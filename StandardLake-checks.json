@@ -1,0 +1,263 @@
+{
+  "targets": [
+    "IntegerPolynomial",
+    "RealDeterminantBound"
+  ],
+  "modules": {
+    "Construction": {
+      "module": "Construction",
+      "returncode": 0,
+      "seconds": 6.77,
+      "log": ".lake/build/verification-logs/Construction.log"
+    },
+    "ClassBasis": {
+      "module": "ClassBasis",
+      "returncode": 0,
+      "seconds": 10.49,
+      "log": ".lake/build/verification-logs/ClassBasis.log"
+    },
+    "Andreief": {
+      "module": "Andreief",
+      "returncode": 0,
+      "seconds": 15.36,
+      "log": ".lake/build/verification-logs/Andreief.log"
+    },
+    "AnalyticCompletion": {
+      "module": "AnalyticCompletion",
+      "returncode": 0,
+      "seconds": 18.7,
+      "log": ".lake/build/verification-logs/AnalyticCompletion.log"
+    },
+    "BernoulliKernel": {
+      "module": "BernoulliKernel",
+      "returncode": 0,
+      "seconds": 19.74,
+      "log": ".lake/build/verification-logs/BernoulliKernel.log"
+    },
+    "InnerValuation": {
+      "module": "InnerValuation",
+      "returncode": 0,
+      "seconds": 23.24,
+      "log": ".lake/build/verification-logs/InnerValuation.log"
+    },
+    "LocalDivision": {
+      "module": "LocalDivision",
+      "returncode": 0,
+      "seconds": 17.79,
+      "log": ".lake/build/verification-logs/LocalDivision.log"
+    },
+    "AppendixNumericBase": {
+      "module": "AppendixNumericBase",
+      "returncode": 0,
+      "seconds": 25.32,
+      "log": ".lake/build/verification-logs/AppendixNumericBase.log"
+    },
+    "CirclePotential": {
+      "module": "CirclePotential",
+      "returncode": 0,
+      "seconds": 31.53,
+      "log": ".lake/build/verification-logs/CirclePotential.log"
+    },
+    "LocalFunctional": {
+      "module": "LocalFunctional",
+      "returncode": 0,
+      "seconds": 22.2,
+      "log": ".lake/build/verification-logs/LocalFunctional.log"
+    },
+    "Normalization": {
+      "module": "Normalization",
+      "returncode": 0,
+      "seconds": 10.53,
+      "log": ".lake/build/verification-logs/Normalization.log"
+    },
+    "LogCertificates": {
+      "module": "LogCertificates",
+      "returncode": 0,
+      "seconds": 20.81,
+      "log": ".lake/build/verification-logs/LogCertificates.log"
+    },
+    "AnalyticFarPoles": {
+      "module": "AnalyticFarPoles",
+      "returncode": 0,
+      "seconds": 19.87,
+      "log": ".lake/build/verification-logs/AnalyticFarPoles.log"
+    },
+    "Moments": {
+      "module": "Moments",
+      "returncode": 0,
+      "seconds": 21.12,
+      "log": ".lake/build/verification-logs/Moments.log"
+    },
+    "NearPoleSeries": {
+      "module": "NearPoleSeries",
+      "returncode": 0,
+      "seconds": 17.78,
+      "log": ".lake/build/verification-logs/NearPoleSeries.log"
+    },
+    "AppendixCellBase": {
+      "module": "AppendixCellBase",
+      "returncode": 0,
+      "seconds": 20.14,
+      "log": ".lake/build/verification-logs/AppendixCellBase.log"
+    },
+    "IntegerPoleRecurrence": {
+      "module": "IntegerPoleRecurrence",
+      "returncode": 0,
+      "seconds": 15.71,
+      "log": ".lake/build/verification-logs/IntegerPoleRecurrence.log"
+    },
+    "CircleMeasures": {
+      "module": "CircleMeasures",
+      "returncode": 0,
+      "seconds": 17.07,
+      "log": ".lake/build/verification-logs/CircleMeasures.log"
+    },
+    "GeometricMoments": {
+      "module": "GeometricMoments",
+      "returncode": 0,
+      "seconds": 18.26,
+      "log": ".lake/build/verification-logs/GeometricMoments.log"
+    },
+    "FarUnitExpansion": {
+      "module": "FarUnitExpansion",
+      "returncode": 0,
+      "seconds": 16.91,
+      "log": ".lake/build/verification-logs/FarUnitExpansion.log"
+    },
+    "AppendixNumericConstants": {
+      "module": "AppendixNumericConstants",
+      "returncode": 0,
+      "seconds": 26.06,
+      "log": ".lake/build/verification-logs/AppendixNumericConstants.log"
+    },
+    "OuterValuation": {
+      "module": "OuterValuation",
+      "returncode": 0,
+      "seconds": 23.46,
+      "log": ".lake/build/verification-logs/OuterValuation.log"
+    },
+    "PaperParameters": {
+      "module": "PaperParameters",
+      "returncode": 0,
+      "seconds": 16.21,
+      "log": ".lake/build/verification-logs/PaperParameters.log"
+    },
+    "EnergyMixtures": {
+      "module": "EnergyMixtures",
+      "returncode": 0,
+      "seconds": 17.33,
+      "log": ".lake/build/verification-logs/EnergyMixtures.log"
+    },
+    "PoleKernel": {
+      "module": "PoleKernel",
+      "returncode": 0,
+      "seconds": 9.01,
+      "log": ".lake/build/verification-logs/PoleKernel.log"
+    },
+    "PartialFractions": {
+      "module": "PartialFractions",
+      "returncode": 0,
+      "seconds": 14.15,
+      "log": ".lake/build/verification-logs/PartialFractions.log"
+    },
+    "AppendixPartition": {
+      "module": "AppendixPartition",
+      "returncode": 0,
+      "seconds": 29.94,
+      "log": ".lake/build/verification-logs/AppendixPartition.log"
+    },
+    "AppendixPotential.Batch004": {
+      "module": "AppendixPotential.Batch004",
+      "returncode": 0,
+      "seconds": 58.42,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch004.log"
+    },
+    "AppendixPotential.Batch003": {
+      "module": "AppendixPotential.Batch003",
+      "returncode": 0,
+      "seconds": 64.34,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch003.log"
+    },
+    "AppendixPotential.Batch005": {
+      "module": "AppendixPotential.Batch005",
+      "returncode": 0,
+      "seconds": 66.42,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch005.log"
+    },
+    "AppendixPotential.Batch006": {
+      "module": "AppendixPotential.Batch006",
+      "returncode": 0,
+      "seconds": 72.97,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch006.log"
+    },
+    "AppendixPotential.Batch002": {
+      "module": "AppendixPotential.Batch002",
+      "returncode": 0,
+      "seconds": 84.48,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch002.log"
+    },
+    "AppendixPotential.Batch001": {
+      "module": "AppendixPotential.Batch001",
+      "returncode": 0,
+      "seconds": 108.28,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch001.log"
+    },
+    "AppendixPotential.Batch007": {
+      "module": "AppendixPotential.Batch007",
+      "returncode": 0,
+      "seconds": 71.44,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch007.log"
+    },
+    "AppendixPotential.Batch008": {
+      "module": "AppendixPotential.Batch008",
+      "returncode": 0,
+      "seconds": 75.83,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch008.log"
+    },
+    "AppendixPotential.Batch009": {
+      "module": "AppendixPotential.Batch009",
+      "returncode": 0,
+      "seconds": 82.42,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch009.log"
+    },
+    "AppendixPotential.Batch000": {
+      "module": "AppendixPotential.Batch000",
+      "returncode": 0,
+      "seconds": 162.59,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch000.log"
+    },
+    "AppendixPotential.Batch010": {
+      "module": "AppendixPotential.Batch010",
+      "returncode": 0,
+      "seconds": 79.13,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch010.log"
+    },
+    "AppendixPotential.Batch011": {
+      "module": "AppendixPotential.Batch011",
+      "returncode": 0,
+      "seconds": 89.67,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch011.log"
+    },
+    "AppendixPotential.Batch012": {
+      "module": "AppendixPotential.Batch012",
+      "returncode": 0,
+      "seconds": 90.91,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch012.log"
+    },
+    "AppendixNumerics": {
+      "module": "AppendixNumerics",
+      "returncode": 0,
+      "seconds": 255.72,
+      "log": ".lake/build/verification-logs/AppendixNumerics.log"
+    },
+    "AppendixPotential.Batch013": {
+      "module": "AppendixPotential.Batch013",
+      "returncode": 0,
+      "seconds": 96.95,
+      "log": ".lake/build/verification-logs/AppendixPotential.Batch013.log"
+    }
+  },
+  "status": "partial_stopped",
+  "reason": "Stopped after 42 successful local module builds to avoid repeating already checked numerical elaboration; all local stored proof terms are separately kernel-replayed.",
+  "complete_clean_build": false
+}

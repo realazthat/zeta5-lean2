@@ -1,0 +1,9 @@
+{
+  "module_count": 406,
+  "official_kernel_replay_complete": true,
+  "all_exit_status_zero": true,
+  "changed_files": [],
+  "changed_artifact_selection": [],
+  "frozen_snapshot_conflicts": [],
+  "passed": true
+}

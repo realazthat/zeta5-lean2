@@ -1,0 +1,14 @@
+import SmallPrimeEntry
+
+#print axioms Zeta5Local.bernoulliFunctional_binomial
+#print axioms Zeta5Local.newton_expansion
+#print axioms Zeta5Local.integerValued_lipschitz
+#print axioms Zeta5Local.rationalTauFunctional_integerValued_norm
+#print axioms Zeta5Local.reducedInverseProduct_bounds
+#print axioms Zeta5Local.factorial_ratio_balanced_norm
+#print axioms Zeta5Local.smallPrimeQuotient_norm
+#print axioms Zeta5Local.smallPrimeTauPolynomial_coeff_norm
+#print axioms Zeta5Local.smallPrimeQ_binomial
+#print axioms Zeta5Local.denominator_binomial
+#print axioms Zeta5Local.smallPrimeF_integerValued
+#print axioms Zeta5Local.smallPrime_entry_coeff_norm

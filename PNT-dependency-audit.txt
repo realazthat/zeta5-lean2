@@ -1,0 +1,42 @@
+PrimeNumberTheoremAnd dependency and axiom audit
+
+Repository: https://github.com/AlexKontorovich/PrimeNumberTheoremAnd
+Commit: a5154676af9aa3095150ee410cdda80555aa0642
+Toolchain: leanprover/lean4:v4.32.2
+
+Pinned dependencies:
+mathlib: 905b95818eb32af7874a58b427f50c1711a5e96c
+PrimeCert: 6cac6fcb55fe9070afc4c42cad1d0eaa1c59e6a1
+leancert: 6b11513512c9d27183fb4725bfc291ab38b4a6d7
+checkdecls: 3d425859e73fcfbef85b9638c2a91708ef4a22d4
+LeanArchitect: d9013cc08bd2b5483e837368dfa4cc7ead92a5c2
+plausible: e12c1910fe855cbfc38803cd4e55543906d5fa62
+LeanSearchClient: c5d5b8fe6e5158def25cd28eb94e4141ad97c843
+importGraph: 7e9612bf0b9ee66db3cb5b9988a35afc706f5a12
+proofwidgets: 6e311e2a844da9b2cc3971187df2fe0066947b93
+aesop: a7dbf0c63b694e47f425f3dcddbc0e178bb432d3
+Qq: 38d591e778f100aec9762bb582f9c7f55f50e9dc
+batteries: 023ce7d62a0531e22a5331e20b587817a80d49ff
+Cli: 88679d088c9720c27ebdf2ba4dafe17341747f94
+
+Build: lake build PrimeNumberTheoremAnd.Consequences
+Result: succeeded (3708 jobs).
+
+Audit command: lake env lean Zeta5PNTAudit.lean
+
+chebyshev_asymptotic : Asymptotics.IsEquivalent Filter.atTop Chebyshev.theta id
+chebyshev_asymptotic_finsum :
+  Asymptotics.IsEquivalent Filter.atTop (fun x => ∑ᶠ (p : ℕ) (_ : p ≤ x) (_ : Nat.Prime p), Real.log ↑p) fun x => ↑x
+chebyshev_asymptotic' :
+  ∃ f,
+    (∀ ε > 0, f =o[Filter.atTop] fun t => ε * t) ∧
+      (∀ (x : ℝ), 2 ≤ x → MeasureTheory.IntegrableOn f (Set.Icc 2 x) MeasureTheory.volume) ∧
+        ∀ (x : ℝ), Chebyshev.theta x = x + f x
+Bernoulli.vonStaudt_clausen (k : ℕ) :
+  bernoulli (2 * k) + ∑ p ∈ Finset.range (2 * k + 2) with Nat.Prime p ∧ p - 1 ∣ 2 * k, 1 / ↑p ∈ Set.range Int.cast
+'WeakPNT' depends on axioms: [propext, Classical.choice, Quot.sound]
+'chebyshev_asymptotic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'chebyshev_asymptotic_finsum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Bernoulli.vonStaudt_clausen' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+Exit code: 0

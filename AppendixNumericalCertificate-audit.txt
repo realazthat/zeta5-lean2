@@ -1,0 +1,5 @@
+'Zeta5AppendixNumerics.all_cell_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Zeta5AppendixNumerics.interval_cell_certificate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Zeta5AppendixNumerics.energy_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Zeta5AppendixNumerics.cstar_bounds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Zeta5AppendixNumerics.final_coefficient' depends on axioms: [propext, Classical.choice, Quot.sound]

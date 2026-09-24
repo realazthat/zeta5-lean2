@@ -1,0 +1,1088 @@
+{
+  "lean": "4.32.2",
+  "mathlib": "905b95818eb32af7874a58b427f50c1711a5e96c",
+  "master_returncode": 0,
+  "batch_results": {
+    "potential": [
+      {
+        "module": "AppendixPotential/Batch000.lean",
+        "returncode": 0,
+        "seconds": 120.55
+      },
+      {
+        "module": "AppendixPotential/Batch001.lean",
+        "returncode": 0,
+        "seconds": 83.54
+      },
+      {
+        "module": "AppendixPotential/Batch002.lean",
+        "returncode": 0,
+        "seconds": 58.74
+      },
+      {
+        "module": "AppendixPotential/Batch003.lean",
+        "returncode": 0,
+        "seconds": 50.06
+      },
+      {
+        "module": "AppendixPotential/Batch004.lean",
+        "returncode": 0,
+        "seconds": 39.58
+      },
+      {
+        "module": "AppendixPotential/Batch005.lean",
+        "returncode": 0,
+        "seconds": 56.29
+      },
+      {
+        "module": "AppendixPotential/Batch006.lean",
+        "returncode": 0,
+        "seconds": 46.87
+      },
+      {
+        "module": "AppendixPotential/Batch007.lean",
+        "returncode": 0,
+        "seconds": 52.23
+      },
+      {
+        "module": "AppendixPotential/Batch008.lean",
+        "returncode": 0,
+        "seconds": 65.81
+      },
+      {
+        "module": "AppendixPotential/Batch009.lean",
+        "returncode": 0,
+        "seconds": 62.14
+      },
+      {
+        "module": "AppendixPotential/Batch010.lean",
+        "returncode": 0,
+        "seconds": 73.32
+      },
+      {
+        "module": "AppendixPotential/Batch011.lean",
+        "returncode": 0,
+        "seconds": 77.36
+      },
+      {
+        "module": "AppendixPotential/Batch012.lean",
+        "returncode": 0,
+        "seconds": 68.86
+      },
+      {
+        "module": "AppendixPotential/Batch013.lean",
+        "returncode": 0,
+        "seconds": 68.2
+      },
+      {
+        "module": "AppendixPotential/Batch014.lean",
+        "returncode": 0,
+        "seconds": 77.75
+      },
+      {
+        "module": "AppendixPotential/Batch015.lean",
+        "returncode": 0,
+        "seconds": 74.02
+      },
+      {
+        "module": "AppendixPotential/Batch016.lean",
+        "returncode": 0,
+        "seconds": 77.98
+      },
+      {
+        "module": "AppendixPotential/Batch017.lean",
+        "returncode": 0,
+        "seconds": 70.97
+      },
+      {
+        "module": "AppendixPotential/Batch018.lean",
+        "returncode": 0,
+        "seconds": 112.83
+      },
+      {
+        "module": "AppendixPotential/Batch019.lean",
+        "returncode": 0,
+        "seconds": 114.07
+      },
+      {
+        "module": "AppendixPotential/Batch020.lean",
+        "returncode": 0,
+        "seconds": 115.16
+      },
+      {
+        "module": "AppendixPotential/Batch021.lean",
+        "returncode": 0,
+        "seconds": 114.77
+      },
+      {
+        "module": "AppendixPotential/Batch022.lean",
+        "returncode": 0,
+        "seconds": 109.23
+      },
+      {
+        "module": "AppendixPotential/Batch023.lean",
+        "returncode": 0,
+        "seconds": 102.37
+      },
+      {
+        "module": "AppendixPotential/Batch024.lean",
+        "returncode": 0,
+        "seconds": 103.7
+      },
+      {
+        "module": "AppendixPotential/Batch025.lean",
+        "returncode": 0,
+        "seconds": 104.58
+      },
+      {
+        "module": "AppendixPotential/Batch026.lean",
+        "returncode": 0,
+        "seconds": 99.2
+      },
+      {
+        "module": "AppendixPotential/Batch027.lean",
+        "returncode": 0,
+        "seconds": 98.76
+      },
+      {
+        "module": "AppendixPotential/Batch028.lean",
+        "returncode": 0,
+        "seconds": 83.8
+      },
+      {
+        "module": "AppendixPotential/Batch029.lean",
+        "returncode": 0,
+        "seconds": 99.76
+      },
+      {
+        "module": "AppendixPotential/Batch030.lean",
+        "returncode": 0,
+        "seconds": 137.73
+      },
+      {
+        "module": "AppendixPotential/Batch031.lean",
+        "returncode": 0,
+        "seconds": 135.56
+      },
+      {
+        "module": "AppendixPotential/Batch032.lean",
+        "returncode": 0,
+        "seconds": 140.5
+      },
+      {
+        "module": "AppendixPotential/Batch033.lean",
+        "returncode": 0,
+        "seconds": 133.57
+      },
+      {
+        "module": "AppendixPotential/Batch034.lean",
+        "returncode": 0,
+        "seconds": 107.23
+      },
+      {
+        "module": "AppendixPotential/Batch035.lean",
+        "returncode": 0,
+        "seconds": 103.46
+      },
+      {
+        "module": "AppendixPotential/Batch036.lean",
+        "returncode": 0,
+        "seconds": 106.6
+      },
+      {
+        "module": "AppendixPotential/Batch037.lean",
+        "returncode": 0,
+        "seconds": 109.75
+      },
+      {
+        "module": "AppendixPotential/Batch038.lean",
+        "returncode": 0,
+        "seconds": 128.56
+      },
+      {
+        "module": "AppendixPotential/Batch039.lean",
+        "returncode": 0,
+        "seconds": 124.11
+      },
+      {
+        "module": "AppendixPotential/Batch040.lean",
+        "returncode": 0,
+        "seconds": 117.68
+      },
+      {
+        "module": "AppendixPotential/Batch041.lean",
+        "returncode": 0,
+        "seconds": 108.59
+      },
+      {
+        "module": "AppendixPotential/Batch042.lean",
+        "returncode": 0,
+        "seconds": 113.85
+      },
+      {
+        "module": "AppendixPotential/Batch043.lean",
+        "returncode": 0,
+        "seconds": 107.22
+      },
+      {
+        "module": "AppendixPotential/Batch044.lean",
+        "returncode": 0,
+        "seconds": 128.38
+      },
+      {
+        "module": "AppendixPotential/Batch045.lean",
+        "returncode": 0,
+        "seconds": 121.84
+      },
+      {
+        "module": "AppendixPotential/Batch046.lean",
+        "returncode": 0,
+        "seconds": 122.94
+      },
+      {
+        "module": "AppendixPotential/Batch047.lean",
+        "returncode": 0,
+        "seconds": 136.39
+      },
+      {
+        "module": "AppendixPotential/Batch048.lean",
+        "returncode": 0,
+        "seconds": 122.0
+      },
+      {
+        "module": "AppendixPotential/Batch049.lean",
+        "returncode": 0,
+        "seconds": 119.54
+      },
+      {
+        "module": "AppendixPotential/Batch050.lean",
+        "returncode": 0,
+        "seconds": 149.29
+      },
+      {
+        "module": "AppendixPotential/Batch051.lean",
+        "returncode": 0,
+        "seconds": 144.05
+      },
+      {
+        "module": "AppendixPotential/Batch052.lean",
+        "returncode": 0,
+        "seconds": 146.25
+      },
+      {
+        "module": "AppendixPotential/Batch053.lean",
+        "returncode": 0,
+        "seconds": 141.54
+      },
+      {
+        "module": "AppendixPotential/Batch054.lean",
+        "returncode": 0,
+        "seconds": 114.83
+      },
+      {
+        "module": "AppendixPotential/Batch055.lean",
+        "returncode": 0,
+        "seconds": 131.34
+      },
+      {
+        "module": "AppendixPotential/Batch056.lean",
+        "returncode": 0,
+        "seconds": 136.69
+      },
+      {
+        "module": "AppendixPotential/Batch057.lean",
+        "returncode": 0,
+        "seconds": 131.97
+      },
+      {
+        "module": "AppendixPotential/Batch058.lean",
+        "returncode": 0,
+        "seconds": 154.33
+      },
+      {
+        "module": "AppendixPotential/Batch059.lean",
+        "returncode": 0,
+        "seconds": 152.25
+      },
+      {
+        "module": "AppendixPotential/Batch060.lean",
+        "returncode": 0,
+        "seconds": 141.88
+      },
+      {
+        "module": "AppendixPotential/Batch061.lean",
+        "returncode": 0,
+        "seconds": 137.38
+      },
+      {
+        "module": "AppendixPotential/Batch062.lean",
+        "returncode": 0,
+        "seconds": 130.61
+      },
+      {
+        "module": "AppendixPotential/Batch063.lean",
+        "returncode": 0,
+        "seconds": 136.09
+      },
+      {
+        "module": "AppendixPotential/Batch064.lean",
+        "returncode": 0,
+        "seconds": 147.62
+      },
+      {
+        "module": "AppendixPotential/Batch065.lean",
+        "returncode": 0,
+        "seconds": 125.13
+      },
+      {
+        "module": "AppendixPotential/Batch066.lean",
+        "returncode": 0,
+        "seconds": 162.49
+      },
+      {
+        "module": "AppendixPotential/Batch067.lean",
+        "returncode": 0,
+        "seconds": 157.13
+      },
+      {
+        "module": "AppendixPotential/Batch068.lean",
+        "returncode": 0,
+        "seconds": 131.45
+      },
+      {
+        "module": "AppendixPotential/Batch069.lean",
+        "returncode": 0,
+        "seconds": 155.91
+      },
+      {
+        "module": "AppendixPotential/Batch070.lean",
+        "returncode": 0,
+        "seconds": 130.18
+      },
+      {
+        "module": "AppendixPotential/Batch071.lean",
+        "returncode": 0,
+        "seconds": 136.89
+      },
+      {
+        "module": "AppendixPotential/Batch072.lean",
+        "returncode": 0,
+        "seconds": 135.2
+      },
+      {
+        "module": "AppendixPotential/Batch073.lean",
+        "returncode": 0,
+        "seconds": 138.98
+      },
+      {
+        "module": "AppendixPotential/Batch074.lean",
+        "returncode": 0,
+        "seconds": 152.72
+      },
+      {
+        "module": "AppendixPotential/Batch075.lean",
+        "returncode": 0,
+        "seconds": 164.54
+      },
+      {
+        "module": "AppendixPotential/Batch076.lean",
+        "returncode": 0,
+        "seconds": 153.52
+      },
+      {
+        "module": "AppendixPotential/Batch077.lean",
+        "returncode": 0,
+        "seconds": 162.5
+      },
+      {
+        "module": "AppendixPotential/Batch078.lean",
+        "returncode": 0,
+        "seconds": 155.5
+      },
+      {
+        "module": "AppendixPotential/Batch079.lean",
+        "returncode": 0,
+        "seconds": 144.19
+      },
+      {
+        "module": "AppendixPotential/Batch080.lean",
+        "returncode": 0,
+        "seconds": 146.94
+      },
+      {
+        "module": "AppendixPotential/Batch081.lean",
+        "returncode": 0,
+        "seconds": 199.92
+      },
+      {
+        "module": "AppendixPotential/Batch082.lean",
+        "returncode": 0,
+        "seconds": 248.02
+      },
+      {
+        "module": "AppendixPotential/Batch083.lean",
+        "returncode": 0,
+        "seconds": 257.77
+      },
+      {
+        "module": "AppendixPotential/Batch084.lean",
+        "returncode": 0,
+        "seconds": 247.12
+      },
+      {
+        "module": "AppendixPotential/Batch085.lean",
+        "returncode": 0,
+        "seconds": 189.49
+      }
+    ],
+    "field": [
+      {
+        "module": "AppendixField/Batch000.lean",
+        "returncode": 0,
+        "seconds": 76.48
+      },
+      {
+        "module": "AppendixField/Batch001.lean",
+        "returncode": 0,
+        "seconds": 77.55
+      },
+      {
+        "module": "AppendixField/Batch002.lean",
+        "returncode": 0,
+        "seconds": 90.97
+      },
+      {
+        "module": "AppendixField/Batch003.lean",
+        "returncode": 0,
+        "seconds": 91.68
+      },
+      {
+        "module": "AppendixField/Batch004.lean",
+        "returncode": 0,
+        "seconds": 102.41
+      },
+      {
+        "module": "AppendixField/Batch005.lean",
+        "returncode": 0,
+        "seconds": 100.88
+      },
+      {
+        "module": "AppendixField/Batch006.lean",
+        "returncode": 0,
+        "seconds": 97.75
+      },
+      {
+        "module": "AppendixField/Batch007.lean",
+        "returncode": 0,
+        "seconds": 85.94
+      },
+      {
+        "module": "AppendixField/Batch008.lean",
+        "returncode": 0,
+        "seconds": 77.36
+      },
+      {
+        "module": "AppendixField/Batch009.lean",
+        "returncode": 0,
+        "seconds": 81.33
+      },
+      {
+        "module": "AppendixField/Batch010.lean",
+        "returncode": 0,
+        "seconds": 74.25
+      },
+      {
+        "module": "AppendixField/Batch011.lean",
+        "returncode": 0,
+        "seconds": 119.29
+      },
+      {
+        "module": "AppendixField/Batch012.lean",
+        "returncode": 0,
+        "seconds": 111.44
+      },
+      {
+        "module": "AppendixField/Batch013.lean",
+        "returncode": 0,
+        "seconds": 89.77
+      },
+      {
+        "module": "AppendixField/Batch014.lean",
+        "returncode": 0,
+        "seconds": 103.44
+      },
+      {
+        "module": "AppendixField/Batch015.lean",
+        "returncode": 0,
+        "seconds": 99.2
+      },
+      {
+        "module": "AppendixField/Batch016.lean",
+        "returncode": 0,
+        "seconds": 67.8
+      },
+      {
+        "module": "AppendixField/Batch017.lean",
+        "returncode": 0,
+        "seconds": 77.16
+      },
+      {
+        "module": "AppendixField/Batch018.lean",
+        "returncode": 0,
+        "seconds": 78.96
+      },
+      {
+        "module": "AppendixField/Batch019.lean",
+        "returncode": 0,
+        "seconds": 93.88
+      },
+      {
+        "module": "AppendixField/Batch020.lean",
+        "returncode": 0,
+        "seconds": 80.41
+      },
+      {
+        "module": "AppendixField/Batch021.lean",
+        "returncode": 0,
+        "seconds": 90.61
+      },
+      {
+        "module": "AppendixField/Batch022.lean",
+        "returncode": 0,
+        "seconds": 87.69
+      },
+      {
+        "module": "AppendixField/Batch023.lean",
+        "returncode": 0,
+        "seconds": 99.68
+      },
+      {
+        "module": "AppendixField/Batch024.lean",
+        "returncode": 0,
+        "seconds": 105.09
+      },
+      {
+        "module": "AppendixField/Batch025.lean",
+        "returncode": 0,
+        "seconds": 84.77
+      },
+      {
+        "module": "AppendixField/Batch026.lean",
+        "returncode": 0,
+        "seconds": 74.79
+      },
+      {
+        "module": "AppendixField/Batch027.lean",
+        "returncode": 0,
+        "seconds": 80.62
+      },
+      {
+        "module": "AppendixField/Batch028.lean",
+        "returncode": 0,
+        "seconds": 99.01
+      },
+      {
+        "module": "AppendixField/Batch029.lean",
+        "returncode": 0,
+        "seconds": 101.39
+      },
+      {
+        "module": "AppendixField/Batch030.lean",
+        "returncode": 0,
+        "seconds": 92.28
+      },
+      {
+        "module": "AppendixField/Batch031.lean",
+        "returncode": 0,
+        "seconds": 78.82
+      },
+      {
+        "module": "AppendixField/Batch032.lean",
+        "returncode": 0,
+        "seconds": 89.55
+      },
+      {
+        "module": "AppendixField/Batch033.lean",
+        "returncode": 0,
+        "seconds": 88.36
+      },
+      {
+        "module": "AppendixField/Batch034.lean",
+        "returncode": 0,
+        "seconds": 85.2
+      },
+      {
+        "module": "AppendixField/Batch035.lean",
+        "returncode": 0,
+        "seconds": 104.08
+      },
+      {
+        "module": "AppendixField/Batch036.lean",
+        "returncode": 0,
+        "seconds": 101.19
+      },
+      {
+        "module": "AppendixField/Batch037.lean",
+        "returncode": 0,
+        "seconds": 78.0
+      },
+      {
+        "module": "AppendixField/Batch038.lean",
+        "returncode": 0,
+        "seconds": 62.95
+      },
+      {
+        "module": "AppendixField/Batch039.lean",
+        "returncode": 0,
+        "seconds": 73.7
+      },
+      {
+        "module": "AppendixField/Batch040.lean",
+        "returncode": 0,
+        "seconds": 84.01
+      },
+      {
+        "module": "AppendixField/Batch041.lean",
+        "returncode": 0,
+        "seconds": 68.81
+      },
+      {
+        "module": "AppendixField/Batch042.lean",
+        "returncode": 0,
+        "seconds": 74.94
+      },
+      {
+        "module": "AppendixField/Batch043.lean",
+        "returncode": 0,
+        "seconds": 83.64
+      },
+      {
+        "module": "AppendixField/Batch044.lean",
+        "returncode": 0,
+        "seconds": 91.93
+      },
+      {
+        "module": "AppendixField/Batch045.lean",
+        "returncode": 0,
+        "seconds": 97.35
+      },
+      {
+        "module": "AppendixField/Batch046.lean",
+        "returncode": 0,
+        "seconds": 93.96
+      },
+      {
+        "module": "AppendixField/Batch047.lean",
+        "returncode": 0,
+        "seconds": 75.34
+      },
+      {
+        "module": "AppendixField/Batch048.lean",
+        "returncode": 0,
+        "seconds": 81.53
+      },
+      {
+        "module": "AppendixField/Batch049.lean",
+        "returncode": 0,
+        "seconds": 82.75
+      },
+      {
+        "module": "AppendixField/Batch050.lean",
+        "returncode": 0,
+        "seconds": 121.67
+      },
+      {
+        "module": "AppendixField/Batch051.lean",
+        "returncode": 0,
+        "seconds": 157.84
+      },
+      {
+        "module": "AppendixField/Batch052.lean",
+        "returncode": 0,
+        "seconds": 157.75
+      },
+      {
+        "module": "AppendixField/Batch053.lean",
+        "returncode": 0,
+        "seconds": 117.02
+      },
+      {
+        "module": "AppendixField/Batch054.lean",
+        "returncode": 0,
+        "seconds": 76.89
+      },
+      {
+        "module": "AppendixField/Batch055.lean",
+        "returncode": 0,
+        "seconds": 66.84
+      },
+      {
+        "module": "AppendixField/Batch056.lean",
+        "returncode": 0,
+        "seconds": 61.35
+      },
+      {
+        "module": "AppendixField/Batch057.lean",
+        "returncode": 0,
+        "seconds": 90.11
+      },
+      {
+        "module": "AppendixField/Batch058.lean",
+        "returncode": 0,
+        "seconds": 71.73
+      },
+      {
+        "module": "AppendixField/Batch059.lean",
+        "returncode": 0,
+        "seconds": 69.7
+      },
+      {
+        "module": "AppendixField/Batch060.lean",
+        "returncode": 0,
+        "seconds": 88.48
+      },
+      {
+        "module": "AppendixField/Batch061.lean",
+        "returncode": 0,
+        "seconds": 79.8
+      },
+      {
+        "module": "AppendixField/Batch062.lean",
+        "returncode": 0,
+        "seconds": 67.61
+      },
+      {
+        "module": "AppendixField/Batch063.lean",
+        "returncode": 0,
+        "seconds": 62.72
+      },
+      {
+        "module": "AppendixField/Batch064.lean",
+        "returncode": 0,
+        "seconds": 60.99
+      },
+      {
+        "module": "AppendixField/Batch065.lean",
+        "returncode": 0,
+        "seconds": 50.37
+      },
+      {
+        "module": "AppendixField/Batch066.lean",
+        "returncode": 0,
+        "seconds": 58.14
+      },
+      {
+        "module": "AppendixField/Batch067.lean",
+        "returncode": 0,
+        "seconds": 71.99
+      },
+      {
+        "module": "AppendixField/Batch068.lean",
+        "returncode": 0,
+        "seconds": 64.69
+      },
+      {
+        "module": "AppendixField/Batch069.lean",
+        "returncode": 0,
+        "seconds": 66.97
+      },
+      {
+        "module": "AppendixField/Batch070.lean",
+        "returncode": 0,
+        "seconds": 69.55
+      },
+      {
+        "module": "AppendixField/Batch071.lean",
+        "returncode": 0,
+        "seconds": 62.01
+      },
+      {
+        "module": "AppendixField/Batch072.lean",
+        "returncode": 0,
+        "seconds": 56.36
+      },
+      {
+        "module": "AppendixField/Batch073.lean",
+        "returncode": 0,
+        "seconds": 68.91
+      },
+      {
+        "module": "AppendixField/Batch074.lean",
+        "returncode": 0,
+        "seconds": 67.55
+      },
+      {
+        "module": "AppendixField/Batch075.lean",
+        "returncode": 0,
+        "seconds": 65.48
+      },
+      {
+        "module": "AppendixField/Batch076.lean",
+        "returncode": 0,
+        "seconds": 83.98
+      },
+      {
+        "module": "AppendixField/Batch077.lean",
+        "returncode": 0,
+        "seconds": 76.63
+      },
+      {
+        "module": "AppendixField/Batch078.lean",
+        "returncode": 0,
+        "seconds": 63.06
+      },
+      {
+        "module": "AppendixField/Batch079.lean",
+        "returncode": 0,
+        "seconds": 62.19
+      },
+      {
+        "module": "AppendixField/Batch080.lean",
+        "returncode": 0,
+        "seconds": 65.05
+      },
+      {
+        "module": "AppendixField/Batch081.lean",
+        "returncode": 0,
+        "seconds": 68.79
+      },
+      {
+        "module": "AppendixField/Batch082.lean",
+        "returncode": 0,
+        "seconds": 67.61
+      },
+      {
+        "module": "AppendixField/Batch083.lean",
+        "returncode": 0,
+        "seconds": 58.01
+      },
+      {
+        "module": "AppendixField/Batch084.lean",
+        "returncode": 0,
+        "seconds": 67.91
+      },
+      {
+        "module": "AppendixField/Batch085.lean",
+        "returncode": 0,
+        "seconds": 35.27
+      }
+    ],
+    "cells": [
+      {
+        "module": "AppendixCells/Batch000.lean",
+        "returncode": 0,
+        "seconds": 22.63
+      },
+      {
+        "module": "AppendixCells/Batch001.lean",
+        "returncode": 0,
+        "seconds": 25.16
+      },
+      {
+        "module": "AppendixCells/Batch002.lean",
+        "returncode": 0,
+        "seconds": 25.87
+      },
+      {
+        "module": "AppendixCells/Batch003.lean",
+        "returncode": 0,
+        "seconds": 20.08
+      },
+      {
+        "module": "AppendixCells/Batch004.lean",
+        "returncode": 0,
+        "seconds": 19.65
+      },
+      {
+        "module": "AppendixCells/Batch005.lean",
+        "returncode": 0,
+        "seconds": 19.82
+      },
+      {
+        "module": "AppendixCells/Batch006.lean",
+        "returncode": 0,
+        "seconds": 19.96
+      },
+      {
+        "module": "AppendixCells/Batch007.lean",
+        "returncode": 0,
+        "seconds": 15.04
+      },
+      {
+        "module": "AppendixCells/Batch008.lean",
+        "returncode": 0,
+        "seconds": 21.28
+      },
+      {
+        "module": "AppendixCells/Batch009.lean",
+        "returncode": 0,
+        "seconds": 13.61
+      },
+      {
+        "module": "AppendixCells/Batch010.lean",
+        "returncode": 0,
+        "seconds": 18.39
+      },
+      {
+        "module": "AppendixCells/Batch011.lean",
+        "returncode": 0,
+        "seconds": 18.15
+      },
+      {
+        "module": "AppendixCells/Batch012.lean",
+        "returncode": 0,
+        "seconds": 15.01
+      },
+      {
+        "module": "AppendixCells/Batch013.lean",
+        "returncode": 0,
+        "seconds": 25.71
+      },
+      {
+        "module": "AppendixCells/Batch014.lean",
+        "returncode": 0,
+        "seconds": 12.86
+      },
+      {
+        "module": "AppendixCells/Batch015.lean",
+        "returncode": 0,
+        "seconds": 19.07
+      },
+      {
+        "module": "AppendixCells/Batch016.lean",
+        "returncode": 0,
+        "seconds": 16.6
+      },
+      {
+        "module": "AppendixCells/Batch017.lean",
+        "returncode": 0,
+        "seconds": 21.53
+      },
+      {
+        "module": "AppendixCells/Batch018.lean",
+        "returncode": 0,
+        "seconds": 12.58
+      },
+      {
+        "module": "AppendixCells/Batch019.lean",
+        "returncode": 0,
+        "seconds": 13.79
+      },
+      {
+        "module": "AppendixCells/Batch020.lean",
+        "returncode": 0,
+        "seconds": 17.64
+      },
+      {
+        "module": "AppendixCells/Batch021.lean",
+        "returncode": 0,
+        "seconds": 19.53
+      },
+      {
+        "module": "AppendixCells/Batch022.lean",
+        "returncode": 0,
+        "seconds": 22.66
+      },
+      {
+        "module": "AppendixCells/Batch023.lean",
+        "returncode": 0,
+        "seconds": 14.88
+      },
+      {
+        "module": "AppendixCells/Batch024.lean",
+        "returncode": 0,
+        "seconds": 33.51
+      },
+      {
+        "module": "AppendixCells/Batch025.lean",
+        "returncode": 0,
+        "seconds": 38.21
+      },
+      {
+        "module": "AppendixCells/Batch026.lean",
+        "returncode": 0,
+        "seconds": 22.74
+      },
+      {
+        "module": "AppendixCells/Batch027.lean",
+        "returncode": 0,
+        "seconds": 19.42
+      },
+      {
+        "module": "AppendixCells/Batch028.lean",
+        "returncode": 0,
+        "seconds": 12.56
+      },
+      {
+        "module": "AppendixCells/Batch029.lean",
+        "returncode": 0,
+        "seconds": 18.17
+      },
+      {
+        "module": "AppendixCells/Batch030.lean",
+        "returncode": 0,
+        "seconds": 10.35
+      },
+      {
+        "module": "AppendixCells/Batch031.lean",
+        "returncode": 0,
+        "seconds": 9.59
+      },
+      {
+        "module": "AppendixCells/Batch032.lean",
+        "returncode": 0,
+        "seconds": 13.89
+      },
+      {
+        "module": "AppendixCells/Batch033.lean",
+        "returncode": 0,
+        "seconds": 9.66
+      },
+      {
+        "module": "AppendixCells/Batch034.lean",
+        "returncode": 0,
+        "seconds": 7.98
+      },
+      {
+        "module": "AppendixCells/Batch035.lean",
+        "returncode": 0,
+        "seconds": 9.36
+      },
+      {
+        "module": "AppendixCells/Batch036.lean",
+        "returncode": 0,
+        "seconds": 9.67
+      },
+      {
+        "module": "AppendixCells/Batch037.lean",
+        "returncode": 0,
+        "seconds": 23.95
+      },
+      {
+        "module": "AppendixCells/Batch038.lean",
+        "returncode": 0,
+        "seconds": 11.06
+      },
+      {
+        "module": "AppendixCells/Batch039.lean",
+        "returncode": 0,
+        "seconds": 17.1
+      },
+      {
+        "module": "AppendixCells/Batch040.lean",
+        "returncode": 0,
+        "seconds": 10.62
+      },
+      {
+        "module": "AppendixCells/Batch041.lean",
+        "returncode": 0,
+        "seconds": 13.88
+      },
+      {
+        "module": "AppendixCells/Batch042.lean",
+        "returncode": 0,
+        "seconds": 11.51
+      }
+    ]
+  }
+}
