@@ -1,5 +1,12 @@
 # Zeta(5) formalization
 
+## Compact, readable proof branch
+
+See [CODEGOLF.md](CODEGOLF.md) for measured source reduction and
+[NUMERICAL_CERTIFICATES.md](NUMERICAL_CERTIFICATES.md) for the checked certificate
+format. The verified baseline is preserved on `palomar-preparation`; this
+branch also passed its own full build and sandboxed three-kernel verification.
+
 ## Palomar preparation
 
 The Palomar port targets Lean **4.35.0-rc2**. See [PALOMAR.md](PALOMAR.md)

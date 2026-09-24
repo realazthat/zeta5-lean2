@@ -258,6 +258,8 @@ globs = [
   "CanonicalLocalBound",
   "CanonicalPresentation",
   "CanonicalSplitBound",
+  "CertificateData",
+  "CertificateTactics",
   "Challenge",
   "CircleMeasures",
   "CirclePotential",

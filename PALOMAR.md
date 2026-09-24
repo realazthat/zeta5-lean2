@@ -75,7 +75,26 @@ The human submission entry point is <https://submit.palomar-registry.org/>.
 Agents should follow that host's `llms.txt` protocol instead of driving the form.
 The responsible maintainer must supply an accurate authorization declaration.
 
-## Verification status
+## Compact branch verification
+
+The `codegolf-readable` branch passed its own complete build (4,590 Lake jobs)
+and sandboxed Comparator on 24 September 2026. con-ron accepted 91,762
+declarations, NanoDa accepted the solution, and the default Lean kernel accepted
+the solution. Comparator ended with `Your solution is okay!` and exit code 0.
+The bundled checkers were unmodified, and the sandbox remained enabled.
+Both final statements retain only the three permitted axioms.
+
+`verification/codegolf/` contains the complete logs and their fingerprints.
+`PalomarSourceManifest.sha256` identifies this branch's source files. The older
+`verification/palomar/` evidence concerns the preserved baseline commit below.
+See `CODEGOLF.md` for the 94.72% first-party source reduction and its scope.
+
+## Verified baseline
+
+The results below concern baseline commit
+`5e55b5ff7a0d57a758e0bd7462753ea8e674c00e`. The compact branch has also been checked separately, as recorded above.
+
+## Baseline verification status
 
 - Structured metadata: passed Palomar's current metadata contract validator.
 - Local import inventory: no missing imports; Challenge and Solution registered.
