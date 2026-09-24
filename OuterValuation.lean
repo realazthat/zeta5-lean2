@@ -355,11 +355,11 @@ theorem mixed_polynomial_det_eq_zero_of_rank_lt [Infinite F]
   intro x
   rw [Polynomial.eval_zero]
   change (Polynomial.evalRingHom x) (Matrix.det (s.piecewise (B.map Polynomial.C) A)) = 0
-  rw [(Polynomial.evalRingHom x).map_det]
+  erw [(Polynomial.evalRingHom x).map_det]
   have hmap : Matrix.map (s.piecewise (B.map Polynomial.C) A) (Polynomial.evalRingHom x) =
       s.piecewise B (A.map (Polynomial.evalRingHom x)) := by
     ext i j
-    by_cases hi : i ∈ s <;> simp [Matrix.map_apply, Finset.piecewise, hi]
+    by_cases hi : i ∈ s <;> simp [Matrix.map, Finset.piecewise, hi]
   change Matrix.det (Matrix.map (s.piecewise (B.map Polynomial.C) A) (Polynomial.evalRingHom x)) = 0
   rw [hmap]
   exact mixed_det_eq_zero_of_rank_lt _ B s hr

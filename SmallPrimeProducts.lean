@@ -71,7 +71,7 @@ theorem reducedInverseProduct_bounds (p : ℕ) [Fact p.Prime] {ι : Type*} [Deci
       (norm_pos_iff.mpr (sub_ne_zero.mpr (hsep i hi).1))).mpr (hd i hi) |>.trans (hsep i hi).2
   have hprod : ‖∏ i ∈ s.erase j, u i‖ ≤ 1 := by
     rw [norm_prod]
-    exact Finset.prod_le_one (fun i _ => norm_nonneg _) hu
+    exact Finset.prod_le_one₀ (fun i _ => norm_nonneg _) hu
   have he : reducedInverseProduct p s r c j x =
       reducedInverseProduct p s r c j (r j) * ∏ i ∈ s.erase j, u i := by
     unfold reducedInverseProduct

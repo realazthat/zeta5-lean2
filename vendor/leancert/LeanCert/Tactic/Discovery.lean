@@ -1,0 +1,2221 @@
+/-
+Copyright (c) 2024 LeanCert Contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: LeanCert Contributors
+-/
+import Lean
+import LeanCert.Discovery.Find
+import LeanCert.Tactic.Verification
+import LeanCert.Meta.ToExpr
+import LeanCert.Meta.ProveSupported
+import LeanCert.Meta.ProveContinuous
+import LeanCert.Tactic.IntervalAuto
+import LeanCert.Engine.Optimization.Global
+import LeanCert.Engine.Optimization.Guided
+import LeanCert.Engine.Optimization.Gradient
+import LeanCert.Validity.Bounds
+
+/-!
+# Discovery Mode: Tactics
+
+This module provides tactics for automatically proving existential goals
+using discovery algorithms:
+
+* `interval_minimize` - Prove `∃ m, ∀ x ∈ I, f(x) ≥ m` by finding the minimum
+* `interval_maximize` - Prove `∃ M, ∀ x ∈ I, f(x) ≤ M` by finding the maximum
+* `interval_roots` - Prove `∃ x ∈ I, f(x) = 0` from a checked sign change
+
+## Usage
+
+```lean
+-- Automatically find and prove a lower bound exists
+example : ∃ m : ℚ, ∀ x ∈ I01, x^2 + Real.sin x ≥ m := by
+  interval_minimize
+
+-- Certify a root from a sign change
+example : ∃ x ∈ Icc (-2 : ℝ) 2, x^3 - x = 0 := by
+  interval_roots
+```
+
+## Implementation
+
+The tactics:
+1. Analyze the goal to find the function `f` and interval `I`.
+2. Reify `f` to a LeanCert AST.
+3. Execute the optimization algorithm (via `evalExpr`) to find the bound `m`.
+4. Instantiate the existential `∃ m` with the found value.
+5. Call `opt_bound` to prove the resulting universal bound.
+-/
+
+open Lean Meta Elab Tactic Term
+open LeanCert.Core
+open LeanCert.Engine
+open LeanCert.Engine.Optimization
+open LeanCert.Meta
+open LeanCert.Discovery
+
+namespace LeanCert.Tactic.Discovery
+
+-- Trace class for discovery mode diagnostics
+initialize registerTraceClass `LeanCert.discovery
+
+-- Use explicit alias to avoid ambiguity with Lean.Expr
+abbrev LExpr := LeanCert.Core.Expr
+
+/-! ## Helper Functions -/
+
+/-- Parse a domain expression into a Box -/
+unsafe def parseDomainToBox (domainExpr : Lean.Expr) : MetaM Box := do
+  -- This is a simplified parser. In a real implementation, this would
+  -- need to evaluate the domainExpr to a Box value.
+  -- For now, we assume domainExpr is an identifier or simple term
+  -- that evaluates to an IntervalRat or Box.
+  -- Since we need the value at runtime to pass to globalMinimize,
+  -- we rely on the user providing a term that evaluates to Box or IntervalRat.
+  -- Here we handle the case where it's a single IntervalRat.
+  let e ← evalExpr IntervalRat (mkConst ``IntervalRat) domainExpr
+  return [e]
+
+/-- Check if the goal is an existential bound: `∃ m, ∀ x ∈ I, f(x) ≥ m` or `≤ m` -/
+inductive ExistentialBoundGoal where
+  | minimize (varName : Name) (varType : Lean.Expr) (domain : Lean.Expr) (func : Lean.Expr)
+  | maximize (varName : Name) (varType : Lean.Expr) (domain : Lean.Expr) (func : Lean.Expr)
+
+/-- Parse an existential bound goal.
+    Supports goals of the form:
+    - `∃ m, ∀ x ∈ I, f(x) ≥ m` (minimize)
+    - `∃ M, ∀ x ∈ I, f(x) ≤ M` (maximize)
+
+    The function f can be:
+    - A raw Lean expression like `x * x + Real.sin x`
+    - An `Expr.eval` wrapped expression
+
+    Auto-reification will convert raw expressions to LeanCert AST. -/
+def parseExistentialGoal (goalType : Lean.Expr) : MetaM (Option ExistentialBoundGoal) := do
+  -- Try to match the Exists pattern
+  let goalType ← whnf goalType
+  if let .app (.app (.const ``Exists _) _) body := goalType then
+    -- body is `fun m => ∀ x ∈ I, ...`
+    if let .lam mName mTy mBody _ := body then
+      -- Introduce m as a local variable to properly resolve bound variables
+      withLocalDeclD mName mTy fun m => do
+        let mBodyInst := mBody.instantiate1 m
+        -- Analyze mBodyInst: `∀ x ∈ I, f(x) ≥ m` (minimize) or `f(x) ≤ m` (maximize)
+        -- We reuse parseBoundGoal from IntervalAuto logic roughly
+        if let some boundGoal ← LeanCert.Tactic.Auto.parseBoundGoal mBodyInst then
+          match boundGoal with
+          | .forallGe _name intervalInfo func bound =>
+             -- c ≤ f(x) where c is m (the fvar we introduced)
+             -- The bound might be a coercion of m, so check if it contains m
+             let boundContainsM := bound.containsFVar m.fvarId!
+             if boundContainsM then
+               return some (.minimize _name mTy intervalInfo.intervalRat func)
+             else return none
+          | .forallLe _name intervalInfo func bound =>
+             -- f(x) ≤ c where c is m
+             let boundContainsM := bound.containsFVar m.fvarId!
+             if boundContainsM then
+               return some (.maximize _name mTy intervalInfo.intervalRat func)
+             else return none
+          | _ => return none
+        else return none
+    else return none
+  else return none
+
+/-! ## Helper Functions -/
+
+/-- Extract an AST and retain definitions unfolded during reification.
+    This enables automatic reification - users can write standard math like `x * x + sin x`
+    without needing to wrap in `Expr.eval`. -/
+def getAstFromFuncWithReport (func : Lean.Expr) : TacticM LeanCert.Meta.ReifyReport := do
+  -- func is (fun x => body) where body might be Expr.eval or a raw expression
+  lambdaTelescope func fun _vars body => do
+    -- Check if body is an Expr.eval application
+    let fn := body.getAppFn
+    if fn.isConstOf ``LeanCert.Core.Expr.eval then
+      -- It's Expr.eval env ast - extract the ast
+      let args := body.getAppArgs
+      -- Expr.eval takes: (env : Nat → ℝ) → Expr → ℝ
+      -- So args[0] is env, args[1] is ast
+      if args.size ≥ 2 then
+        trace[LeanCert.discovery] "Extracted AST from Expr.eval wrapper"
+        return { expr := args[1]! }
+      else
+        throwError "Unexpected Expr.eval application structure"
+    else
+      -- It's a raw expression - reify it automatically
+      trace[LeanCert.discovery] "Auto-reifying raw expression: {body}"
+      try
+        let report ← reifyWithReport func
+        trace[LeanCert.discovery] "Reification successful"
+        return report
+      catch e =>
+        throwError m!"Failed to reify expression to LeanCert AST.\n\
+                      Expression: {body}\n\n\
+                      Error: {e.toMessageData}\n\n\
+                      Supported operations: +, -, *, /, sin, cos, exp, log, sqrt, π, ...\n\
+                      Tip: Unfold custom definitions with 'simp only [myDef]' first."
+
+/-! ### Domain normalization helpers -/
+
+/-- Extract a rational from a normalized real-number expression. -/
+def extractRatFromReal (e : Lean.Expr) : MetaM (Option ℚ) :=
+  LeanCert.Meta.Numeral.toRealRatNormalized? e
+
+private def tryConvertSetIcc (interval : Lean.Expr) : MetaM (Option Lean.Expr) := do
+  let getLeArgs (e : Lean.Expr) : MetaM (Option (Lean.Expr × Lean.Expr)) := do
+    let fn := e.getAppFn
+    let args := e.getAppArgs
+    if fn.isConstOf ``LE.le && args.size >= 4 then
+      return some (args[2]!, args[3]!)
+    return none
+
+  let extractLowerBound (e x : Lean.Expr) : MetaM (Option Lean.Expr) := do
+    if let some (a, b) ← getLeArgs e then
+      if ← isDefEq b x then
+        return some a
+    return none
+
+  let extractUpperBound (e x : Lean.Expr) : MetaM (Option Lean.Expr) := do
+    if let some (a, b) ← getLeArgs e then
+      if ← isDefEq a x then
+        return some b
+    return none
+
+  let parseSetIccBounds (e : Lean.Expr) : MetaM (Option (Lean.Expr × Lean.Expr)) := do
+    let fn := e.getAppFn
+    let args := e.getAppArgs
+    if fn.isConstOf ``Set.Icc && args.size >= 4 then
+      return some (args[2]!, args[3]!)
+    return none
+
+  let parseSetIccLambda (e : Lean.Expr) : MetaM (Option (Lean.Expr × Lean.Expr)) := do
+    match e with
+    | Lean.Expr.lam name ty body _ =>
+      withLocalDeclD name ty fun x => do
+        let bodyInst := body.instantiate1 x
+        let fn := bodyInst.getAppFn
+        let args := bodyInst.getAppArgs
+        if fn.isConstOf ``And && args.size >= 2 then
+          let left := args[0]!
+          let right := args[1]!
+          if let some lo ← extractLowerBound left x then
+            if let some hi ← extractUpperBound right x then
+              return some (lo, hi)
+          if let some lo ← extractLowerBound right x then
+            if let some hi ← extractUpperBound left x then
+              return some (lo, hi)
+        return none
+    | _ => return none
+
+  let parseBounds (e : Lean.Expr) : MetaM (Option (Lean.Expr × Lean.Expr)) := do
+    if let some bounds ← parseSetIccBounds e then
+      return some bounds
+    parseSetIccLambda e
+
+  let mkIntervalRatFromBounds (loExpr hiExpr : Lean.Expr) : MetaM (Option Lean.Expr) := do
+    if let some lo ← extractRatFromReal loExpr then
+      if let some hi ← extractRatFromReal hiExpr then
+        let loRatExpr := toExpr lo
+        let hiRatExpr := toExpr hi
+        let leProofTy ← mkAppM ``LE.le #[loRatExpr, hiRatExpr]
+        let leProof ← mkDecideProof leProofTy
+        let intervalRat ← mkAppM ``IntervalRat.mk #[loRatExpr, hiRatExpr, leProof]
+        return some intervalRat
+    return none
+
+  if let some (loExpr, hiExpr) ← parseBounds interval then
+    if let some intervalRat ← mkIntervalRatFromBounds loExpr hiExpr then
+      return some intervalRat
+  let intervalWhnf ← withTransparency TransparencyMode.all <| whnf interval
+  if intervalWhnf == interval then
+    return none
+  if let some (loExpr, hiExpr) ← parseBounds intervalWhnf then
+    return ← mkIntervalRatFromBounds loExpr hiExpr
+  return none
+
+/-! ## Minimization Tactic -/
+
+/-- Whether discovery searched for a lower or upper extremum. -/
+inductive DiscoveryDirection where
+  | minimum
+  | maximum
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Why the search phase stopped. A non-converged search may still provide a
+sound witness when the separate certificate phase validates the theorem. -/
+inductive DiscoveryTermination where
+  | toleranceReached
+  | iterationLimit
+  | queueExhausted
+  | stopped
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Runtime facts retained from the single successful discovery/certification run. -/
+structure DiscoveryOutcome where
+  direction : DiscoveryDirection
+  witness : ℚ
+  lowerBound : ℚ
+  upperBound : ℚ
+  iterations : Nat
+  configuredLimit : Nat
+  remainingBoxes : Nat
+  tolerance : ℚ
+  termination : DiscoveryTermination
+  checker : Option Name
+  verifier : Option Name
+  verification : LeanCert.Tactic.VerificationUsage
+  dyadic : Option Bool := none
+  taylorDepth : Nat
+  deriving Inhabited
+
+/-- Expected and invariant failures from existential optimization discovery. -/
+inductive DiscoveryFailure where
+  | unsupported (expression detail : String)
+  | inconclusive (detail : String)
+  | domainObstruction (domain : Lean.Expr) (operation detail : String)
+  | transportFailure (detail : String)
+  | internalFailure (detail : String)
+  deriving Inhabited, Repr
+
+private def discoveryFailureOfBound :
+    LeanCert.Tactic.Auto.IntervalBoundFailure → DiscoveryFailure
+  | .unsupported expression detail => .unsupported expression detail
+  | .inconclusive detail => .inconclusive detail
+  | .transportFailure detail => .transportFailure detail
+  | .internalFailure detail => .internalFailure detail
+
+private def throwDiscoveryFailure (tacticName : String) : DiscoveryFailure → TacticM α
+  | .unsupported expression detail =>
+      throwError "{tacticName}: unsupported expression {expression}:\n{detail}"
+  | .inconclusive detail =>
+      throwError "{tacticName}: {detail}"
+  | .domainObstruction _ operation detail =>
+      throwError "{tacticName}: domain obstruction while checking {operation}:\n{detail}"
+  | .transportFailure detail =>
+      throwError "{tacticName}: proof transport failed:\n{detail}"
+  | .internalFailure detail =>
+      throwError "{tacticName}: certificate verification failed:\n{detail}"
+
+private def discoveryTermination (result : GlobalResult)
+    (configuredLimit : Nat) (tolerance : ℚ) : DiscoveryTermination :=
+  if result.bound.hi - result.bound.lo ≤ tolerance then .toleranceReached
+  else if result.remainingBoxes.isEmpty then .queueExhausted
+  else if result.bound.iterations ≥ configuredLimit then .iterationLimit
+  else .stopped
+
+private partial def evalErrorIsDomain : EvalError → Bool
+  | .reciprocalContainsZero _ | .logNonpositive _ | .atanhOutsideUnitBall _ => true
+  | .nestedFailure _ cause => evalErrorIsDomain cause
+  | _ => false
+
+private def discoveryFailureOfEval (domain : Lean.Expr) (error : EvalError) :
+    DiscoveryFailure :=
+  if evalErrorIsDomain error then
+    .domainObstruction domain "the optimization search domain" (reprStr error)
+  else
+    .unsupported (toString domain) (reprStr error)
+
+/-- Reporting-aware implementation of `interval_minimize`.
+
+The optimizer and certificate checker each run exactly once. Failure restores
+the caller's complete tactic state; success returns facts from the retained run. -/
+unsafe def intervalMinimizeCoreTyped (taylorDepth : Nat) :
+    TacticM (Except DiscoveryFailure DiscoveryOutcome) := do
+  let original ← saveState
+  try LeanCert.Tactic.Auto.intervalNormCore
+  catch e =>
+    original.restore
+    return .error <| .unsupported "goal normalization" (← e.toMessageData.toString)
+  let goal ← getMainGoal
+  let goalType ← goal.getType
+
+  let some (.minimize _varName varType domainExpr funcExpr) ← parseExistentialGoal goalType
+    | original.restore
+      return .error <| .unsupported (toString goalType)
+        "expected `∃ m, ∀ x ∈ I, f x ≥ m`"
+
+  trace[LeanCert.discovery] "Parsing goal: ∃ m, ∀ x ∈ I, f(x) ≥ m"
+  trace[LeanCert.discovery] "Function expression: {funcExpr}"
+
+  -- 1. Reify the function (or extract from Expr.eval)
+  let ast ←
+    try pure (← getAstFromFuncWithReport funcExpr).expr
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString funcExpr) (← e.toMessageData.toString)
+  trace[LeanCert.discovery] "Reified AST: {ast}"
+
+  -- 2. Prepare for evaluation with guided optimization
+  let cfg : GuidedOptConfig := {
+    maxIterations := 1000,
+    tolerance := 1/1000,
+    taylorDepth := taylorDepth,
+    useMonotonicity := true,
+    heuristicSamples := 200,
+    seed := 12345,
+    useGridSearch := true,
+    gridPointsPerDim := 10
+  }
+
+  -- Note: safely evaluating the domain expression from syntax to a value
+  let domainExpr ←
+    match ← tryConvertSetIcc domainExpr with
+    | some intervalRat => pure intervalRat
+    | none => pure domainExpr
+  let domainVal ←
+    try evalExpr IntervalRat (mkConst ``IntervalRat) domainExpr
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString domainExpr) (← e.toMessageData.toString)
+  let boxVal : Box := [domainVal]
+  trace[LeanCert.discovery] "Domain: [{domainVal.lo}, {domainVal.hi}]"
+
+  -- 3. Run float-guided optimization
+  trace[LeanCert.discovery] "Running float-guided optimization (heuristic samples={cfg.heuristicSamples}, maxIters={cfg.maxIterations}, taylorDepth={taylorDepth})..."
+  let astVal ←
+    try evalExpr LExpr (mkConst ``LeanCert.Core.Expr) ast
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString funcExpr) (← e.toMessageData.toString)
+  match evalIntervalChecked astVal boxVal.toEnv with
+  | .error error =>
+      original.restore
+      return .error (discoveryFailureOfEval domainExpr error)
+  | .ok _ => pure ()
+  let result := globalMinimizeGuided astVal boxVal cfg
+  let boundVal := result.bound.lo
+
+  trace[LeanCert.discovery] "Optimization complete: {result.bound.iterations} iterations"
+  trace[LeanCert.discovery] "Found minimum bound: {boundVal}"
+  trace[LeanCert.discovery] "Gap: [{result.bound.lo}, {result.bound.hi}]"
+
+  -- Check if optimization converged well
+  let gap := result.bound.hi - result.bound.lo
+  if gap > cfg.tolerance then
+    logWarning m!"⚠️ Optimization gap [{result.bound.lo}, {result.bound.hi}] exceeds tolerance {cfg.tolerance}.\n\
+                  Consider increasing maxIterations or taylorDepth."
+
+  -- 4. Provide witness and prove the bound
+  -- Note: Coerce to ℝ since Expr.eval returns ℝ
+  let boundRatExpr := toExpr boundVal
+  let boundTerm ←
+    match (← whnf varType) with
+    | ty =>
+      if ty.isConstOf ``Rat then
+        pure boundRatExpr
+      else if ty.isConstOf ``Real then
+        mkAppOptM ``Rat.cast #[mkConst ``Real, none, boundRatExpr]
+      else
+        original.restore
+        return .error <| .unsupported (toString varType)
+          "bound type must be ℚ or ℝ"
+  let boundSyntax ← Term.exprToSyntax boundTerm
+  trace[LeanCert.discovery] "Providing witness: m = {boundVal}"
+  try evalTactic (← `(tactic| refine ⟨$boundSyntax, ?_⟩))
+  catch e =>
+    original.restore
+    return .error <| .transportFailure (← e.toMessageData.toString)
+
+  -- 5. Now we have a goal `∀ x ∈ I, f(x) ≥ bound`
+  trace[LeanCert.discovery] "Proving universal bound with certify_bound..."
+  let certification ←
+    match ← LeanCert.Tactic.Auto.intervalBoundCoreTyped taylorDepth with
+    | .ok certification => pure certification
+    | .error failure =>
+        original.restore
+        return .error (discoveryFailureOfBound failure)
+  trace[LeanCert.discovery] "✓ Proof complete"
+  return .ok {
+    direction := .minimum
+    witness := boundVal
+    lowerBound := result.bound.lo
+    upperBound := result.bound.hi
+    iterations := result.bound.iterations
+    configuredLimit := cfg.maxIterations
+    remainingBoxes := result.remainingBoxes.length
+    tolerance := cfg.tolerance
+    termination := discoveryTermination result cfg.maxIterations cfg.tolerance
+    checker := certification.checker
+    verifier := certification.verifier
+    verification := certification.verification
+    dyadic := some certification.dyadic
+    taylorDepth := taylorDepth
+  }
+
+/-- The interval_minimize tactic.
+
+Proves goals of the form `∃ m, ∀ x ∈ I, f(x) ≥ m` by:
+1. Running global optimization to find the minimum `m`.
+2. Instantiating the existential with `m`.
+3. Proving the bound using `opt_bound`.
+-/
+syntax (name := intervalMinimizeTac) "interval_minimize" (num)?
+  (leancertTrustItem)? : tactic
+
+@[tactic intervalMinimizeTac]
+unsafe def elabIntervalMinimize : Tactic := fun stx => do
+  let depth := match stx[1].getOptional? with
+    | some n => n.toNat
+    | none => 10
+  withTrustMode (← elabTrustItem? (stx[2].getOptional?.map (⟨·⟩))) do
+    match ← intervalMinimizeCoreTyped depth with
+    | .ok _ => pure ()
+    | .error failure => throwDiscoveryFailure "interval_minimize" failure
+
+/-! ## Maximization Tactic -/
+
+/-- Reporting-aware implementation of `interval_maximize`. -/
+unsafe def intervalMaximizeCoreTyped (taylorDepth : Nat) :
+    TacticM (Except DiscoveryFailure DiscoveryOutcome) := do
+  let original ← saveState
+  try LeanCert.Tactic.Auto.intervalNormCore
+  catch e =>
+    original.restore
+    return .error <| .unsupported "goal normalization" (← e.toMessageData.toString)
+  let goal ← getMainGoal
+  let goalType ← goal.getType
+
+  let some (.maximize _varName varType domainExpr funcExpr) ← parseExistentialGoal goalType
+    | original.restore
+      return .error <| .unsupported (toString goalType)
+        "expected `∃ M, ∀ x ∈ I, f x ≤ M`"
+
+  trace[LeanCert.discovery] "Parsing goal: ∃ M, ∀ x ∈ I, f(x) ≤ M"
+  trace[LeanCert.discovery] "Function expression: {funcExpr}"
+
+  -- Use getAstFromFuncWithReport to handle both Expr.eval and raw expressions
+  let ast ←
+    try pure (← getAstFromFuncWithReport funcExpr).expr
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString funcExpr) (← e.toMessageData.toString)
+  trace[LeanCert.discovery] "Reified AST: {ast}"
+
+  let cfg : GuidedOptConfig := {
+    maxIterations := 1000,
+    tolerance := 1/1000,
+    taylorDepth := taylorDepth,
+    useMonotonicity := true,
+    heuristicSamples := 200,
+    seed := 12345,
+    useGridSearch := true,
+    gridPointsPerDim := 10
+  }
+
+  let domainExpr ←
+    match ← tryConvertSetIcc domainExpr with
+    | some intervalRat => pure intervalRat
+    | none => pure domainExpr
+  let domainVal ←
+    try evalExpr IntervalRat (mkConst ``IntervalRat) domainExpr
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString domainExpr) (← e.toMessageData.toString)
+  let boxVal : Box := [domainVal]
+  trace[LeanCert.discovery] "Domain: [{domainVal.lo}, {domainVal.hi}]"
+
+  trace[LeanCert.discovery] "Running float-guided optimization (heuristic samples={cfg.heuristicSamples}, maxIters={cfg.maxIterations}, taylorDepth={taylorDepth})..."
+  let astVal ←
+    try evalExpr LExpr (mkConst ``LeanCert.Core.Expr) ast
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString funcExpr) (← e.toMessageData.toString)
+  match evalIntervalChecked astVal boxVal.toEnv with
+  | .error error =>
+      original.restore
+      return .error (discoveryFailureOfEval domainExpr error)
+  | .ok _ => pure ()
+  let result := globalMaximizeGuided astVal boxVal cfg
+  let boundVal := result.bound.hi
+
+  trace[LeanCert.discovery] "Optimization complete: {result.bound.iterations} iterations"
+  trace[LeanCert.discovery] "Found maximum bound: {boundVal}"
+  trace[LeanCert.discovery] "Gap: [{result.bound.lo}, {result.bound.hi}]"
+
+  -- Check if optimization converged well
+  let gap := result.bound.hi - result.bound.lo
+  if gap > cfg.tolerance then
+    logWarning m!"⚠️ Optimization gap [{result.bound.lo}, {result.bound.hi}] exceeds tolerance {cfg.tolerance}.\n\
+                  Consider increasing maxIterations or taylorDepth."
+
+  let boundRatExpr := toExpr boundVal
+  let boundTerm ←
+    match (← whnf varType) with
+    | ty =>
+      if ty.isConstOf ``Rat then
+        pure boundRatExpr
+      else if ty.isConstOf ``Real then
+        mkAppOptM ``Rat.cast #[mkConst ``Real, none, boundRatExpr]
+      else
+        original.restore
+        return .error <| .unsupported (toString varType)
+          "bound type must be ℚ or ℝ"
+  let boundSyntax ← Term.exprToSyntax boundTerm
+  trace[LeanCert.discovery] "Providing witness: M = {boundVal}"
+  try evalTactic (← `(tactic| refine ⟨$boundSyntax, ?_⟩))
+  catch e =>
+    original.restore
+    return .error <| .transportFailure (← e.toMessageData.toString)
+
+  -- Now prove the bound using intervalBoundCore
+  trace[LeanCert.discovery] "Proving universal bound with certify_bound..."
+  let certification ←
+    match ← LeanCert.Tactic.Auto.intervalBoundCoreTyped taylorDepth with
+    | .ok certification => pure certification
+    | .error failure =>
+        original.restore
+        return .error (discoveryFailureOfBound failure)
+  trace[LeanCert.discovery] "✓ Proof complete"
+  return .ok {
+    direction := .maximum
+    witness := boundVal
+    lowerBound := result.bound.lo
+    upperBound := result.bound.hi
+    iterations := result.bound.iterations
+    configuredLimit := cfg.maxIterations
+    remainingBoxes := result.remainingBoxes.length
+    tolerance := cfg.tolerance
+    termination := discoveryTermination result cfg.maxIterations cfg.tolerance
+    checker := certification.checker
+    verifier := certification.verifier
+    verification := certification.verification
+    dyadic := some certification.dyadic
+    taylorDepth := taylorDepth
+  }
+
+/-- The interval_maximize tactic.
+
+Proves goals of the form `∃ M, ∀ x ∈ I, f(x) ≤ M`.
+-/
+syntax (name := intervalMaximizeTac) "interval_maximize" (num)?
+  (leancertTrustItem)? : tactic
+
+@[tactic intervalMaximizeTac]
+unsafe def elabIntervalMaximize : Tactic := fun stx => do
+  let depth := match stx[1].getOptional? with
+    | some n => n.toNat
+    | none => 10
+  withTrustMode (← elabTrustItem? (stx[2].getOptional?.map (⟨·⟩))) do
+    match ← intervalMaximizeCoreTyped depth with
+    | .ok _ => pure ()
+    | .error failure => throwDiscoveryFailure "interval_maximize" failure
+
+/-! ## Argmax/Argmin Tactics -/
+
+/-- Result of analyzing an argmax goal -/
+inductive ArgmaxGoal where
+  /-- ∃ x ∈ I, ∀ y ∈ I, f(y) ≤ f(x) -/
+  | argmax (varName : Name) (domain : Lean.Expr) (func : Lean.Expr)
+  deriving Repr
+
+/-- Try to parse a goal as an argmax goal: ∃ x ∈ I, ∀ y ∈ I, f(y) ≤ f(x) -/
+def parseArgmaxGoal (goal : Lean.Expr) : MetaM (Option ArgmaxGoal) := do
+  let goal ← whnf goal
+  -- Goal: ∃ x, x ∈ I ∧ ∀ y ∈ I, f(y) ≤ f(x)
+  match_expr goal with
+  | Exists _ body =>
+    if let .lam name ty innerBody _ := body then
+      withLocalDeclD name ty fun x => do
+        let bodyInst := innerBody.instantiate1 x
+        let bodyInst ← whnf bodyInst
+        -- bodyInst should be x ∈ I ∧ ∀ y ∈ I, f(y) ≤ f(x)
+        match_expr bodyInst with
+        | And memExpr forallExpr =>
+          -- Extract interval from membership
+          let interval? ← extractIntervalExpr memExpr x
+          let some intervalExpr := interval? | return none
+          -- Check if forallExpr is ∀ y ∈ I, f(y) ≤ f(x)
+          let forallExpr ← whnf forallExpr
+          if forallExpr.isForall then
+            let .forallE yname yty forallBody _ := forallExpr | return none
+            withLocalDeclD yname yty fun y => do
+              let forallBody := forallBody.instantiate1 y
+              let forallBody ← whnf forallBody
+              -- forallBody should be y ∈ I → f(y) ≤ f(x)
+              if forallBody.isForall then
+                let .forallE _ _memTy compBody _ := forallBody | return none
+                -- compBody should be f(y) ≤ f(x) (with y free, x from outer scope)
+                match_expr compBody with
+                | LE.le _ _ lhs rhs =>
+                  -- Argmax means `f(y) ≤ f(x)`: the left side depends on the
+                  -- comparison point and the right side on the candidate.
+                  let lhsHasY := lhs.containsFVar y.fvarId!
+                  let lhsHasX := lhs.containsFVar x.fvarId!
+                  let rhsHasY := rhs.containsFVar y.fvarId!
+                  let rhsHasX := rhs.containsFVar x.fvarId!
+                  let sameConstant ←
+                    if !lhsHasY && !lhsHasX && !rhsHasY && !rhsHasX then
+                      isDefEq lhs rhs
+                    else pure false
+                  if (lhsHasY && !lhsHasX && rhsHasX && !rhsHasY) || sameConstant then
+                    let func ← mkLambdaFVars #[y] lhs
+                    return some (.argmax name intervalExpr func)
+                  return none
+                | _ => return none
+              else return none
+          else return none
+        | _ => return none
+    else return none
+  | _ => return none
+where
+  /-- Extract the interval from a membership expression x ∈ I -/
+  extractIntervalExpr (memExpr : Lean.Expr) (x : Lean.Expr) : MetaM (Option Lean.Expr) := do
+    match_expr memExpr with
+    | Membership.mem _ _ _ interval xExpr =>
+      if ← isDefEq xExpr x then return some interval else return none
+    | _ => return none
+
+/-- Result of analyzing an argmin goal -/
+inductive ArgminGoal where
+  /-- ∃ x ∈ I, ∀ y ∈ I, f(x) ≤ f(y) -/
+  | argmin (varName : Name) (domain : Lean.Expr) (func : Lean.Expr)
+  deriving Repr
+
+/-- Try to parse a goal as an argmin goal: ∃ x ∈ I, ∀ y ∈ I, f(x) ≤ f(y) -/
+def parseArgminGoal (goal : Lean.Expr) : MetaM (Option ArgminGoal) := do
+  let goal ← whnf goal
+  -- Goal: ∃ x, x ∈ I ∧ ∀ y ∈ I, f(x) ≤ f(y)
+  match_expr goal with
+  | Exists _ body =>
+    if let .lam name ty innerBody _ := body then
+      withLocalDeclD name ty fun x => do
+        let bodyInst := innerBody.instantiate1 x
+        let bodyInst ← whnf bodyInst
+        -- bodyInst should be x ∈ I ∧ ∀ y ∈ I, f(x) ≤ f(y)
+        match_expr bodyInst with
+        | And memExpr forallExpr =>
+          -- Extract interval from membership
+          let interval? ← extractIntervalExpr memExpr x
+          let some intervalExpr := interval? | return none
+          -- Check if forallExpr is ∀ y ∈ I, f(x) ≤ f(y)
+          let forallExpr ← whnf forallExpr
+          if forallExpr.isForall then
+            let .forallE yname yty forallBody _ := forallExpr | return none
+            withLocalDeclD yname yty fun y => do
+              let forallBody := forallBody.instantiate1 y
+              let forallBody ← whnf forallBody
+              -- forallBody should be y ∈ I → f(x) ≤ f(y)
+              if forallBody.isForall then
+                let .forallE _ _memTy compBody _ := forallBody | return none
+                -- compBody should be f(x) ≤ f(y) (with y free, x from outer scope)
+                match_expr compBody with
+                | LE.le _ _ lhs rhs =>
+                  -- Argmin means `f(x) ≤ f(y)`: the left side depends on the
+                  -- candidate and the right side on the comparison point.
+                  let lhsHasY := lhs.containsFVar y.fvarId!
+                  let lhsHasX := lhs.containsFVar x.fvarId!
+                  let rhsHasY := rhs.containsFVar y.fvarId!
+                  let rhsHasX := rhs.containsFVar x.fvarId!
+                  let sameConstant ←
+                    if !lhsHasY && !lhsHasX && !rhsHasY && !rhsHasX then
+                      isDefEq lhs rhs
+                    else pure false
+                  if (lhsHasX && !lhsHasY && rhsHasY && !rhsHasX) || sameConstant then
+                    let func ← mkLambdaFVars #[y] rhs
+                    return some (.argmin name intervalExpr func)
+                  return none
+                | _ => return none
+              else return none
+          else return none
+        | _ => return none
+    else return none
+  | _ => return none
+where
+  /-- Extract the interval from a membership expression x ∈ I -/
+  extractIntervalExpr (memExpr : Lean.Expr) (x : Lean.Expr) : MetaM (Option Lean.Expr) := do
+    match_expr memExpr with
+    | Membership.mem _ _ _ interval xExpr =>
+      if ← isDefEq xExpr x then return some interval else return none
+    | _ => return none
+
+/-- Check if a function expression is wrapped in Expr.eval -/
+def isExprEvalFunc (func : Lean.Expr) : MetaM Bool := do
+  lambdaTelescope func fun _vars body => do
+    let fn := body.getAppFn
+    return fn.isConstOf ``LeanCert.Core.Expr.eval
+
+/-! ## Attained-extremum reporting -/
+
+/-- Whether an attained-extremum proof certifies a minimum or maximum. -/
+inductive AttainedExtremumKind where
+  | minimum
+  | maximum
+  deriving DecidableEq, Repr, Inhabited
+
+/-- How the rational witness retained by an attained-extremum proof arose. -/
+inductive AttainedWitnessOrigin where
+  | discovered
+  | endpoint
+  deriving DecidableEq, Repr, Inhabited
+
+/-- One of the two Boolean certificates retained by `verify_argmin` or
+`verify_argmax`. -/
+structure AttainedCertificate where
+  role : String
+  checker : Name
+  verifier : Option Name := none
+  verification : LeanCert.Tactic.VerificationUsage
+  enclosure : Option IntervalRat := none
+  deriving Repr, Inhabited
+
+/-- Runtime evidence from one successful attained-extremum construction. -/
+structure AttainedExtremumOutcome where
+  kind : AttainedExtremumKind
+  witness : ℚ
+  witnessOrigin : AttainedWitnessOrigin
+  pointEnclosure : IntervalRat
+  globalEnclosure : IntervalRat
+  bridgeBound : ℚ
+  iterations : Nat
+  configuredLimit : Nat
+  remainingBoxes : Nat
+  tolerance : ℚ
+  termination : DiscoveryTermination
+  taylorDepth : Nat
+  certificates : Array AttainedCertificate
+  verifier : Option Name
+  deriving Repr, Inhabited
+
+/-- Expected non-successes at the attained-extremum boundary. -/
+inductive AttainedExtremumFailure where
+  | unsupported (expression detail : String)
+  | domainObstruction (domain : Lean.Expr) (operation detail : String)
+  | rejectedCandidate (witness : ℚ) (checker : Name) (detail : String)
+  | inconclusive (detail : String)
+  | transportFailure (detail : String)
+  | internalFailure (detail : String)
+  deriving Repr, Inhabited
+
+private def throwAttainedExtremumFailure (tacticName : String) :
+    AttainedExtremumFailure → TacticM α
+  | .unsupported expression detail =>
+      throwError "{tacticName}: unsupported expression {expression}:\n{detail}"
+  | .domainObstruction _ operation detail =>
+      throwError "{tacticName}: domain obstruction while checking {operation}:\n{detail}"
+  | .rejectedCandidate witness checker detail =>
+      throwError "{tacticName}: candidate {witness} was rejected by {checker}:\n{detail}"
+  | .inconclusive detail =>
+      throwError "{tacticName}: {detail}"
+  | .transportFailure detail =>
+      throwError "{tacticName}: proof transport failed:\n{detail}"
+  | .internalFailure detail =>
+      throwError "{tacticName}: internal certificate failure:\n{detail}"
+
+/-- The interval_argmax tactic implementation -/
+private unsafe def intervalArgmaxCoreImpl
+    (taylorDepth : Nat) :
+    TacticM (Except AttainedExtremumFailure AttainedExtremumOutcome) := do
+  LeanCert.Tactic.Auto.intervalNormCore
+  let goal ← getMainGoal
+  let goalType ← goal.getType
+
+  let some (.argmax _varName domainExpr funcExpr) ← parseArgmaxGoal goalType
+    | let diagReport ← LeanCert.Tactic.Auto.mkDiagnosticReport "interval_argmax" goalType "parse"
+        (some m!"Expected form: ∃ x ∈ I, ∀ y ∈ I, f(y) ≤ f(x)\n\n\
+                 This proves existence of a maximizer point x in I.")
+      throwError "interval_argmax: Could not parse goal.\n\n{diagReport}"
+
+  trace[LeanCert.discovery] "Parsing argmax goal: ∃ x ∈ I, ∀ y ∈ I, f(y) ≤ f(x)"
+  trace[LeanCert.discovery] "Function expression: {funcExpr}"
+
+  -- Check if using native syntax (not Expr.eval)
+  let isNativeSyntax := !(← isExprEvalFunc funcExpr)
+  trace[LeanCert.discovery] "Using native syntax: {isNativeSyntax}"
+
+  -- 1. Reify the function
+  let ast := (← getAstFromFuncWithReport funcExpr).expr
+  trace[LeanCert.discovery] "Reified AST: {ast}"
+
+  -- 2. Prepare optimization config
+  let cfg : GuidedOptConfig := {
+    maxIterations := 1000,
+    tolerance := 1/1000,
+    taylorDepth := taylorDepth,
+    useMonotonicity := true,
+    heuristicSamples := 200,
+    seed := 12345,
+    useGridSearch := true,
+    gridPointsPerDim := 10
+  }
+
+  let domainExpr ←
+    match ← tryConvertSetIcc domainExpr with
+    | some intervalRat => pure intervalRat
+    | none => pure domainExpr
+  let domainVal ← evalExpr IntervalRat (mkConst ``IntervalRat) domainExpr
+  let boxVal : Box := [domainVal]
+  trace[LeanCert.discovery] "Domain: [{domainVal.lo}, {domainVal.hi}]"
+
+  -- 3. Run optimization to find the argmax
+  trace[LeanCert.discovery] "Running float-guided maximization..."
+  let astVal ← evalExpr LExpr (mkConst ``LeanCert.Core.Expr) ast
+  let result := globalMaximizeGuided astVal boxVal cfg
+
+  -- 4. Extract the midpoint of the best box as witness
+  let bestBox := result.bound.bestBox
+  let xOpt : ℚ := match bestBox with
+    | [I] => (I.lo + I.hi) / 2
+    | _ => domainVal.lo  -- Fallback
+
+  trace[LeanCert.discovery] "Best box: {bestBox.map (fun I => s!"[{I.lo}, {I.hi}]")}"
+  trace[LeanCert.discovery] "Witness point: x = {xOpt}"
+  trace[LeanCert.discovery] "Maximum value ≈ {result.bound.hi}"
+
+  -- 5. Evaluate f at xOpt to get a concrete lower bound
+  -- We use the lower bound of interval evaluation at the point as our transitivity constant
+  let evalCfg : EvalConfig := { taylorDepth := taylorDepth }
+  let pointInterval : IntervalRat := ⟨xOpt, xOpt, le_refl xOpt⟩
+  let fAtXOpt := LeanCert.Internal.Rational.evalTotalCore1 astVal pointInterval evalCfg
+  let cBound := fAtXOpt.lo  -- c such that c ≤ f(xOpt)
+
+  trace[LeanCert.discovery] "f(xOpt) ∈ [{fAtXOpt.lo}, {fAtXOpt.hi}]"
+  trace[LeanCert.discovery] "Using bound c = {cBound} for transitivity"
+
+  -- 6. Generate support proof. The Boolean checks are closed below exactly
+  -- once through the typed verification boundary.
+  let suppProof ← LeanCert.Meta.mkSupportedCoreProof ast
+
+  -- 9. Provide witness: refine ⟨xOpt, ?memProof, ?boundProof⟩
+  let xOptExpr := toExpr xOpt
+  let xOptSyntax ← Term.exprToSyntax xOptExpr
+  evalTactic (← `(tactic| refine ⟨(($xOptSyntax : ℚ) : ℝ), ?_, ?_⟩))
+
+  -- 10. Prove membership (x ∈ I)
+  trace[LeanCert.discovery] "Proving membership..."
+  try
+    let memGoal ← getMainGoal
+    let memType ← memGoal.getType
+    let memTypeWhnf ← whnf memType
+    match_expr memTypeWhnf with
+    | And _ _ =>
+      let memTypeWhnfSyntax ← Term.exprToSyntax memTypeWhnf
+      evalTactic (← `(tactic| change $memTypeWhnfSyntax))
+      evalTactic (← `(tactic| constructor <;> norm_cast))
+    | _ =>
+      match_expr memType with
+      | Membership.mem _ _ _ interval _xExpr =>
+        let intervalSyntax ← Term.exprToSyntax interval
+        evalTactic (← `(tactic| simp [($intervalSyntax:term), Set.mem_Icc]))
+      | _ =>
+        evalTactic (← `(tactic| simp [Set.mem_Icc]))
+      if (← getGoals).isEmpty then
+        pure ()
+      else
+        let memGoal ← getMainGoal
+        let memType ← memGoal.getType
+        match_expr memType with
+        | And _ _ =>
+          evalTactic (← `(tactic| constructor <;> norm_cast))
+        | _ =>
+          evalTactic (← `(tactic| norm_cast))
+  catch _ =>
+    try
+      evalTactic (← `(tactic| decide))
+    catch _ =>
+      throwError "could not prove witness membership"
+
+  -- 11. Prove the bound: ∀ y ∈ I, f(y) ≤ f(xOpt)
+  trace[LeanCert.discovery] "Proving universal bound..."
+
+  let certificatesResult : Except AttainedExtremumFailure
+      (Array AttainedCertificate) ← if isNativeSyntax then
+    -- For native syntax, simplify and use intervalBoundCore directly
+    trace[LeanCert.discovery] "Using native syntax path with intervalBoundCore"
+    try
+      -- The goal is: ∀ y ∈ Set.Icc a b, f(y) ≤ f(xOpt)
+      -- where f(xOpt) involves xOpt which is (q : ℚ) : ℝ
+
+      -- First, simplify the goal to reduce f(xOpt) to a concrete form
+      -- Use push_cast and norm_num to simplify rational arithmetic
+      try evalTactic (← `(tactic| simp only [Rat.cast_intCast, Rat.cast_natCast])) catch _ => pure ()
+      try evalTactic (← `(tactic| push_cast)) catch _ => pure ()
+      try evalTactic (← `(tactic| norm_num [Rat.divInt_eq_div])) catch _ => pure ()
+
+      -- norm_num may already close trivial bounds outright (constant or
+      -- identity objectives); only invoke the interval engine on a live goal.
+      let retained ← if !(← getGoals).isEmpty then
+        match ← LeanCert.Tactic.Auto.intervalBoundCoreTyped taylorDepth with
+        | .ok outcome =>
+            let checker := outcome.checker.getD Name.anonymous
+            if checker == Name.anonymous then
+              throwError "native attained-extremum proof returned no checker identity"
+            pure <| .ok #[{
+              role := "global attained-maximum bound"
+              checker
+              verifier := outcome.verifier
+              verification := outcome.verification
+            }]
+        | .error failure =>
+            pure <| .error <| .inconclusive
+              s!"native attained-extremum bound failed: {repr failure}"
+      else
+        pure (.ok #[])
+      trace[LeanCert.discovery] "✓ Proof complete (native syntax)"
+      pure retained
+    catch e =>
+      throwError "interval_argmax: Could not prove universal bound.\n\
+        Error: {e.toMessageData}\n\
+        The witness x = {xOpt} may need higher precision."
+  else
+    -- For Expr.eval syntax, use verify_argmax
+    trace[LeanCert.discovery] "Using verify_argmax path"
+    let reflective ← saveState
+    try
+      -- Build the proof term using verify_argmax
+      let astSyntax ← Term.exprToSyntax ast
+      let suppSyntax ← Term.exprToSyntax suppProof
+      let domainSyntax ← Term.exprToSyntax domainExpr
+      let cBoundExpr := toExpr cBound
+      let cBoundSyntax ← Term.exprToSyntax cBoundExpr
+      let cfgExpr ← mkAppM ``EvalConfig.mk #[toExpr taylorDepth]
+      let cfgSyntax ← Term.exprToSyntax cfgExpr
+
+      -- Membership proof for xOpt
+      evalTactic (← `(tactic|
+        apply LeanCert.Validity.verify_argmax $astSyntax $suppSyntax $domainSyntax
+          $xOptSyntax $cBoundSyntax $cfgSyntax))
+      evalTactic (← `(tactic| constructor <;> norm_cast))
+
+      let close (role : String) (checker : Name) :
+          TacticM (Except AttainedExtremumFailure AttainedCertificate) := do
+        let certGoal ← getMainGoal
+        match ← LeanCert.Tactic.closeCertificateGoalTyped
+            (← LeanCert.Tactic.VerificationConfig.current) certGoal
+            (tacticName := "interval_argmax") with
+        | .accepted event =>
+            return .ok { role, checker, verification := event.toUsage }
+        | .rejected =>
+            return .error <| .rejectedCandidate xOpt checker
+              "the Boolean certificate evaluated to false"
+        | .failed failure =>
+            return .error <| .internalFailure
+              (failure.message "interval_argmax")
+      match ← close "global upper bound" ``LeanCert.Validity.checkUpperBound with
+      | .error failure => pure (.error failure)
+      | .ok upper =>
+        match ← close "candidate point lower bound"
+            ``LeanCert.Validity.checkPointLowerBound with
+        | .error failure => pure (.error failure)
+        | .ok point =>
+          trace[LeanCert.discovery] "✓ Proof complete"
+          pure (.ok #[upper, point])
+    catch e =>
+      -- Fallback to intervalBoundCore
+      reflective.restore
+      trace[LeanCert.discovery] "verify_argmax failed, trying intervalBoundCore fallback..."
+      match ← LeanCert.Tactic.Auto.intervalBoundCoreTyped taylorDepth with
+      | .ok outcome =>
+        let checker := outcome.checker.getD Name.anonymous
+        if checker == Name.anonymous then
+          throwError "fallback attained-extremum proof returned no checker identity"
+        trace[LeanCert.discovery] "✓ Proof complete (via fallback)"
+        pure <| .ok #[{
+          role := "fallback universal bound"
+          checker
+          verifier := outcome.verifier
+          verification := outcome.verification
+        }]
+      | .error e2 =>
+        pure <| .error <| .transportFailure
+          s!"primary verify_argmax failed: {← e.toMessageData.toString}\n\
+            fallback interval bound failed: {repr e2}"
+  let certificates ←
+    match certificatesResult with
+    | .ok certificates => pure certificates
+    | .error failure => return .error failure
+  let globalEnclosure : IntervalRat :=
+    if h : result.bound.lo ≤ result.bound.hi then
+      ⟨result.bound.lo, result.bound.hi, h⟩
+    else fAtXOpt
+  return .ok {
+    kind := .maximum
+    witness := xOpt
+    witnessOrigin := .discovered
+    pointEnclosure := fAtXOpt
+    globalEnclosure
+    bridgeBound := cBound
+    iterations := result.bound.iterations
+    configuredLimit := cfg.maxIterations
+    remainingBoxes := result.remainingBoxes.length
+    tolerance := cfg.tolerance
+    termination := discoveryTermination result cfg.maxIterations cfg.tolerance
+    taylorDepth
+    certificates
+    verifier :=
+      if certificates.size == 2 then some ``LeanCert.Validity.verify_argmax
+      else certificates[0]?.bind (·.verifier)
+  }
+
+/-- Reporting-aware attained-maximum core. -/
+unsafe def intervalArgmaxCoreTyped (taylorDepth : Nat) :
+    TacticM (Except AttainedExtremumFailure AttainedExtremumOutcome) := do
+  let original ← saveState
+  try
+    match ← intervalArgmaxCoreImpl taylorDepth with
+    | .ok outcome => return .ok outcome
+    | .error failure =>
+        original.restore
+        return .error failure
+  catch e =>
+    original.restore
+    return .error <| .internalFailure (← e.toMessageData.toString)
+
+/-- The interval_argmax tactic.
+
+Proves goals of the form `∃ x ∈ I, ∀ y ∈ I, f(y) ≤ f(x)` by:
+1. Running global optimization to find the point x where f is maximized.
+2. Instantiating the existential with x.
+3. Proving membership x ∈ I.
+4. Proving the universal bound using interval arithmetic.
+-/
+syntax (name := intervalArgmaxTac) "interval_argmax" (num)?
+  (leancertTrustItem)? : tactic
+
+@[tactic intervalArgmaxTac]
+unsafe def elabIntervalArgmax : Tactic := fun stx => do
+  let depth := match stx[1].getOptional? with
+    | some n => n.toNat
+    | none => 10
+  withTrustMode (← elabTrustItem? (stx[2].getOptional?.map (⟨·⟩))) do
+    match ← intervalArgmaxCoreTyped depth with
+    | .ok _ => pure ()
+    | .error failure => throwAttainedExtremumFailure "interval_argmax" failure
+
+/-- The interval_argmin tactic implementation -/
+private unsafe def intervalArgminCoreImpl
+    (taylorDepth : Nat) :
+    TacticM (Except AttainedExtremumFailure AttainedExtremumOutcome) := do
+  LeanCert.Tactic.Auto.intervalNormCore
+  let goal ← getMainGoal
+  let goalType ← goal.getType
+
+  let some (.argmin _varName domainExpr funcExpr) ← parseArgminGoal goalType
+    | let diagReport ← LeanCert.Tactic.Auto.mkDiagnosticReport "interval_argmin" goalType "parse"
+        (some m!"Expected form: ∃ x ∈ I, ∀ y ∈ I, f(x) ≤ f(y)\n\n\
+                 This proves existence of a minimizer point x in I.")
+      throwError "interval_argmin: Could not parse goal.\n\n{diagReport}"
+
+  trace[LeanCert.discovery] "Parsing argmin goal: ∃ x ∈ I, ∀ y ∈ I, f(x) ≤ f(y)"
+  trace[LeanCert.discovery] "Function expression: {funcExpr}"
+
+  -- Check if using native syntax (not Expr.eval)
+  let isNativeSyntax := !(← isExprEvalFunc funcExpr)
+  trace[LeanCert.discovery] "Using native syntax: {isNativeSyntax}"
+
+  -- 1. Reify the function
+  let ast := (← getAstFromFuncWithReport funcExpr).expr
+  trace[LeanCert.discovery] "Reified AST: {ast}"
+
+  -- 2. Prepare optimization config
+  let cfg : GuidedOptConfig := {
+    maxIterations := 1000,
+    tolerance := 1/1000,
+    taylorDepth := taylorDepth,
+    useMonotonicity := true,
+    heuristicSamples := 200,
+    seed := 12345,
+    useGridSearch := true,
+    gridPointsPerDim := 10
+  }
+
+  let domainExpr ←
+    match ← tryConvertSetIcc domainExpr with
+    | some intervalRat => pure intervalRat
+    | none => pure domainExpr
+  let domainVal ← evalExpr IntervalRat (mkConst ``IntervalRat) domainExpr
+  let boxVal : Box := [domainVal]
+  trace[LeanCert.discovery] "Domain: [{domainVal.lo}, {domainVal.hi}]"
+
+  -- 3. Run optimization to find the argmin (use minimize instead of maximize)
+  trace[LeanCert.discovery] "Running float-guided minimization..."
+  let astVal ← evalExpr LExpr (mkConst ``LeanCert.Core.Expr) ast
+  let result := globalMinimizeGuided astVal boxVal cfg
+
+  -- 4. Extract the midpoint of the best box as witness
+  let bestBox := result.bound.bestBox
+  let xOpt : ℚ := match bestBox with
+    | [I] => (I.lo + I.hi) / 2
+    | _ => domainVal.lo  -- Fallback
+
+  trace[LeanCert.discovery] "Best box: {bestBox.map (fun I => s!"[{I.lo}, {I.hi}]")}"
+  trace[LeanCert.discovery] "Witness point: x = {xOpt}"
+  trace[LeanCert.discovery] "Minimum value ≈ {result.bound.lo}"
+
+  -- 5. Evaluate f at xOpt to get a concrete upper bound
+  -- We use the upper bound of interval evaluation at the point as our transitivity constant
+  let evalCfg : EvalConfig := { taylorDepth := taylorDepth }
+  let pointInterval : IntervalRat := ⟨xOpt, xOpt, le_refl xOpt⟩
+  let fAtXOpt := LeanCert.Internal.Rational.evalTotalCore1 astVal pointInterval evalCfg
+  let cBound := fAtXOpt.hi  -- c such that f(xOpt) ≤ c
+
+  trace[LeanCert.discovery] "f(xOpt) ∈ [{fAtXOpt.lo}, {fAtXOpt.hi}]"
+  trace[LeanCert.discovery] "Using bound c = {cBound} for transitivity"
+
+  -- 6. Generate support proof. Certificate checks are performed once below.
+  let suppProof ← LeanCert.Meta.mkSupportedCoreProof ast
+
+  -- 9. Provide witness: refine ⟨xOpt, ?memProof, ?boundProof⟩
+  let xOptExpr := toExpr xOpt
+  let xOptSyntax ← Term.exprToSyntax xOptExpr
+  evalTactic (← `(tactic| refine ⟨(($xOptSyntax : ℚ) : ℝ), ?_, ?_⟩))
+
+  -- 10. Prove membership (x ∈ I)
+  trace[LeanCert.discovery] "Proving membership..."
+  try
+    let memGoal ← getMainGoal
+    let memType ← memGoal.getType
+    let memTypeWhnf ← whnf memType
+    match_expr memTypeWhnf with
+    | And _ _ =>
+      let memTypeWhnfSyntax ← Term.exprToSyntax memTypeWhnf
+      evalTactic (← `(tactic| change $memTypeWhnfSyntax))
+      evalTactic (← `(tactic| constructor <;> norm_cast))
+    | _ =>
+      match_expr memType with
+      | Membership.mem _ _ _ interval _xExpr =>
+        let intervalSyntax ← Term.exprToSyntax interval
+        evalTactic (← `(tactic| simp [($intervalSyntax:term), Set.mem_Icc]))
+      | _ =>
+        evalTactic (← `(tactic| simp [Set.mem_Icc]))
+      if (← getGoals).isEmpty then
+        pure ()
+      else
+        let memGoal ← getMainGoal
+        let memType ← memGoal.getType
+        match_expr memType with
+        | And _ _ =>
+          evalTactic (← `(tactic| constructor <;> norm_cast))
+        | _ =>
+          evalTactic (← `(tactic| norm_cast))
+  catch _ =>
+    try
+      evalTactic (← `(tactic| decide))
+    catch _ =>
+      throwError "could not prove witness membership"
+
+  -- 11. Prove the bound: ∀ y ∈ I, f(xOpt) ≤ f(y)
+  trace[LeanCert.discovery] "Proving universal bound..."
+
+  let certificatesResult : Except AttainedExtremumFailure
+      (Array AttainedCertificate) ← if isNativeSyntax then
+    -- For native syntax, simplify and use intervalBoundCore directly
+    trace[LeanCert.discovery] "Using native syntax path with intervalBoundCore"
+    try
+      -- First, simplify the goal to reduce f(xOpt) to a concrete form
+      try evalTactic (← `(tactic| simp only [Rat.cast_intCast, Rat.cast_natCast])) catch _ => pure ()
+      try evalTactic (← `(tactic| push_cast)) catch _ => pure ()
+      try evalTactic (← `(tactic| norm_num [Rat.divInt_eq_div])) catch _ => pure ()
+
+      -- norm_num may already close trivial bounds outright (constant or
+      -- identity objectives); only invoke the interval engine on a live goal.
+      let retained ← if !(← getGoals).isEmpty then
+        match ← LeanCert.Tactic.Auto.intervalBoundCoreTyped taylorDepth with
+        | .ok outcome =>
+            let checker := outcome.checker.getD Name.anonymous
+            if checker == Name.anonymous then
+              throwError "native attained-extremum proof returned no checker identity"
+            pure <| .ok #[{
+              role := "global attained-minimum bound"
+              checker
+              verifier := outcome.verifier
+              verification := outcome.verification
+            }]
+        | .error failure =>
+            pure <| .error <| .inconclusive
+              s!"native attained-extremum bound failed: {repr failure}"
+      else
+        pure (.ok #[])
+      trace[LeanCert.discovery] "✓ Proof complete (native syntax)"
+      pure retained
+    catch e =>
+      throwError "interval_argmin: Could not prove universal bound.\n\
+        Error: {e.toMessageData}\n\
+        The witness x = {xOpt} may need higher precision."
+  else
+    -- For Expr.eval syntax, use verify_argmin
+    trace[LeanCert.discovery] "Using verify_argmin path"
+    let reflective ← saveState
+    try
+      -- Build the proof term using verify_argmin
+      let astSyntax ← Term.exprToSyntax ast
+      let suppSyntax ← Term.exprToSyntax suppProof
+      let domainSyntax ← Term.exprToSyntax domainExpr
+      let cBoundExpr := toExpr cBound
+      let cBoundSyntax ← Term.exprToSyntax cBoundExpr
+      let cfgExpr ← mkAppM ``EvalConfig.mk #[toExpr taylorDepth]
+      let cfgSyntax ← Term.exprToSyntax cfgExpr
+
+      -- Membership proof for xOpt
+      evalTactic (← `(tactic|
+        apply LeanCert.Validity.verify_argmin $astSyntax $suppSyntax $domainSyntax
+          $xOptSyntax $cBoundSyntax $cfgSyntax))
+      evalTactic (← `(tactic| constructor <;> norm_cast))
+
+      let close (role : String) (checker : Name) :
+          TacticM (Except AttainedExtremumFailure AttainedCertificate) := do
+        let certGoal ← getMainGoal
+        match ← LeanCert.Tactic.closeCertificateGoalTyped
+            (← LeanCert.Tactic.VerificationConfig.current) certGoal
+            (tacticName := "interval_argmin") with
+        | .accepted event =>
+            return .ok { role, checker, verification := event.toUsage }
+        | .rejected =>
+            return .error <| .rejectedCandidate xOpt checker
+              "the Boolean certificate evaluated to false"
+        | .failed failure =>
+            return .error <| .internalFailure
+              (failure.message "interval_argmin")
+      match ← close "global lower bound" ``LeanCert.Validity.checkLowerBound with
+      | .error failure => pure (.error failure)
+      | .ok lower =>
+        match ← close "candidate point upper bound"
+            ``LeanCert.Validity.checkPointUpperBound with
+        | .error failure => pure (.error failure)
+        | .ok point =>
+          trace[LeanCert.discovery] "✓ Proof complete"
+          pure (.ok #[lower, point])
+    catch e =>
+      -- Fallback to intervalBoundCore
+      reflective.restore
+      trace[LeanCert.discovery] "verify_argmin failed, trying intervalBoundCore fallback..."
+      match ← LeanCert.Tactic.Auto.intervalBoundCoreTyped taylorDepth with
+      | .ok outcome =>
+        let checker := outcome.checker.getD Name.anonymous
+        if checker == Name.anonymous then
+          throwError "fallback attained-extremum proof returned no checker identity"
+        trace[LeanCert.discovery] "✓ Proof complete (via fallback)"
+        pure <| .ok #[{
+          role := "fallback universal bound"
+          checker
+          verifier := outcome.verifier
+          verification := outcome.verification
+        }]
+      | .error e2 =>
+        pure <| .error <| .transportFailure
+          s!"primary verify_argmin failed: {← e.toMessageData.toString}\n\
+            fallback interval bound failed: {repr e2}"
+  let certificates ←
+    match certificatesResult with
+    | .ok certificates => pure certificates
+    | .error failure => return .error failure
+  let globalEnclosure : IntervalRat :=
+    if h : result.bound.lo ≤ result.bound.hi then
+      ⟨result.bound.lo, result.bound.hi, h⟩
+    else fAtXOpt
+  return .ok {
+    kind := .minimum
+    witness := xOpt
+    witnessOrigin := .discovered
+    pointEnclosure := fAtXOpt
+    globalEnclosure
+    bridgeBound := cBound
+    iterations := result.bound.iterations
+    configuredLimit := cfg.maxIterations
+    remainingBoxes := result.remainingBoxes.length
+    tolerance := cfg.tolerance
+    termination := discoveryTermination result cfg.maxIterations cfg.tolerance
+    taylorDepth
+    certificates
+    verifier :=
+      if certificates.size == 2 then some ``LeanCert.Validity.verify_argmin
+      else certificates[0]?.bind (·.verifier)
+  }
+
+/-- Reporting-aware attained-minimum core. -/
+unsafe def intervalArgminCoreTyped (taylorDepth : Nat) :
+    TacticM (Except AttainedExtremumFailure AttainedExtremumOutcome) := do
+  let original ← saveState
+  try
+    match ← intervalArgminCoreImpl taylorDepth with
+    | .ok outcome => return .ok outcome
+    | .error failure =>
+        original.restore
+        return .error failure
+  catch e =>
+    original.restore
+    return .error <| .internalFailure (← e.toMessageData.toString)
+
+/-- The interval_argmin tactic.
+
+Proves goals of the form `∃ x ∈ I, ∀ y ∈ I, f(x) ≤ f(y)` by:
+1. Running global optimization to find the point x where f is minimized.
+2. Instantiating the existential with x.
+3. Proving membership x ∈ I.
+4. Proving the universal bound using interval arithmetic.
+-/
+syntax (name := intervalArgminTac) "interval_argmin" (num)?
+  (leancertTrustItem)? : tactic
+
+@[tactic intervalArgminTac]
+unsafe def elabIntervalArgmin : Tactic := fun stx => do
+  let depth := match stx[1].getOptional? with
+    | some n => n.toNat
+    | none => 10
+  withTrustMode (← elabTrustItem? (stx[2].getOptional?.map (⟨·⟩))) do
+    match ← intervalArgminCoreTyped depth with
+    | .ok _ => pure ()
+    | .error failure => throwAttainedExtremumFailure "interval_argmin" failure
+
+/-! ## Multivariate Minimization/Maximization Tactics -/
+
+/-- Result of analyzing a multivariate existential bound goal -/
+inductive MultivariateExistentialGoal where
+  /-- ∃ m, ∀ x ∈ I, ∀ y ∈ J, ..., f(...) ≥ m (minimize) -/
+  | minimize (varType : Lean.Expr) (vars : Array LeanCert.Tactic.Auto.VarIntervalInfo) (func : Lean.Expr)
+  /-- ∃ M, ∀ x ∈ I, ∀ y ∈ J, ..., f(...) ≤ M (maximize) -/
+  | maximize (varType : Lean.Expr) (vars : Array LeanCert.Tactic.Auto.VarIntervalInfo) (func : Lean.Expr)
+
+/-- Parse a multivariate existential bound goal.
+    Supports goals of the form:
+    - `∃ m, ∀ x ∈ I, ∀ y ∈ J, f(x,y) ≥ m` (minimize)
+    - `∃ M, ∀ x ∈ I, ∀ y ∈ J, f(x,y) ≤ M` (maximize) -/
+def parseMultivariateExistentialGoal (goalType : Lean.Expr) :
+    MetaM (Option MultivariateExistentialGoal) := do
+  let goalType ← whnf goalType
+  -- Match: ∃ m, body where body is a forall chain
+  if let .app (.app (.const ``Exists _) _) body := goalType then
+    if let .lam mName mTy mBody _ := body then
+      withLocalDeclD mName mTy fun m => do
+        let mBodyInst := mBody.instantiate1 m
+        -- Now parse the multivariate forall chain
+        if let some mvGoal ← LeanCert.Tactic.Auto.parseMultivariateBoundGoal mBodyInst then
+          match mvGoal with
+          | .forallGe vars func bound =>
+            -- c ≤ f(...) where c should be our existential variable m
+            let boundContainsM := bound.containsFVar m.fvarId!
+            if boundContainsM then
+              return some (.minimize mTy vars func)
+            else return none
+          | .forallLe vars func bound =>
+            -- f(...) ≤ c where c should be our existential variable m
+            let boundContainsM := bound.containsFVar m.fvarId!
+            if boundContainsM then
+              return some (.maximize mTy vars func)
+            else return none
+        else return none
+    else return none
+  else return none
+
+/-- Reporting-aware multivariate existential discovery. Search quality is
+reported independently from the final checked bound: a loose search interval
+may still yield a valid theorem when its selected endpoint is certified. -/
+private unsafe def intervalMvCoreTyped (direction : DiscoveryDirection)
+    (taylorDepth : Nat) : TacticM (Except DiscoveryFailure DiscoveryOutcome) := do
+  let original ← saveState
+  try LeanCert.Tactic.Auto.intervalNormCore
+  catch e =>
+    original.restore
+    return .error <| .unsupported "goal normalization" (← e.toMessageData.toString)
+  let goal ← getMainGoal
+  let goalType ← goal.getType
+  let parsed ← parseMultivariateExistentialGoal goalType
+  let some parsed := parsed
+    | original.restore
+      return .error <| .unsupported (toString goalType)
+        "expected a multivariate existential minimum or maximum"
+  let (varType, vars, funcExpr) ←
+    match direction, parsed with
+    | .minimum, .minimize varType vars func => pure (varType, vars, func)
+    | .maximum, .maximize varType vars func => pure (varType, vars, func)
+    | _, _ =>
+        original.restore
+        return .error <| .unsupported (toString goalType)
+          "the existential extremum direction does not match this strategy"
+  let ast ←
+    try pure (← getAstFromFuncWithReport funcExpr).expr
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString funcExpr) (← e.toMessageData.toString)
+  let mut boxVals : Array IntervalRat := #[]
+  for v in vars do
+    let intervalVal ←
+      try evalExpr IntervalRat (mkConst ``IntervalRat) v.intervalRat
+      catch e =>
+        original.restore
+        return .error <| .unsupported (toString v.intervalRat)
+          (← e.toMessageData.toString)
+    boxVals := boxVals.push intervalVal
+  let boxVal : Box := boxVals.toList
+  let cfg : GuidedOptConfig := {
+    maxIterations := 2000
+    tolerance := 1/1000
+    taylorDepth := taylorDepth
+    useMonotonicity := true
+    heuristicSamples := 300
+    seed := 12345
+    useGridSearch := true
+    gridPointsPerDim := 5
+  }
+  let astVal ←
+    try evalExpr LExpr (mkConst ``LeanCert.Core.Expr) ast
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString funcExpr) (← e.toMessageData.toString)
+  match evalIntervalChecked astVal boxVal.toEnv with
+  | .error error =>
+      original.restore
+      let domain := vars[0]?.map (·.intervalRat) |>.getD goalType
+      return .error (discoveryFailureOfEval domain error)
+  | .ok _ => pure ()
+  let result :=
+    match direction with
+    | .minimum => globalMinimizeGuided astVal boxVal cfg
+    | .maximum => globalMaximizeGuided astVal boxVal cfg
+  let boundVal :=
+    match direction with
+    | .minimum => result.bound.lo
+    | .maximum => result.bound.hi
+  let boundRatExpr := toExpr boundVal
+  let boundTerm ←
+    match (← whnf varType) with
+    | ty =>
+        if ty.isConstOf ``Rat then pure boundRatExpr
+        else if ty.isConstOf ``Real then
+          mkAppOptM ``Rat.cast #[mkConst ``Real, none, boundRatExpr]
+        else
+          original.restore
+          return .error <| .unsupported (toString varType)
+            "bound type must be ℚ or ℝ"
+  let boundSyntax ← Term.exprToSyntax boundTerm
+  try evalTactic (← `(tactic| refine ⟨$boundSyntax, ?_⟩))
+  catch e =>
+    original.restore
+    return .error <| .transportFailure (← e.toMessageData.toString)
+  let certification ←
+    match ← LeanCert.Tactic.Auto.multivariateBoundCoreTyped cfg.maxIterations
+        cfg.tolerance cfg.useMonotonicity taylorDepth with
+    | .ok certification => pure certification
+    | .error (.unsupported expression detail) =>
+        original.restore
+        return .error (.unsupported expression detail)
+    | .error (.rejected detail) =>
+        original.restore
+        return .error (.inconclusive detail)
+    | .error (.transportFailure detail) =>
+        original.restore
+        return .error (.transportFailure detail)
+    | .error (.internalFailure detail) =>
+        original.restore
+        return .error (.internalFailure detail)
+  return .ok {
+    direction
+    witness := boundVal
+    lowerBound := result.bound.lo
+    upperBound := result.bound.hi
+    iterations := result.bound.iterations
+    configuredLimit := cfg.maxIterations
+    remainingBoxes := result.remainingBoxes.length
+    tolerance := cfg.tolerance
+    termination := discoveryTermination result cfg.maxIterations cfg.tolerance
+    checker := some certification.checker
+    verifier := some certification.verifier
+    verification := certification.verification
+    dyadic := none
+    taylorDepth
+  }
+
+unsafe def intervalMinimizeMvCoreTyped (taylorDepth : Nat) :
+    TacticM (Except DiscoveryFailure DiscoveryOutcome) :=
+  intervalMvCoreTyped .minimum taylorDepth
+
+unsafe def intervalMaximizeMvCoreTyped (taylorDepth : Nat) :
+    TacticM (Except DiscoveryFailure DiscoveryOutcome) :=
+  intervalMvCoreTyped .maximum taylorDepth
+
+/-- The interval_minimize_mv tactic.
+
+Proves multivariate goals of the form `∃ m, ∀ x ∈ I, ∀ y ∈ J, f(x,y) ≥ m` by:
+1. Running global optimization over the n-dimensional domain.
+2. Instantiating the existential with the found minimum.
+3. Proving the bound using `certify_bound`.
+-/
+syntax (name := intervalMinimizeMvTac) "interval_minimize_mv" (num)?
+  (leancertTrustItem)? : tactic
+
+@[tactic intervalMinimizeMvTac]
+unsafe def elabIntervalMinimizeMv : Tactic := fun stx => do
+  let depth := match stx[1].getOptional? with
+    | some n => n.toNat
+    | none => 10
+  withTrustMode (← elabTrustItem? (stx[2].getOptional?.map (⟨·⟩))) do
+    match ← intervalMinimizeMvCoreTyped depth with
+    | .ok _ => pure ()
+    | .error failure => throwDiscoveryFailure "interval_minimize_mv" failure
+
+/-- The interval_maximize_mv tactic.
+
+Proves multivariate goals of the form `∃ M, ∀ x ∈ I, ∀ y ∈ J, f(x,y) ≤ M` by:
+1. Running global optimization over the n-dimensional domain.
+2. Instantiating the existential with the found maximum.
+3. Proving the bound using `certify_bound`.
+-/
+syntax (name := intervalMaximizeMvTac) "interval_maximize_mv" (num)?
+  (leancertTrustItem)? : tactic
+
+@[tactic intervalMaximizeMvTac]
+unsafe def elabIntervalMaximizeMv : Tactic := fun stx => do
+  let depth := match stx[1].getOptional? with
+    | some n => n.toNat
+    | none => 10
+  withTrustMode (← elabTrustItem? (stx[2].getOptional?.map (⟨·⟩))) do
+    match ← intervalMaximizeMvCoreTyped depth with
+    | .ok _ => pure ()
+    | .error failure => throwDiscoveryFailure "interval_maximize_mv" failure
+
+/-! ## Roots Tactic -/
+
+/-- Result of analyzing a root existence goal -/
+inductive RootExistsGoal where
+  /-- `∃ x ∈ I, lhs x = rhs x`, represented by `lhs - rhs`. -/
+  | existsRoot (varName : Name) (interval : Lean.Expr) (func : Lean.Expr)
+      (reverseZeroEquality : Bool := false)
+  deriving Repr
+
+/-- Turn an equality involving `x` into the zero-finding function `lhs - rhs`. -/
+def rootDifferenceFunction? (eqExpr x : Lean.Expr) : MetaM (Option (Lean.Expr × Bool)) := do
+  match_expr eqExpr with
+  | Eq _ lhs rhs =>
+    if !lhs.containsFVar x.fvarId! && !rhs.containsFVar x.fvarId! then
+      return none
+    let zero ← mkAppOptM ``OfNat.ofNat #[mkConst ``Real, mkRawNatLit 0, none]
+    if ← isDefEq (← whnf rhs) zero then
+      return some (← mkLambdaFVars #[x] lhs, false)
+    if ← isDefEq (← whnf lhs) zero then
+      return some (← mkLambdaFVars #[x] rhs, true)
+    let diff ← mkAppM ``HSub.hSub #[lhs, rhs]
+    return some (← mkLambdaFVars #[x] diff, false)
+  | _ => return none
+
+/-- Try to parse a goal as a root existence goal: `∃ x ∈ I, lhs x = rhs x`. -/
+def parseRootExistsGoal (goal : Lean.Expr) : MetaM (Option RootExistsGoal) := do
+  let goal ← whnf goal
+  -- Check for ∃ x, x ∈ I ∧ f x = 0
+  -- Mathlib notation ∃ x ∈ I, P x expands to ∃ x, x ∈ I ∧ P x
+  match_expr goal with
+  | Exists _ body =>
+    -- body is `fun x => x ∈ I ∧ f x = 0`
+    if let .lam name ty innerBody _ := body then
+      withLocalDeclD name ty fun x => do
+        let bodyInst := innerBody.instantiate1 x
+        let bodyInst ← whnf bodyInst
+        -- bodyInst should be x ∈ I ∧ f x = 0
+        match_expr bodyInst with
+        | And memExpr eqExpr =>
+          -- Extract interval from membership
+          let interval? ← extractInterval memExpr x
+          let some interval := interval? | return none
+          -- Reify equality as the root function lhs - rhs.
+          let func? ← rootDifferenceFunction? eqExpr x
+          let some (func, reverseZeroEquality) := func? | return none
+          return some (.existsRoot name interval func reverseZeroEquality)
+        | _ => return none
+    else return none
+  | _ => return none
+where
+  getLeArgs (e : Lean.Expr) : MetaM (Option (Lean.Expr × Lean.Expr)) := do
+    let fn := e.getAppFn
+    let args := e.getAppArgs
+    if fn.isConstOf ``LE.le && args.size >= 4 then
+      return some (args[2]!, args[3]!)
+    return none
+
+  extractLowerBound (e x : Lean.Expr) : MetaM (Option Lean.Expr) := do
+    if let some (a, b) ← getLeArgs e then
+      if ← isDefEq b x then
+        return some a
+    return none
+
+  extractUpperBound (e x : Lean.Expr) : MetaM (Option Lean.Expr) := do
+    if let some (a, b) ← getLeArgs e then
+      if ← isDefEq a x then
+        return some b
+    return none
+
+  extractBoundsFromAnd (memExpr : Lean.Expr) (x : Lean.Expr) :
+      MetaM (Option (Lean.Expr × Lean.Expr)) := do
+    match_expr memExpr with
+    | And a b =>
+      if let some lo ← extractLowerBound a x then
+        if let some hi ← extractUpperBound b x then
+          return some (lo, hi)
+      if let some lo ← extractLowerBound b x then
+        if let some hi ← extractUpperBound a x then
+          return some (lo, hi)
+      return none
+    | _ => return none
+
+  mkSetIccFromBounds (loExpr hiExpr : Lean.Expr) : MetaM Lean.Expr := do
+    mkAppM ``Set.Icc #[loExpr, hiExpr]
+
+  /-- Extract the interval from a membership expression x ∈ I -/
+  extractInterval (memExpr : Lean.Expr) (x : Lean.Expr) : MetaM (Option Lean.Expr) := do
+    match_expr memExpr with
+    | Membership.mem _ _ _ interval xExpr =>
+      if ← isDefEq xExpr x then return some interval else return none
+    | _ =>
+      if let some (loExpr, hiExpr) ← extractBoundsFromAnd memExpr x then
+        return some (← mkSetIccFromBounds loExpr hiExpr)
+      let memExprWhnf ← withTransparency TransparencyMode.all <| whnf memExpr
+      if memExprWhnf == memExpr then
+        return none
+      if let some (loExpr, hiExpr) ← extractBoundsFromAnd memExprWhnf x then
+        return some (← mkSetIccFromBounds loExpr hiExpr)
+      return none
+
+/-- Runtime facts from a retained root certificate. -/
+structure RootDiscoveryOutcome where
+  checker : Name
+  verifier : Name
+  verification : LeanCert.Tactic.VerificationUsage
+  taylorDepth : Nat
+  deriving Inhabited
+
+/-- Expected and invariant failures from root existence and uniqueness
+certification. -/
+inductive RootDiscoveryFailure where
+  | unsupported (expression detail : String)
+  | rejected (detail : String)
+  | transportFailure (detail : String)
+  | internalFailure (detail : String)
+  deriving Inhabited, Repr
+
+private def throwRootDiscoveryFailure (tacticName : String) :
+    RootDiscoveryFailure → TacticM α
+  | .unsupported expression detail =>
+      throwError "{tacticName}: unsupported expression {expression}:\n{detail}"
+  | .rejected detail =>
+      throwError "{tacticName}: certificate rejected:\n{detail}"
+  | .transportFailure detail =>
+      throwError "{tacticName}: proof transport failed:\n{detail}"
+  | .internalFailure detail =>
+      throwError "{tacticName}: internal certificate failure:\n{detail}"
+
+private def intervalRootsCoreTypedImpl
+    (original : Lean.Elab.Tactic.SavedState) (taylorDepth : Nat) :
+    TacticM (Except RootDiscoveryFailure RootDiscoveryOutcome) := do
+  try LeanCert.Tactic.Auto.intervalNormCore
+  catch e =>
+    original.restore
+    return .error <| .unsupported "goal normalization" (← e.toMessageData.toString)
+  let initialGoal ← getMainGoal
+  let goalType ← initialGoal.getType
+
+  -- 1. Parse the goal
+  let some (.existsRoot _varName interval func reverseZeroEquality) ← parseRootExistsGoal goalType
+    | original.restore
+      return .error <| .unsupported (toString goalType)
+        "expected `∃ x ∈ I, lhs x = rhs x`"
+
+  if reverseZeroEquality then try
+    evalTactic (← `(tactic| conv => arg 1; ext x; arg 2; rw [eq_comm]))
+  catch e =>
+    original.restore
+    return .error <| .transportFailure (← e.toMessageData.toString)
+  let goal ← getMainGoal
+
+  try goal.withContext do
+    let mut fromSetIcc := false
+    let intervalExpr ←
+      match ← tryConvertSetIcc interval with
+      | some intervalRat =>
+          fromSetIcc := true
+          pure intervalRat
+      | none =>
+          let intervalTy ← inferType interval
+          if intervalTy.isConstOf ``IntervalRat then
+            pure interval
+          else
+            original.restore
+            return .error <| .unsupported (toString interval)
+              "only IntervalRat or literal Set.Icc intervals are supported"
+
+    -- 2. Get AST (either from Expr.eval or by reifying)
+    let reified ←
+      try pure (← getAstFromFuncWithReport func)
+      catch e =>
+        original.restore
+        return .error <| .unsupported (toString func) (← e.toMessageData.toString)
+    let ast := reified.expr
+    LeanCert.Tactic.unfoldReifiedDefinitions reified.unfolded
+
+    -- 3. Generate ExprSupportedCore proof
+    let supportProof ←
+      try pure (← mkSupportedCoreProof ast)
+      catch e =>
+        original.restore
+        return .error <| .unsupported (toString func) (← e.toMessageData.toString)
+
+    -- 4. Generate ContinuousOn proof
+    let contProof ←
+      try pure (← mkContinuousOnProofWithDomain ast intervalExpr)
+      catch e =>
+        original.restore
+        return .error <| .unsupported (toString func) (← e.toMessageData.toString)
+
+    -- 5. Build config expression
+    let cfgExpr ← mkAppM ``EvalConfig.mk #[toExpr taylorDepth]
+
+    -- 6. Apply verify_sign_change theorem
+    -- verify_sign_change : ExprSupportedCore e → ContinuousOn ... → checkSignChange e I cfg = true → ∃ x ∈ I, f(x) = 0
+    let proof ← mkAppM ``LeanCert.Validity.RootFinding.verify_sign_change
+      #[ast, supportProof, intervalExpr, cfgExpr, contProof]
+    let checker ← mkAppM ``LeanCert.Validity.RootFinding.checkSignChange
+      #[ast, intervalExpr, cfgExpr]
+    let certType ← mkAppM ``Eq #[checker, mkConst ``Bool.true]
+    let certificate ← mkFreshExprMVar certType
+    let event ←
+      match ← LeanCert.Tactic.closeCertificateGoalTyped
+          (← LeanCert.Tactic.VerificationConfig.current) certificate.mvarId!
+          (tacticName := "interval_roots") with
+      | .accepted event => pure event
+      | .rejected =>
+          original.restore
+          return .error <| .rejected "the sign-change checker evaluated to false"
+      | .failed failure =>
+          original.restore
+          return .error <| .internalFailure (failure.message "interval_roots")
+    let conclusion ← mkAppM' proof #[certificate]
+
+    if fromSetIcc then
+      let proofSyntax ← Term.exprToSyntax conclusion
+      try
+        evalTactic (← `(tactic| exact (by
+          have h := $proofSyntax
+          simpa [IntervalRat.mem_iff_mem_Icc, sub_eq_zero, sub_eq_add_neg,
+            add_eq_zero_iff_eq_neg, sq, pow_two] using h)))
+      catch e =>
+        original.restore
+        return .error <| .transportFailure (← e.toMessageData.toString)
+    else
+      goal.assign conclusion
+      replaceMainGoal []
+    return .ok {
+      checker := ``LeanCert.Validity.RootFinding.checkSignChange
+      verifier := ``LeanCert.Validity.RootFinding.verify_sign_change
+      verification := event.toUsage
+      taylorDepth := taylorDepth
+    }
+  catch e =>
+    original.restore
+    return .error <| .internalFailure (← e.toMessageData.toString)
+
+/-- Typed interval-roots implementation. Every non-success restores the
+caller's complete tactic state. -/
+def intervalRootsCoreTyped (taylorDepth : Nat) :
+    TacticM (Except RootDiscoveryFailure RootDiscoveryOutcome) := do
+  let original ← saveState
+  try intervalRootsCoreTypedImpl original taylorDepth
+  catch e =>
+    original.restore
+    return .error <| .internalFailure (← e.toMessageData.toString)
+
+/-- The interval_roots tactic.
+
+Proves goals of the form `∃ x ∈ I, f(x) = 0` by:
+1. Checking for a sign change at the interval endpoints using interval arithmetic
+2. Applying the Intermediate Value Theorem
+
+The tactic automatically:
+- Reifies the function to a LeanCert AST
+- Generates an `ExprSupportedCore` proof
+- Generates a `ContinuousOn` proof (automatic for supported expressions)
+- Verifies the sign change certificate via the configured route (`leancert.trust`)
+
+**Usage:**
+```lean
+example : ∃ x ∈ Icc (0 : ℝ) 2, x^2 - 2 = 0 := by
+  interval_roots
+```
+
+**Limitations:**
+- Only works for expressions in `ExprSupportedCore` (no `log`, `inv`)
+- Requires a sign change at the endpoints (IVT condition)
+- If there's no sign change, the tactic will fail
+-/
+elab "interval_roots" depth:(num)? t:(leancertTrustItem)? : tactic => do
+  let taylorDepth := match depth with
+    | some n => n.getNat
+    | none => 10
+  withTrustMode (← elabTrustItem? t) do
+    match ← intervalRootsCoreTyped taylorDepth with
+    | .ok _ => pure ()
+    | .error failure => throwRootDiscoveryFailure "interval_roots" failure
+
+/-! ## Unique Root Tactic -/
+
+/-- Parse a unique root goal: `∃! x, x ∈ I ∧ lhs x = rhs x`. -/
+def parseUniqueRootGoal (goalType : Lean.Expr) :
+    MetaM (Option (Name × Lean.Expr × Lean.Expr × Bool)) := do
+  -- Match: ∃! x, P x where P x = (x ∈ I ∧ f(x) = 0)
+  -- NOTE: Don't call whnf before matching ExistsUnique - it would expand to Exists!
+  match_expr goalType with
+  | ExistsUnique _ body =>
+    -- body is `fun x => x ∈ I ∧ f x = 0`
+    if let .lam name ty innerBody _ := body then
+      withLocalDeclD name ty fun x => do
+        let bodyInst := innerBody.instantiate1 x
+        let bodyInst ← whnf bodyInst
+        let getLeArgs (e : Lean.Expr) : MetaM (Option (Lean.Expr × Lean.Expr)) := do
+          let fn := e.getAppFn
+          let args := e.getAppArgs
+          if fn.isConstOf ``LE.le && args.size >= 4 then
+            return some (args[2]!, args[3]!)
+          return none
+        let extractLowerBound (e : Lean.Expr) : MetaM (Option Lean.Expr) := do
+          if let some (a, b) ← getLeArgs e then
+            if ← isDefEq b x then
+              return some a
+          return none
+        let extractUpperBound (e : Lean.Expr) : MetaM (Option Lean.Expr) := do
+          if let some (a, b) ← getLeArgs e then
+            if ← isDefEq a x then
+              return some b
+          return none
+        let extractBoundsFromAnd (memExpr : Lean.Expr) :
+            MetaM (Option (Lean.Expr × Lean.Expr)) := do
+          match_expr memExpr with
+          | And a b =>
+            if let some lo ← extractLowerBound a then
+              if let some hi ← extractUpperBound b then
+                return some (lo, hi)
+            if let some lo ← extractLowerBound b then
+              if let some hi ← extractUpperBound a then
+                return some (lo, hi)
+            return none
+          | _ => return none
+        let extractInterval (memExpr : Lean.Expr) : MetaM (Option Lean.Expr) := do
+          match_expr memExpr with
+          | Membership.mem _ _ _ interval xExpr =>
+            if ← isDefEq xExpr x then return some interval else return none
+          | _ =>
+            if let some (loExpr, hiExpr) ← extractBoundsFromAnd memExpr then
+              return some (← mkAppM ``Set.Icc #[loExpr, hiExpr])
+            let memExprWhnf ← withTransparency TransparencyMode.all <| whnf memExpr
+            if memExprWhnf == memExpr then
+              return none
+            if let some (loExpr, hiExpr) ← extractBoundsFromAnd memExprWhnf then
+              return some (← mkAppM ``Set.Icc #[loExpr, hiExpr])
+            return none
+        -- bodyInst should be x ∈ I ∧ f x = 0
+        match_expr bodyInst with
+        | And memExpr eqExpr =>
+          -- Extract interval from membership (use pattern matching)
+          let some interval ← extractInterval memExpr | return none
+          let some (func, reverseZeroEquality) ← rootDifferenceFunction? eqExpr x | return none
+          return some (name, interval, func, reverseZeroEquality)
+        | _ => return none
+    else return none
+  | _ => return none
+
+/-- Core implementation for interval_unique_root tactic.
+
+    Proves `∃! x ∈ I, f(x) = 0` by:
+    1. Checking Newton contraction (derivative bounded away from 0)
+    2. Applying verify_unique_root_computable theorem
+
+    Uses the fully computable `verify_unique_root_computable` theorem which only
+    requires `checkNewtonContractsCore`. This allows the certificate check
+    (configured via `leancert.trust`) to work without noncomputable Real
+    functions.
+-/
+private unsafe def intervalUniqueRootCoreTypedImpl
+    (original : Lean.Elab.Tactic.SavedState) (taylorDepth : Nat) :
+    TacticM (Except RootDiscoveryFailure RootDiscoveryOutcome) := do
+  try LeanCert.Tactic.Auto.intervalNormCore
+  catch e =>
+    original.restore
+    return .error <| .unsupported "goal normalization" (← e.toMessageData.toString)
+  let initialGoal ← getMainGoal
+  let goalType ← initialGoal.getType
+
+  -- Parse goal: ∃! x, x ∈ I ∧ f(x) = 0
+  let some (_varName, interval, func, reverseZeroEquality) ← parseUniqueRootGoal goalType
+    | original.restore
+      return .error <| .unsupported (toString goalType)
+        "expected `∃! x, x ∈ I ∧ lhs x = rhs x`"
+
+  if reverseZeroEquality then try
+    evalTactic (← `(tactic| conv => arg 1; ext x; arg 2; rw [eq_comm]))
+  catch e =>
+    original.restore
+    return .error <| .transportFailure (← e.toMessageData.toString)
+  let goal ← getMainGoal
+
+  try
+  let mut fromSetIcc := false
+  let intervalExpr ←
+    match ← tryConvertSetIcc interval with
+    | some intervalRat =>
+        fromSetIcc := true
+        pure intervalRat
+    | none =>
+        let intervalTy ← inferType interval
+        if intervalTy.isConstOf ``IntervalRat then
+          pure interval
+        else
+          original.restore
+          return .error <| .unsupported (toString interval)
+            "only IntervalRat or literal Set.Icc intervals are supported"
+
+  -- Extract AST
+  let reified ←
+    try pure (← getAstFromFuncWithReport func)
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString func) (← e.toMessageData.toString)
+  let ast := reified.expr
+  LeanCert.Tactic.unfoldReifiedDefinitions reified.unfolded
+
+  -- Generate ADSupported proof (required by verify_unique_root_computable)
+  let supportProof ←
+    try pure (← mkSupportedProof ast)
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString func) (← e.toMessageData.toString)
+
+  -- Generate UsesOnlyVar0 proof
+  let var0Proof ←
+    try pure (← mkUsesOnlyVar0Proof ast)
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString func) (← e.toMessageData.toString)
+
+  -- Generate ContinuousOn proof
+  let contProof ←
+    try pure (← LeanCert.Meta.mkContinuousOnProofWithDomain ast intervalExpr)
+    catch e =>
+      original.restore
+      return .error <| .unsupported (toString func) (← e.toMessageData.toString)
+
+  -- Build EvalConfig (for the computable core check)
+  let evalCfgExpr ← mkAppM ``EvalConfig.mk #[toExpr taylorDepth]
+
+  -- Apply verify_unique_root_computable (fully computable version)
+  -- Args: e, hsupp, hvar0, I, cfg, hCont
+  let proof ← mkAppM ``Validity.RootFinding.verify_unique_root_computable
+    #[ast, supportProof, var0Proof, intervalExpr, evalCfgExpr, contProof]
+  let checker ← mkAppM ``Validity.RootFinding.checkNewtonContractsCore
+    #[ast, intervalExpr, evalCfgExpr]
+  let certType ← mkAppM ``Eq #[checker, mkConst ``Bool.true]
+  let certificate ← mkFreshExprMVar certType
+  let event ←
+    match ← LeanCert.Tactic.closeCertificateGoalTyped
+        (← LeanCert.Tactic.VerificationConfig.current) certificate.mvarId!
+        (tacticName := "interval_unique_root") with
+    | .accepted event => pure event
+    | .rejected =>
+        original.restore
+        return .error <| .rejected "the interval-Newton checker evaluated to false"
+    | .failed failure =>
+        original.restore
+        return .error <| .internalFailure (failure.message "interval_unique_root")
+  let conclusion ← mkAppM' proof #[certificate]
+
+  if fromSetIcc then
+    let proofSyntax ← Term.exprToSyntax conclusion
+    try
+      evalTactic (← `(tactic| exact (by
+        have h := $proofSyntax
+        simpa [IntervalRat.mem_iff_mem_Icc, sub_eq_zero, sub_eq_add_neg,
+          add_eq_zero_iff_eq_neg, sq, pow_two] using h)))
+    catch e =>
+      original.restore
+      return .error <| .transportFailure (← e.toMessageData.toString)
+  else
+    goal.assign conclusion
+    replaceMainGoal []
+  return .ok {
+    checker := ``Validity.RootFinding.checkNewtonContractsCore
+    verifier := ``Validity.RootFinding.verify_unique_root_computable
+    verification := event.toUsage
+    taylorDepth := taylorDepth
+  }
+  catch e =>
+    original.restore
+    return .error <| .internalFailure (← e.toMessageData.toString)
+
+/-- Typed interval-Newton implementation. Every non-success restores the
+caller's complete tactic state. -/
+unsafe def intervalUniqueRootCoreTyped (taylorDepth : Nat) :
+    TacticM (Except RootDiscoveryFailure RootDiscoveryOutcome) := do
+  let original ← saveState
+  try intervalUniqueRootCoreTypedImpl original taylorDepth
+  catch e =>
+    original.restore
+    return .error <| .internalFailure (← e.toMessageData.toString)
+
+/-- The interval_unique_root tactic.
+
+Proves goals of the form `∃! x ∈ I, f(x) = 0` by:
+1. Using Newton contraction to verify uniqueness (derivative bounded away from 0)
+2. Applying the Intermediate Value Theorem for existence
+
+**Usage:**
+```lean
+example : ∃! x ∈ I_1_2, Expr.eval (fun _ => x) (x² - 2) = 0 := by
+  interval_unique_root
+```
+
+**Requirements:**
+- Function must be in the AD-supported subset needed by Newton uniqueness
+  checking.
+- Newton step must contract (derivative doesn't contain 0)
+-/
+syntax (name := intervalUniqueRootTac) "interval_unique_root" (num)?
+  (leancertTrustItem)? : tactic
+
+@[tactic intervalUniqueRootTac]
+unsafe def elabIntervalUniqueRoot : Tactic := fun stx => do
+  let taylorDepth := match stx[1].getOptional? with
+    | some n => n.toNat
+    | none => 10
+  withTrustMode (← elabTrustItem? (stx[2].getOptional?.map (⟨·⟩))) do
+    match ← intervalUniqueRootCoreTyped taylorDepth with
+    | .ok _ => pure ()
+    | .error failure => throwRootDiscoveryFailure "interval_unique_root" failure
+
+/-! ## Discover Tactic -/
+
+/-- The discover tactic - generic discovery.
+
+Analyzes the goal and applies the appropriate discovery tactic.
+-/
+syntax (name := discoverTac) "discover" (num)? : tactic
+
+@[tactic discoverTac]
+unsafe def elabDiscover : Tactic := fun stx => do
+  let depth := match stx[1].getOptional? with
+    | some n => n.toNat
+    | none => 10
+  let goal ← getMainGoal
+  let goalType ← goal.getType
+
+  if let some goalKind ← parseExistentialGoal goalType then
+    match goalKind with
+    | .minimize .. =>
+        match ← intervalMinimizeCoreTyped depth with
+        | .ok _ => pure ()
+        | .error failure => throwDiscoveryFailure "discover" failure
+    | .maximize .. =>
+        match ← intervalMaximizeCoreTyped depth with
+        | .ok _ => pure ()
+        | .error failure => throwDiscoveryFailure "discover" failure
+  else
+    throwError "discover: Goal not recognized. Supported forms:\n\
+                - ∃ m, ∀ x ∈ I, f(x) ≥ m\n\
+                - ∃ M, ∀ x ∈ I, f(x) ≤ M"
+
+/-! ## Exploration Command -/
+
+/-- Syntax for signed integer: either a nat or -nat -/
+declare_syntax_cat signedInt
+syntax num : signedInt
+syntax "-" num : signedInt
+
+/-- Parse a signedInt syntax to Int -/
+def parseSignedInt : Syntax → Int
+  | `(signedInt| $n:num) => n.getNat
+  | `(signedInt| -$n:num) => -(n.getNat : Int)
+  | _ => 0
+
+open Lean.Elab.Command in
+/-- The `#explore` command analyzes a function on an interval.
+
+Usage:
+```lean
+#explore (Expr.sin (Expr.var 0)) on [0, 7]
+#explore (Expr.cos (Expr.var 0)) on [-1, 2]
+```
+
+Output includes:
+- Range bounds
+- Global minimum/maximum
+- Root detection (sign changes)
+
+Note: Bounds must be integer literals (positive or negative).
+-/
+elab "#explore " e:term " on " "[" lo:signedInt ", " hi:signedInt "]" : command => do
+  liftTermElabM do
+    -- Elaborate the expression
+    let exprE ← elabTerm e (some (mkConst ``LeanCert.Core.Expr))
+    let exprE ← instantiateMVars exprE
+
+    -- Parse bounds as integers from syntax
+    let loInt := parseSignedInt lo
+    let hiInt := parseSignedInt hi
+    let loVal : ℚ := loInt
+    let hiVal : ℚ := hiInt
+
+    -- Evaluate to get the actual values
+    let astVal ← unsafe evalExpr LExpr (mkConst ``LeanCert.Core.Expr) exprE
+
+    -- Check bounds are valid
+    if h : loVal ≤ hiVal then
+      let intervalVal : IntervalRat := ⟨loVal, hiVal, h⟩
+
+      let cfg : GuidedOptConfig := {
+        maxIterations := 1000,
+        tolerance := 1/1000,
+        taylorDepth := 10,
+        useMonotonicity := true,
+        heuristicSamples := 200,
+        seed := 12345,
+        useGridSearch := true,
+        gridPointsPerDim := 10
+      }
+      let box : Box := [intervalVal]
+
+      -- Compute range (min and max) using float-guided optimization
+      let minResult := globalMinimizeGuided astVal box cfg
+      let maxResult := globalMaximizeGuided astVal box cfg
+
+      -- Check for sign change (root detection)
+      let evalCfg : EvalConfig := { taylorDepth := 10 }
+      let hasSignChange := Validity.RootFinding.checkSignChange astVal intervalVal evalCfg
+
+      -- Compute gradient/derivative bounds for monotonicity analysis
+      let grad := gradientIntervalCore astVal box evalCfg
+      let gradStr := match grad with
+        | [] => "N/A (no variables)"
+        | [dI] => s!"[{dI.lo}, {dI.hi}]"
+        | _ => s!"{grad.map (fun dI => s!"[{dI.lo}, {dI.hi}]")}"
+
+      -- Classify monotonicity based on derivative sign
+      let monotonicityStr := match grad with
+        | [] => "constant"
+        | [dI] =>
+          if dI.lo > 0 then "strictly increasing"
+          else if dI.hi < 0 then "strictly decreasing"
+          else if dI.lo ≥ 0 then "non-decreasing"
+          else if dI.hi ≤ 0 then "non-increasing"
+          else "non-monotonic (derivative changes sign)"
+        | _ => "multivariate"
+
+      -- Count potential roots from sign change
+      let rootStr := if hasSignChange then
+        "Sign change detected - at least one root exists (by IVT)"
+      else
+        "No sign change - may have no roots or an even number"
+
+      -- Format output
+      let minStr := s!"{minResult.bound.lo}"
+      let maxStr := s!"{maxResult.bound.hi}"
+
+      logInfo m!"=== Function Analysis ===\n\
+                 Expression: {exprE}\n\
+                 Domain: [{loVal}, {hiVal}]\n\
+                 \n\
+                 Range: [{minStr}, {maxStr}]\n\
+                 Global minimum: ≥ {minStr}\n\
+                 Global maximum: ≤ {maxStr}\n\
+                 \n\
+                 Derivative bounds: {gradStr}\n\
+                 Monotonicity: {monotonicityStr}\n\
+                 \n\
+                 Roots: {rootStr}\n\
+                 Iterations: min={minResult.bound.iterations}, max={maxResult.bound.iterations}"
+    else
+      throwError "#explore: Invalid interval: lo ({loVal}) must be ≤ hi ({hiVal})"
+
+end LeanCert.Tactic.Discovery

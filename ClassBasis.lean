@@ -154,7 +154,7 @@ theorem class_coefficient_det_ne_zero (Q : ι → F[X]) (d : ι → ℕ)
   apply hind c _ k
   funext j
   have hh := congrFun hc (e.symm j)
-  simpa using hh
+  simpa [Matrix.row] using hh
 
 #print axioms class_coefficient_det_ne_zero
 
@@ -179,10 +179,16 @@ theorem integer_class_det_unit (p : ℕ) [Fact p.Prime]
   have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hdiv
   apply hh
   rw [← hz]
-  rw [Int.cast_det]
-  congr 1
-  ext i j
-  simp [complement, Polynomial.coeff_map, ← Polynomial.map_prod, ← Polynomial.map_mul]
+  let M : Matrix (Σ a, Fin (d a)) (Σ a, Fin (d a)) ℤ := fun i j =>
+    ((∏ a ∈ Finset.univ.erase i.1, Q a) * q i.1 i.2).coeff (e j).val
+  change _ = f M.det
+  calc
+    _ = (M.map f).det := by
+      congr 1
+      ext i j
+      simp [M, Matrix.map, complement, Polynomial.coeff_map,
+        ← Polynomial.map_prod, ← Polynomial.map_mul]
+    _ = f M.det := (f.map_det M).symm
 
 theorem integer_class_det_valuation (p : ℕ) [Fact p.Prime]
     (Q : ι → ℤ[X]) (d : ι → ℕ)

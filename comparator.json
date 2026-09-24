@@ -1,0 +1,9 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "Zeta5Palomar.irrational_zeta_five",
+    "Zeta5Palomar.irrational_reciprocal_fifth_power_sum"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}

@@ -37,7 +37,7 @@ lemma realDenominator_eval_ge_one (N : ℕ) (y : ℝ) :
   calc
     1 = ∏ k ∈ Finset.range N, (1 : ℝ) := by simp
     _ ≤ _ := by
-      apply Finset.prod_le_prod (fun k hk => zero_le_one)
+      apply Finset.prod_le_prod₀ (fun k hk => zero_le_one)
       intro k hk
       have hkpos : (1 : ℝ) ≤ k+1 := by linarith [(show (0 : ℝ) ≤ k from Nat.cast_nonneg k)]
       nlinarith [sq_nonneg y]

@@ -30,6 +30,8 @@ def main() -> int:
     ap.add_argument("--no-cache",action="store_true",help="skip the optional mathlib cache download")
     ap.add_argument("--sync-lake",action="store_true",help="register newly added source modules before building")
     ap.add_argument("--dry-run",action="store_true",help="print the build plan without invoking Lake")
+    ap.add_argument("--keep-going",action="store_true",help="continue independent modules after a failure")
+    ap.add_argument("--proof-first",action="store_true",help="prioritize non-generated modules for compatibility debugging")
     args=ap.parse_args()
     if args.jobs<1: ap.error("--jobs must be positive")
     src=sources()
@@ -71,10 +73,11 @@ def main() -> int:
                 "log":str(log.relative_to(ROOT))}
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
         while pending or running:
-            if not failed:
+            if not failed or args.keep_going:
                 ready=sorted(m for m in pending if local_deps[m]<=finished)
                 # Numerical batches are independent and dominate the build time.
-                ready.sort(key=lambda m:(not m.startswith(("AppendixPotential.","AppendixField.")),m))
+                ready.sort(key=lambda m: (
+                    m.startswith(("AppendixPotential.","AppendixField.")) == args.proof_first, m))
                 for m in ready[:args.jobs-len(running)]:
                     pending.remove(m);running[pool.submit(build,m)]=m
             if not running:
@@ -89,7 +92,10 @@ def main() -> int:
                     print((ROOT/r["log"]).read_text()[-12000:],file=sys.stderr,flush=True)
                 else: finished.add(m)
             (logs/"results.json").write_text(json.dumps({"targets":args.targets,"modules":results},indent=2)+"\n")
-    if failed:return 1
+    if failed:
+        if pending:
+            print(f"{len(pending)} modules remain blocked by failed prerequisites.",file=sys.stderr)
+        return 1
     print("Build complete. Logs: .lake/build/verification-logs/",flush=True)
     return 0
 

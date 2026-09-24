@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-24",
+  "toolchain": "leanprover/lean4:v4.35.0-rc2",
+  "mathlib": "065356127b1dc0016f66b7283ce0ce2c4055aa55",
+  "build_jobs": 4588,
+  "comparator_exit_code": 0,
+  "kernels": {
+    "con-ron": "accepted 91762 declarations",
+    "nanoda": "accepted",
+    "lean-default": "accepted"
+  },
+  "logs": {
+    "comparator.log": "ff66e655b8755952d3ccfbd61c0faf236dcd7859dc02ba18698262bcd91d5954",
+    "build.log": "5363f094b3d016fc43a3a44b041f70154a211499e8d95c6111339c8058cb067a"
+  },
+  "source_manifest_sha256": "6af1a5886a521422c1170993797edbd1c326dc8c4698ad44ab17089fd9fecc9d"
+}

@@ -34,7 +34,9 @@ lemma near_weight_sum (ν : Fin (m+1)→ℕ) (p : ℕ) (c : ℤ) :
     (∑ i ∈ nearIndices Finset.univ (root m) p c, weight m ν i) =
       ∑ a : Fin (m+1), ((if (p:ℤ)∣c-a.val then ν a else 0)+
         (if (p:ℤ)∣c+a.val then ν a else 0)) := by
-  simp only [nearIndices, Finset.sum_filter, Fintype.sum_prod_type, Fintype.sum_bool,
+  unfold nearIndices
+  erw [Finset.sum_filter]
+  simp only [Fintype.sum_prod_type, Fintype.sum_bool,
     root, weight, Bool.false_eq_true, if_false, if_true, sub_neg_eq_add]
 
 /-- Exact local degree of a row pullback at an ordinary square class. -/

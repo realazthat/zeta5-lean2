@@ -1,5 +1,21 @@
 # Zeta(5) formalization
 
+## Palomar preparation
+
+The Palomar port targets Lean **4.35.0-rc2**. See [PALOMAR.md](PALOMAR.md)
+for the independent statements, reproducible checks, and current verification
+status. The full build and sandboxed Comparator passed, including con-ron,
+NanoDa, and Lean's default kernel. The historical notes below concern the original Lean
+4.32.2 snapshot; current port evidence is recorded separately in `PALOMAR.md`.
+
+Original mathematical proof: **Aabir Fauzan**. Formal Lean proof: **Astra and
+Azriel Fasten**. Azriel Fasten is the human author and responsible maintainer;
+Astra's AI contribution is recorded in [formalization.yaml](formalization.yaml).
+This repository is licensed under [MIT](LICENSE). The cited paper and software
+dependencies retain their respective licenses.
+
+## Original proof snapshot and historical verification
+
 Lean formalization of Aabir Fauzan's preprint, version 1, 17 September 2026:
 https://zenodo.org/records/22826419.
 
@@ -10,7 +26,9 @@ Lean 4.32.2, and their axiom audits list only `propext`, `Classical.choice`, and
 `Quot.sound`. See `VerificationStatus.md` for the source, artifact, and kernel
 checks performed, including the exact extent of the standard Lake rebuild.
 
-## Rebuild
+## Historical rebuild instructions (Lean 4.32.2)
+
+For this branch use the current instructions in [PALOMAR.md](PALOMAR.md).
 
 The project pins Lean **4.32.2** in `lean-toolchain` and every dependency commit
 in `lake-manifest.json`. The principal dependencies are:

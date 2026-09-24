@@ -1,0 +1,44 @@
+# Discovery Mode
+
+Discovery mode is for exploration before final theorem statements.
+
+## Interactive Commands
+
+```lean
+import LeanCert.Discovery.Commands
+
+#find_min (fun x => x^2 + Real.sin x) on [-2, 2]
+#find_max (fun x => Real.sin x * Real.exp (-x)) on [0, 3]
+#bounds (fun x => x^3 - x) on [-2, 2]
+#eval_interval (fun x => Real.exp (Real.sin x)) on [0, 1]
+```
+
+These commands print rigorous enclosures and diagnostics inside the editor.
+
+## Turning Exploration into Proofs
+
+```lean
+import LeanCert.Tactic.Discovery
+
+example : ∃ m : ℚ, ∀ x ∈ Set.Icc (0 : ℝ) 1, x ^ 2 ≥ m := by
+  interval_minimize
+
+example : ∃ M : ℚ, ∀ x ∈ Set.Icc (0 : ℝ) 1, Real.sin x ≤ M := by
+  interval_maximize
+```
+
+## Recommended Workflow
+
+1. Use `#find_min` / `#bounds` to inspect behavior.
+2. Pick a clean rational target bound.
+3. Prove the final mathematical statement with `leancert`. Use a dedicated
+   tactic such as `certify_bound`, `interval_minimize`, or `interval_maximize`
+   when you need explicit strategy or configuration control.
+4. Keep the proof script minimal and reproducible.
+
+## Split Repositories
+
+Python SDK workflows were moved out of this repo:
+
+- `https://github.com/alerad/leancert-python`
+- `https://github.com/alerad/leancert-bridge`
