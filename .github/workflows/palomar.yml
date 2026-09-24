@@ -6,6 +6,10 @@ on:
   push:
     branches: [main, palomar-preparation]
 
+concurrency:
+  group: palomar-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -20,6 +24,10 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.12'
+      - name: Test build dependency planning
+        run: python3 -m unittest discover -s scripts -p test_build.py
+      - name: Provision memory for proof export
+        run: bash scripts/ci_memory.sh
       - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
         with:
           build: false
@@ -30,12 +38,16 @@ jobs:
       - name: Install Comparator sandbox
         run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap
       - name: Compare statements and check independent kernels
-        run: python3 scripts/verify_comparator.py
+        run: |
+          set -o pipefail
+          python3 -u scripts/verify_comparator.py 2>&1 | tee comparator.log
       - name: Preserve build evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: palomar-verification
+          include-hidden-files: true
           path: |
             project-inventory.json
+            comparator.log
             .lake/build/verification-logs/

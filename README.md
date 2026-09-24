@@ -1,11 +1,19 @@
 # Zeta(5) formalization
 
+## Compact, readable proof branch
+
+See [CODEGOLF.md](CODEGOLF.md) for measured source reduction and
+[NUMERICAL_CERTIFICATES.md](NUMERICAL_CERTIFICATES.md) for the checked certificate
+format. The verified baseline is preserved on `palomar-preparation`; this
+branch has saved local build and three-kernel acceptance logs for commit
+`53f1134`. See `PALOMAR.md` for their scope and evidence limitations.
+
 ## Palomar preparation
 
 The Palomar port targets Lean **4.35.0-rc2**. See [PALOMAR.md](PALOMAR.md)
 for the independent statements, reproducible checks, and current verification
-status. The full build and sandboxed Comparator passed, including con-ron,
-NanoDa, and Lean's default kernel. The historical notes below concern the original Lean
+status. Saved local logs record a full build and acceptance by con-ron,
+NanoDa, and Lean's default kernel; they do not establish hosted CI success. The historical notes below concern the original Lean
 4.32.2 snapshot; current port evidence is recorded separately in `PALOMAR.md`.
 
 Original mathematical proof: **Aabir Fauzan**. Formal Lean proof: **Astra and
@@ -30,7 +38,7 @@ checks performed, including the exact extent of the standard Lake rebuild.
 
 For this branch use the current instructions in [PALOMAR.md](PALOMAR.md).
 
-The project pins Lean **4.32.2** in `lean-toolchain` and every dependency commit
+The historical snapshot pinned Lean **4.32.2** in `lean-toolchain` and every dependency commit
 in `lake-manifest.json`. The principal dependencies are:
 
 | Dependency | Commit |
