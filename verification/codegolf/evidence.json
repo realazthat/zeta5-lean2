@@ -13,7 +13,7 @@
     "comparator.log": "e5775dd612dc3fa977b570bbf7eea920222f0030bd17c6bbb2b766b46d2e7ffb",
     "build.log": "43847a2468d3e5986693c45274333a03de30036b05ee574f72839ac98bd639df"
   },
-  "source_manifest_sha256": "b1c7703bdea9e28e8959fa2ac855d10fefda935d447be8f3d3d8cfda66166562",
+  "source_manifest_sha256": "fe1e410e10203107a07745a81bb739925489c9a915523fc79fe2f14f49411f18",
   "verified_source_commit": "53f1134b621452a5b8339c3050367259d46b4de6",
   "historical_source_manifest_sha256": "601ea0e383a3793070fb37306e39738055fb817bca6400c230ca8001e9e4a57b",
   "source_manifest_scope": "Current tracked source and build files; historical logs predate subsequent CI and evidence corrections.",

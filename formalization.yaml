@@ -53,12 +53,15 @@ automation:
       framework: OpenAI ChatGPT and Codex
       tool_setup: >-
         Astra produced the Lean formal proof development with Azriel Fasten;
-        Codex prepared the Palomar interface and compatibility work. Lean
-        tactics and numerical certificate generation were used throughout.
+        Codex prepared the Palomar interface, compatibility port, certificate
+        source compaction, readable proof macros, and CI and evidence repairs.
+        Lean tactics and numerical certificate generation were used throughout.
   notes: >-
     Formal proof credit is shared by Astra and Azriel Fasten. Astra is
     credited here as an AI system, not as a human author. Historical model
     configurations, costs, and a complete prompt log are not reconstructed.
+    Astra is the attribution supplied by the maintainer; this metadata does
+    not independently authenticate a historical model version.
 review:
   status: agent-reviewed
   reviewers: [OpenAI ChatGPT]
@@ -72,6 +75,12 @@ fidelity:
   divergences: >-
     Only the irrationality conclusion and its series formulation are exposed
     to Comparator. The paper's quantitative irrationality measure is omitted.
+    Conservative adaptations charge the full outer correction rank, adding
+    9/640 to the outer coefficient, and relax inner allocation by 1/36.
+    The periodic cubic primitive bound is 17, giving a 34/M^3 tail term
+    with endpoint -2677/48000. The proof fixes M=100000 and targets decay
+    10*n^2; these losses are included in the final coefficient, not omitted.
+    PROOF_GUIDE.md maps these adaptations to the formal development.
     An independent human verification of full source-to-formalization fidelity
     has not been recorded.
 alignment:
