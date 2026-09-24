@@ -23,6 +23,16 @@ def execute(argv, env):
     subprocess.run(argv,cwd=ROOT,env=env,check=True)
 
 
+# These modules ship with the selected Lean toolchain, not Lake packages.
+TOOLCHAIN_ROOTS = {"Init", "Lean", "Lake", "Std"}
+
+
+def package_build_targets(imports):
+    """Keep package imports while excluding the toolchain's prebuilt modules."""
+    return ["+" + name + ":olean" for name in sorted(set(imports))
+            if name.split(".", 1)[0] not in TOOLCHAIN_ROOTS]
+
+
 def main() -> int:
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument("targets",nargs="*",default=["Main"])
@@ -62,7 +72,8 @@ def main() -> int:
     execute(["lake","env","lean","--version"],env)
     if not args.no_cache: execute(["lake","exe","cache","get"],env)
     # Complete shared external dependencies once, before parallel local jobs.
-    if external: execute(["lake","build",*["+"+m+":olean" for m in external]],env)
+    package_targets = package_build_targets(external)
+    if package_targets: execute(["lake", "build", *package_targets], env)
     logs=ROOT/".lake"/"build"/"verification-logs";logs.mkdir(parents=True,exist_ok=True)
     results={};finished=set();pending=set(selected);running={};failed=False
     def build(m):
