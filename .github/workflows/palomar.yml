@@ -28,13 +28,71 @@ jobs:
         run: python3 -m unittest discover -s scripts -p test_build.py
       - name: Provision memory for proof export
         run: bash scripts/ci_memory.sh
+      # Resolve keys before restoring files, so cached files cannot affect them.
+      - name: Compute cache keys
+        id: cache-keys
+        env:
+          TOOLCHAIN: ${{ hashFiles('lean-toolchain') }}
+          CONFIGURATION: ${{ hashFiles('lake-manifest.json', 'lakefile.toml', 'vendor/**', '!vendor/**/.lake/**', '.github/workflows/palomar.yml', 'scripts/build.py', 'scripts/project_audit.py') }}
+          SOURCES: ${{ hashFiles('**/*.lean', '!vendor/**', '!.lake/**') }}
+        run: |
+          prefix="palomar-lake-v1-${{ runner.os }}-${{ runner.arch }}-ubuntu22-${TOOLCHAIN}-${CONFIGURATION}"
+          echo "toolchain=palomar-toolchain-v1-${{ runner.os }}-${{ runner.arch }}-ubuntu22-${TOOLCHAIN}" >> "$GITHUB_OUTPUT"
+          echo "lake-prefix=${prefix}-" >> "$GITHUB_OUTPUT"
+          echo "lake=${prefix}-${SOURCES}" >> "$GITHUB_OUTPUT"
+      - name: Restore Lean toolchain
+        id: toolchain-cache
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25
+        with:
+          path: ~/.elan/toolchains
+          key: ${{ steps.cache-keys.outputs.toolchain }}
+      - name: Restore compiled dependencies and proof
+        id: lake-cache
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25
+        with:
+          path: |
+            .lake/packages
+            .lake/build/lib
+            .lake/build/ir
+            .lake/build/bin
+            vendor/**/.lake/build/lib
+            vendor/**/.lake/build/ir
+            vendor/**/.lake/build/bin
+            !**/verification-logs/**
+          key: ${{ steps.cache-keys.outputs.lake }}
+          restore-keys: ${{ steps.cache-keys.outputs.lake-prefix }}
       - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
         with:
           build: false
+          # Save after our custom build, rather than inside this setup action.
+          use-github-cache: false
+          # build.py fetches missing Mathlib artifacts once after setup.
+          use-mathlib-cache: false
+      - name: Save Lean toolchain
+        if: steps.toolchain-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25
+        with:
+          path: ~/.elan/toolchains
+          key: ${{ steps.cache-keys.outputs.toolchain }}
       - name: Check source inventory
         run: python3 scripts/project_audit.py --check --output project-inventory.json
       - name: Build statements and proof
         run: python3 scripts/build.py --jobs 2 Tests.KernelCertificates Challenge Solution AxiomAudit
+      # Keep a successful build even when the later independent checks fail.
+      - name: Save compiled dependencies and proof
+        if: steps.lake-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25
+        with:
+          path: |
+            .lake/packages
+            .lake/build/lib
+            .lake/build/ir
+            .lake/build/bin
+            vendor/**/.lake/build/lib
+            vendor/**/.lake/build/ir
+            vendor/**/.lake/build/bin
+            !**/verification-logs/**
+          key: ${{ steps.cache-keys.outputs.lake }}
       - name: Install Comparator sandbox
         run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap
       - name: Compare statements and check independent kernels
