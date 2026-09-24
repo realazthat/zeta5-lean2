@@ -1,8 +1,21 @@
 # Guide to the ζ(5) formalization
 
-This guide maps the proof's mathematical structure to its Lean files. The source is Aabir Fauzan, “ζ(5) is irrational,” [Zenodo 22826419](https://zenodo.org/records/22826419). The development uses Lean 4.32.2, mathlib, and the proved prime number theorem from `PrimeNumberTheoremAnd`.
+This guide maps the proof's mathematical structure to its Lean files. The source is Aabir Fauzan, “ζ(5) is irrational,” [Zenodo 22826419](https://zenodo.org/records/22826419). The current port uses Lean 4.35.0-rc2, Mathlib, and the proved prime number theorem from `PrimeNumberTheoremAnd`.
 
-**Proof status.** `Main.lean` has compiled successfully with all arithmetic, analytic, numerical, and asymptotic inputs supplied. Both final theorems have no hypotheses, and their axiom audit reports only `propext`, `Classical.choice`, and `Quot.sound`. No mathematical gate remains. Some earlier files deliberately retain useful conditional theorems; the unconditional result is the assembled theorem in `Main.lean`. The project configuration and a representative subset were also checked through standard Lake. The complete clean Lake rebuild was not repeated; the verification report distinguishes this packaging check from the completed kernel-checked proof.
+**Verification scope.** The saved build and Comparator logs concern compact
+source commit `53f1134b621452a5b8339c3050367259d46b4de6` under Lean
+4.35.0-rc2. They report the complete build and acceptance by all three kernels.
+Both final theorem axiom listings contain only `propext`, `Classical.choice`,
+and `Quot.sound`. These historical logs do not establish current hosted CI
+success or independent source-paper fidelity; see `PALOMAR.md` for provenance.
+Earlier packaging reports that did not repeat a full clean build concern their
+own historical checks, rather than the later recorded complete build.
+
+Module introductions in `Zeta5Reduction.lean` and `PrimeSums.lean` retain
+historical toolchain descriptions; the root `lean-toolchain` and manifest govern
+the current port. The reduction module proves a conditional implication on
+purpose; `Main.lean` supplies its construction and estimates unconditionally.
+Its file-local disclaimer does not describe the assembled project's endpoint.
 
 The proved target in `Main.lean` is:
 
@@ -117,4 +130,4 @@ These losses are included in \(A\); they are not omitted numerical tolerances.
 
 Consequently the two eventual estimates give positive integer-polynomial values below \(e^{-10n^2}\), with degrees \(37n\). If \(\zeta(5)=a/b\) were rational, every nonzero such value would have magnitude at least \(b^{-37n}\). Quadratic exponential decay contradicts this linear-degree denominator bound. The proof of that implication is `Zeta5Reduction.irrational_of_small_polynomial_family`.
 
-For an audit, start with `Main.lean` and its `#print axioms` output, then follow the named endpoints above. The observed axiom set for both final theorems is exactly the standard foundations `propext`, `Classical.choice`, and `Quot.sound`; it contains no `sorryAx`, additional arithmetic axiom, or assumed paper estimate. Build instructions and dependency pins belong to `README.md` and the project configuration. A complete clean Lake rebuild is available through the documented build command; it was not repeated in full during the final packaging check.
+For an audit, start with `Main.lean` and its `#print axioms` output, then follow the named endpoints above. The observed axiom set for both final theorems is exactly the standard foundations `propext`, `Classical.choice`, and `Quot.sound`; it contains no `sorryAx`, additional arithmetic axiom, or assumed paper estimate. Build instructions and dependency pins belong to `README.md` and the project configuration. The documented build command reproduces the project; cached replay lines in historical logs do not establish a from-scratch rebuild. Current verification must be assessed at its actual commit.
