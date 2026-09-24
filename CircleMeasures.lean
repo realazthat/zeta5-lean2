@@ -22,7 +22,7 @@ noncomputable def circleMeasure (c : ℂ) (R : ℝ) : Measure ℂ :=
 instance circleMeasure_probability (c : ℂ) (R : ℝ) :
     IsProbabilityMeasure (circleMeasure c R) := by
   unfold circleMeasure
-  exact Measure.isProbabilityMeasure_map (by fun_prop)
+  infer_instance
 
 noncomputable def arcsineMap (a b : ℝ) (z : ℂ) : ℂ :=
   (((a+b)/2+(b-a)/2*z.re : ℝ) : ℂ)
@@ -33,7 +33,7 @@ noncomputable def arcsineMeasure (a b : ℝ) : Measure ℂ :=
 instance arcsineMeasure_probability (a b : ℝ) :
     IsProbabilityMeasure (arcsineMeasure a b) := by
   unfold arcsineMeasure
-  exact Measure.isProbabilityMeasure_map (by unfold arcsineMap; fun_prop)
+  infer_instance
 
 theorem integral_circleMeasure (f : ℂ → ℝ) (hf : Measurable f) (c : ℂ) (R : ℝ) :
     (∫ z, f z ∂circleMeasure c R) = circleAverage f c R := by

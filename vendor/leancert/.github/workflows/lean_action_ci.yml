@@ -1,0 +1,33 @@
+name: Core
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  core:
+    name: Stable library and downstream API
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+
+      - name: Build stable library
+        run: lake build LeanCert
+
+      - name: Build downstream interface contract
+        run: lake build DownstreamInterface DownstreamPatterns
+
+      - name: Build isolated public API contracts
+        run: |
+          lake build \
+            LeanCert.Test.PublicAPI.Eval \
+            LeanCert.Test.PublicAPI.Backend \
+            LeanCert.Test.PublicAPI.Bounds \
+            LeanCert.Test.PublicAPI.Optimization \
+            LeanCert.Test.PublicAPI.Isolation \
+            LeanCert.Test.PublicAPI.CertifiedBoundsImport \
+            LeanCert.Test.PublicAPI.TrustAxes \
+            LeanCert.Test.PublicAPI.DomainUmbrellas

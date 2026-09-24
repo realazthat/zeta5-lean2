@@ -1,0 +1,1069 @@
+# Tactics Reference
+
+Canonical syntax reference for LeanCert tactics. Start with [`leancert`](#leancert-and-leancert);
+the dedicated tactics below are advanced controls for selecting a particular
+proof strategy.
+
+## Syntax Index
+
+| Tactic | Accepted invocation forms |
+|---|---|
+| `leancert`, `leancert?` | `leancert ((budget \| taylorDepth \| subdivisions \| maxIterations) := n)* (trust := native\|kernel\|auto)?` |
+| `interval_decide`, `interval_auto`, `certify_bound` | optional positional Taylor depth, followed by optional `(trust := native\|kernel\|auto)` |
+| `interval_refute` | optional positional depth |
+| `interval_bound_subdiv` | optional positional Taylor depth and subdivision depth, followed by optional `(trust := ...)` |
+| `multivariate_bound` | optional positional iteration count, followed by optional `(trust := ...)` |
+| `opt_bound` | optional positional iteration count, followed by optional `mono` and `(trust := ...)` |
+| `root_bound`, `interval_roots`, `interval_unique_root` | optional positional Taylor depth, followed by optional `(trust := ...)` |
+| `system_unique_root`, `system_unique_root?` | optional `using cert`; automatic mode also accepts `(maxIterations := n)` and `(maxDimension := n)`, plus `(taylorDepth := n)` and `(trust := native\|kernel\|auto)` |
+| `interval_minimize`, `interval_maximize` | optional positional Taylor depth, followed by optional `(trust := ...)` |
+| `interval_minimize_mv`, `interval_maximize_mv` | optional positional Taylor depth, followed by optional `(trust := ...)` |
+| `interval_argmin`, `interval_argmax` | optional positional Taylor depth, followed by optional `(trust := ...)` |
+| `discover` | optional positional Taylor depth |
+| `finsum_bound` | optional `using evaluator proof`, then optional precision; or `auto evaluator`, then optional precision; all forms accept a trailing `(trust := ...)` |
+| `finsum_witness` | `finsum_witness evaluator using proof`, then optional precision |
+| `interval_bound_adaptive` | optional positional maximum-iteration count |
+| `integral_exact`, `interval_norm`, `finsum_expand`, `vec_simp` | no positional arguments |
+
+The interval, bound, root, optimization, extrema, and `finsum_bound` certificate
+tactics in the index accept a trailing inline `(trust := ...)`. `discover` and
+`finsum_witness` honor the scoped `leancert.trust` option. Exact kernel proof
+construction such as `integral_exact` does not consult the trust option. Trust
+selects certificate verification; it does not select a Rational, Dyadic, or
+Affine numerical backend.
+
+## Trust Modes
+
+LeanCert proof-producing certificate tactics close their Boolean certificates
+through a single verification choke point with an explicit trust choice.
+Diagnostic and simplification tactics do not necessarily produce a Boolean
+certificate:
+
+```lean
+example : Real.log 2 < 7/10 := by interval_decide (trust := kernel)
+example : ∀ x ∈ Set.Icc (0:ℝ) 1, Real.exp x ≤ 3 := by
+  certify_bound (trust := auto)
+
+set_option leancert.trust "kernel" in   -- or file/project-wide
+theorem log2 : Real.log 2 < 7/10 := by interval_decide
+
+#print axioms log2
+-- [propext, Classical.choice, Quot.sound]  ← no compiler trust
+```
+
+| Mode | Certificate closed by | Trusted base | Behavior on failure |
+|------|----------------------|--------------|---------------------|
+| `native` (default) | `native_decide` | kernel + compiler (`Lean.ofReduceBool`) | error |
+| `kernel` | `decide +kernel` | kernel only | hard error — **never** falls back to native |
+| `auto` | kernel, then native | kernel where it succeeds | fallback reported once per process; details under `trace[leancert.verification]` |
+
+Per-invocation `(trust := …)` overrides `set_option leancert.trust`, which
+overrides the native default. The syntax index above identifies tactics with
+an inline override. `discover` and `finsum_witness` use the scoped option.
+
+The verification boundary distinguishes a checker that evaluates to `false`
+from an inability to run the checker. The former is ordinary certificate
+rejection and may allow another solver strategy to run; kernel reduction,
+native compilation, evaluation, or protocol failures are terminal. Automatic
+mode falls back from an unfinished kernel attempt, never from a conclusive
+`false` result.
+
+Guidance from the calibration data (`scripts/bench-trust/README.md`): kernel
+verification is essentially free for point inequalities and quantified
+bounds, cheap for moderate partition/subdivision counts, and crosses over
+around 10⁴ finite-sum terms. `auto` encodes exactly this policy — its cost
+gates are tunable via the `leancert.trust.auto*` options. Pin the result in
+CI with `#assert_trust kernel thm` / `#assert_trust native thm`.
+
+## Semantic Front Door
+
+### `leancert` and `leancert?`
+
+`leancert` classifies the mathematical shape of a goal and tries a bounded
+portfolio through isolated, validated proof artifacts. Failed attempts restore
+the complete tactic state; successful native computations retain generated
+declarations required by their checked proof artifacts while restoring the
+caller's goal list. `leancert?` also reports the winning strategy and its
+dedicated advanced control when one exists. Closed Boolean checkers whose implementation is under the
+`LeanCert` namespace are routed to `native_decide`; arbitrary closed
+propositions are not.
+
+```lean
+import LeanCert.Tactic
+
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, x^2 ≤ 1 := by leancert
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, x^2 ≤ x + 1 := by leancert
+example : ∃ x ∈ Set.Icc (1 : ℝ) 2, x^2 = 2 := by leancert?
+example : (∫ x in (0 : ℝ)..1, x^2) = 1/3 := by leancert
+example : (∫ x in (0 : ℝ)..1, Real.exp x) ≤ 2 := by leancert
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, x * (1 - x) ≤ (27/100 : ℚ) := by
+  leancert (subdivisions := 8)
+```
+
+The semantic parser accepts interval membership and root/optimizer predicates
+in either conjunction order. Comparisons whose two operands both depend on the
+quantified variables are normalized to a difference bound and transported back
+to the theorem stated by the user. Numerical interval certificates currently
+operate over `ℝ`; another carrier is reported as an unsupported domain rather
+than an internal verifier failure.
+
+Imported unary enclosure rules registered through
+`LeanCert.Tactic.Extension` participate in univariate interval bounds. The
+router certifies each registered application, verifies its downstream Boolean
+checker under the requested trust policy, and applies the registered soundness
+theorem. Checked results become proof-carrying atoms for the ordinary core
+evaluator, allowing supported operations around them. `leancert?` reports every
+retained downstream checker and theorem together with any surrounding
+composition. Rejected or comparison-inconclusive registered candidates are
+retried by rational bisection up to `(subdivisions := n)`; domain obstructions
+remain terminal. See [Downstream enclosure extensions](extensions.md).
+
+For a narrow import and deterministic execution of exactly that strategy, use:
+
+```text
+import LeanCert.Tactic.Extension
+import LeanCert.Tactic.Enclosure
+
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, downstreamFunction x ≤ 2 := by
+  enclosure_bound (taylorDepth := 10) (subdivisions := 4) (trust := auto)
+```
+
+`enclosure_bound?` proves the same goal and reports certificate count, checked
+composition, subdivision statistics, and the observed verification route. Both
+forms are transactional on rejection, exhaustion, domain obstruction, and
+verification failure. The focused module does not import discovery, finite-sum,
+Krawczyk, or semantic-router tactics.
+
+Expected checker rejection, unsupported expressions, inconclusive enclosures,
+and certified counterexamples are rendered as separate diagnostic categories.
+Raw checker propositions are available only through
+`set_option trace.LeanCert.solver true`.
+
+Inline options are `budget`, `taylorDepth`, `subdivisions`, and
+`maxIterations`. The budget limits cumulative deterministic strategy cost; exact
+normalization is free. It does not alter
+Lean's heartbeat setting. Integral equalities over the rational-polynomial
+fragment use the executable `QPoly.checkExactIntegral` checker. Integral
+inequalities fall back to checked rational partition search. State ordinary
+integral equalities or inequalities and use `leancert`.
+
+Conjunctions of recognized numerical goals are routed recursively, including
+goals exposed by `forall_and`. Every child must be independently supported and
+proved. Disjunctions are intentionally not routed: choosing a logical branch
+is not a numerical-certification decision.
+
+`integral_exact` is the dedicated exact-polynomial tactic reported by
+`leancert?`; it supports rational constants, `+`, `-`, `*`, natural powers,
+and division by a nonzero rational constant.
+
+## Bound Proving
+
+### `certify_bound`
+
+Proves universal bounds over intervals using a Dyadic-first interval portfolio
+with Rational fallback. The verification route is independent of whichever
+numerical backend succeeds.
+
+```lean
+import LeanCert.Tactic.IntervalAuto
+
+-- Basic usage
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, Real.exp x ≤ 3 := by certify_bound
+
+-- With Taylor depth (higher = tighter bounds, slower)
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, Real.exp x ≤ 2.72 := by certify_bound 15
+
+-- Lower bounds
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, 0 ≤ Real.exp x := by certify_bound
+
+-- Strict inequalities
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, Real.exp x < 3 := by certify_bound
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `depth` | `ℕ` | 10 | Taylor series depth for transcendentals |
+
+**Supported functions:** `+`, `-`, `*`, `/`, `^` (rational exponents), `abs`, `max`, `min`, `sin`, `cos`, `exp`, `sqrt`, `sinh`, `cosh`, `tanh`, `atan`, `arsinh`, `atanh`, `sinc`, `erf`, `log`, `inv`
+
+**Note on rational exponents:** general rational exponents like `x^(1/3)` are lowered to `exp(log(x) * q)`, which requires the base to be provably positive from interval bounds.
+
+---
+
+### Verification routes
+
+`certify_bound`, `interval_decide`, `interval_auto`, and `leancert` accept an
+independent certificate-verification route. Kernel mode uses `decide +kernel`
+and never silently falls back.
+
+```lean
+import LeanCert.Tactic
+
+-- Kernel-only certificate verification.
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, Real.exp x ≤ 3 := by
+  certify_bound (trust := kernel)
+
+-- Kernel first, with a reported native fallback when appropriate.
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, Real.exp x ≤ 3 := by
+  certify_bound (trust := auto)
+```
+
+**Trust levels:**
+
+| Mode | Verification | Trusted Components |
+|---|---|---|
+| `kernel` | `decide +kernel` | Lean kernel only |
+| `native` (default) | `native_decide` | Lean kernel + compiler/runtime |
+| `auto` | Kernel first, with calibrated gates and reported fallback | Depends on the route used |
+
+**Diagnostics:** Enable `set_option trace.leancert.verification true` to see
+the selected verification route.
+
+---
+
+### `interval_decide`
+
+Proves point inequalities involving specific numbers (transcendentals like π, e).
+
+```lean
+import LeanCert.Tactic.IntervalAuto
+
+example : Real.pi < 3.15 := by interval_decide
+example : Real.exp 1 < 3 := by interval_decide
+example : Real.sin 1 + Real.cos 1 < 1.5 := by interval_decide
+example : Real.sqrt 2 < 1.42 := by interval_decide
+```
+
+Use this for concrete values. For universally quantified mathematical bounds,
+start with `leancert`; use `certify_bound` for explicit interval-engine control.
+
+---
+
+### `interval_auto`
+
+Combines normalization and interval automation for point or interval goals. It
+accepts the same optional Taylor depth and inline trust item as
+`interval_decide` and `certify_bound`.
+
+```lean
+import LeanCert.Tactic
+
+example : Real.exp 1 < 3 := by
+  interval_auto 10 (trust := kernel)
+```
+
+### `interval_norm`
+
+Normalizes supported interval expressions without selecting a semantic-router
+portfolio. It takes no arguments and is primarily a low-level building block.
+
+---
+
+## Counter-Example Search
+
+### `interval_refute`
+
+Searches for counter-examples to disprove false bounds.
+
+The following is a compiled expected-failure test: the bound is false because
+`x²` reaches `4` on `[-2, 2]`.
+
+```lean expect-error: Counter-example FOUND
+example : ∀ x ∈ Set.Icc (-2 : ℝ) 2, x * x ≤ 3 := by
+  interval_refute
+```
+
+This is an expected-failure example: the tactic reports a checked violating
+point and intentionally leaves the false theorem unproved.
+
+**Output types:**
+
+| Result | Meaning |
+|--------|---------|
+| `Verified` | Rigorous proof that bound fails at this point |
+| `Candidate` | Likely counter-example (may be precision artifact) |
+
+**Configuration:**
+
+```text
+-- In a development scratch theorem:
+-- interval_refute (config := { maxIterations := 100,
+--                              tolerance := 1 / 1000000 })
+```
+---
+
+## Discovery Tactics
+
+### `interval_minimize` / `interval_maximize`
+
+Proves existence of global minimum/maximum via branch-and-bound optimization.
+
+```lean
+import LeanCert.Tactic.Discovery
+
+-- Find and prove a lower bound exists
+example : ∃ m, ∀ x ∈ Set.Icc (0 : ℝ) 2, x * x - x ≥ m := by
+  interval_minimize
+
+-- With Taylor depth
+example : ∃ m, ∀ x ∈ Set.Icc (0 : ℝ) 1, Real.sin x ≥ m := by
+  interval_minimize 15
+```
+
+---
+
+### `interval_roots`
+
+Proves root existence via sign change detection (Intermediate Value Theorem).
+
+**Native syntax (recommended):**
+
+```lean
+import LeanCert.Tactic.Discovery
+
+-- Prove √2 exists in [1, 2]
+example : ∃ x ∈ Set.Icc (1 : ℝ) 2, x^2 - 2 = 0 := by
+  interval_roots
+
+-- Also supports f(x) = c form
+example : ∃ x ∈ Set.Icc (1 : ℝ) 2, x^2 = 2 := by
+  interval_roots
+
+-- Transcendental roots
+example : ∃ x ∈ Set.Icc (1 : ℝ) 2, Real.cos x = 0 := by
+  interval_roots
+```
+
+**Expr AST syntax (also supported):**
+
+```lean
+open LeanCert.Core
+
+def I12 : IntervalRat := ⟨1, 2, by norm_num⟩
+
+example : ∃ x ∈ I12, Expr.eval (fun _ => x)
+    (Expr.add (Expr.mul (Expr.var 0) (Expr.var 0)) (Expr.neg (Expr.const 2))) = 0 := by
+  interval_roots
+```
+
+**How it works:**
+1. Evaluates expression at interval endpoints
+2. Detects sign change (f(lo) < 0 < f(hi) or vice versa)
+3. Applies IVT to prove existence
+
+`intervalRootsCoreTyped` returns the retained checker and verifier identities,
+verification usage, and Taylor depth. A false sign-change check is typed
+rejection and restores the original tactic state.
+
+---
+
+### `interval_unique_root`
+
+Proves root uniqueness via Newton contraction mapping.
+
+**Native syntax (recommended):**
+
+```lean
+import LeanCert.Tactic.Discovery
+
+-- Prove there's exactly one root of x² - 2 in [1, 2]
+example : ∃! x ∈ Set.Icc (1 : ℝ) 2, x^2 - 2 = 0 := by
+  interval_unique_root
+```
+
+**Expr AST syntax (also supported):**
+
+```lean
+open LeanCert.Core
+
+def I12 : IntervalRat := ⟨1, 2, by norm_num⟩
+def expr_x2_minus_2 : Expr := Expr.add (Expr.mul (Expr.var 0) (Expr.var 0)) (Expr.neg (Expr.const 2))
+
+example : ∃! x ∈ I12, Expr.eval (fun _ => x) expr_x2_minus_2 = 0 := by
+  unfold expr_x2_minus_2
+  interval_unique_root
+```
+
+**How it works:**
+1. Computes Newton operator N(x) = x - f(x)/f'(x)
+2. Verifies N maps interval into itself
+3. Verifies |N'(x)| < 1 (contraction)
+4. Banach fixed-point theorem gives uniqueness
+
+`intervalUniqueRootCoreTyped` distinguishes unsupported goals, rejected
+Newton certificates, proof transport failures, and internal verification
+failures. Every failure is transactional.
+
+---
+
+### `system_unique_root` and `system_unique_root?`
+
+Certifies a unique zero of a square nonlinear system. Automatic mode generates
+a rational `KrawczykCert n`; manual mode accepts a user-supplied certificate:
+
+```lean
+import LeanCert.Examples.Krawczyk
+import LeanCert.Tactic
+
+open LeanCert.Core LeanCert.Engine LeanCert.Validity
+open LeanCert.Examples.Krawczyk
+
+example : ∃! x, FinBoxMem x box ∧ SystemZero system x := by
+  system_unique_root (maxIterations := 8) (taylorDepth := 10) (trust := auto)
+```
+
+The tactic accepts the conjunction in either order. `system_unique_root?`
+proves the same goal and reports attempts, Newton refinements, generated center
+and preconditioner, checked contraction bound, `krawczykCheck`,
+`verify_unique_system_root`, and the observed verification route. Candidate
+generation is untrusted and the selected candidate is replayed through the I1
+checker. Candidate rejection, singular midpoint Jacobians, budget exhaustion,
+unsupported AD, and dimension limits are typed, transactional failures.
+
+Use `system_unique_root using certificate` to bypass search while retaining the
+same trusted verification boundary. Automatic box subdivision is intentionally
+excluded because a certificate on one sub-box does not prove uniqueness over
+the original target box.
+
+---
+
+### Integral goals
+
+State ordinary equalities and inequalities and use `leancert`:
+
+```lean
+example : (∫ x in (0 : ℝ)..1, x ^ 2) = 1 / 3 := by leancert
+example : (∫ x in (0 : ℝ)..1, Real.sin x) ≤ 1 := by leancert
+```
+
+Use `integral_exact` as an advanced control when the integrand is in the
+rational-polynomial fragment:
+
+```lean
+example : (∫ x in (0 : ℝ)..1, x ^ 2) = 1 / 3 := by
+  integral_exact
+```
+
+**How it works:**
+
+1. Reifies the supported rational polynomial.
+2. Checks its exact rational antiderivative value with
+   `QPoly.checkExactIntegral`.
+3. Applies `QPoly.integral_eq_of_check` to the ordinary integral goal.
+
+Nonpolynomial integral inequalities use the separate checked partition-search
+strategy selected by `leancert`.
+
+## Interactive Commands
+
+These commands are for **exploration in the editor**, not for proofs. Use them to discover bounds before writing theorems.
+
+### `#bounds`
+
+Find both minimum and maximum of a function on an interval.
+
+```lean
+import LeanCert.Discovery.Commands
+
+#bounds (fun x => x^2 + Real.sin x) on [-2, 2]
+```
+
+**Output:**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#bounds Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  f(x) ∈ [-5, 5]
+
+  Minimum: -5 (± 4.77)
+  Maximum: 5 (± 0.91)
+
+  Total iterations: 32
+  Verified: ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+---
+
+### `#find_min` / `#find_max`
+
+Find the minimum or maximum separately, with optional precision control.
+
+```lean
+import LeanCert.Discovery.Commands
+
+-- Basic usage
+#find_min (fun x => x^2 + Real.sin x) on [-2, 2]
+#find_max (fun x => Real.exp x - x^2) on [0, 1]
+
+-- Higher precision for tighter bounds
+#find_max (fun x => Real.exp x) on [0, 1] precision 20
+```
+
+**Syntax:**
+```
+#find_min <function> on [<lo>, <hi>]
+#find_min <function> on [<lo>, <hi>] precision <n>
+```
+
+**Parameters:**
+- `function`: A lambda `(fun x => ...)` with the expression
+- `lo`, `hi`: Integer bounds (rationals not supported in syntax)
+- `precision`: Optional Taylor depth (default: 10)
+
+---
+
+### `#explore`
+
+Interactive function analysis in the editor. Shows range, extrema, and roots.
+
+```lean
+import LeanCert.Tactic.Discovery
+
+open LeanCert LeanCert.Core
+
+-- Explore sin(x) on [0, 4]
+#explore (Expr.sin (Expr.var 0)) on [0, 4]
+```
+
+**Output includes:**
+- Domain and computed range
+- Global minimum and maximum with locations
+- Sign changes (potential roots)
+- Monotonicity information
+
+---
+
+## Comparison Table
+
+| Tactic | Purpose | Verification route | Speed |
+|--------|---------|-------|-------|
+| `certify_bound` | Prove bounds | `native`, `kernel`, or `auto` | Medium |
+| `interval_decide` | Point inequalities | `native`, `kernel`, or `auto` | Fast |
+| `interval_refute` | Find diagnostic counter-example data | checker-dependent diagnostic | Slow |
+| `interval_roots` | Prove root exists | Inline or configured `leancert.trust` route | Medium |
+| `interval_unique_root` | Prove root unique | Inline or configured `leancert.trust` route | Slow |
+| `interval_minimize` | Prove min exists | Inline or configured `leancert.trust` route | Slow |
+| `interval_maximize` | Prove max exists | Inline or configured `leancert.trust` route | Slow |
+| `leancert` | Prove ordinary integral equalities and inequalities | checked exact/partition certificates | Medium |
+| `discover` | Auto-route min/max | Configured `leancert.trust` route | Slow |
+| `interval_minimize_mv` | Multivariate min | Inline or configured `leancert.trust` route | Slow |
+| `interval_maximize_mv` | Multivariate max | Inline or configured `leancert.trust` route | Slow |
+| `multivariate_bound` | N-dim bounds | Inline or configured `leancert.trust` route | Medium |
+| `root_bound` | Prove f(x) ≠ 0 | Inline or configured `leancert.trust` route | Medium |
+| `interval_bound_subdiv` | Tight bounds via subdivision | Inline or configured `leancert.trust` route | Slow |
+| `interval_argmax` | Prove an attained maximizer | Inline or configured `leancert.trust` route | Slow |
+| `interval_argmin` | Prove an attained minimizer | Inline or configured `leancert.trust` route | Slow |
+| `vec_simp` | Simplify vector indexing | `dsimp` | Fast |
+| `finsum_expand` | Expand finite sums | Configured `leancert.trust` route for generated side conditions | Fast |
+
+---
+
+## Additional Tactics
+
+### `discover`
+
+Meta-tactic that analyzes the goal and automatically routes to `interval_minimize` or `interval_maximize`.
+
+```lean
+def discoveryInterval : IntervalRat := ⟨-1, 1, by norm_num⟩
+
+def squareExpr : Expr := Expr.mul (Expr.var 0) (Expr.var 0)
+
+example : ∃ m : ℚ, ∀ x ∈ discoveryInterval,
+    Expr.eval (fun _ => x) squareExpr ≥ m := by
+  discover
+
+example : ∃ M : ℚ, ∀ x ∈ discoveryInterval,
+    Expr.eval (fun _ => x) squareExpr ≤ M := by
+  discover
+```
+
+---
+
+### `interval_minimize_mv` / `interval_maximize_mv`
+
+Multivariate versions of minimize/maximize for N-dimensional domains.
+
+```lean
+import LeanCert.Tactic.Discovery
+
+-- Find minimum over 2D domain
+example : ∃ m : ℚ, ∀ x ∈ Set.Icc (0:ℝ) 1, ∀ y ∈ Set.Icc (0:ℝ) 1,
+    x*x + y*y ≥ m := by
+  interval_minimize_mv
+
+-- Find maximum over 2D domain
+example : ∃ M : ℚ, ∀ x ∈ Set.Icc (0:ℝ) 1, ∀ y ∈ Set.Icc (0:ℝ) 1,
+    x + y ≤ M := by
+  interval_maximize_mv
+```
+
+Uses more samples (300) and iterations (2000) than univariate versions.
+Both tactics expose typed discovery results to `leancert`: reports retain the
+actual search termination, gap, checker, Golden Theorem, and verification
+route. A loose search remains a valid success only when the selected endpoint
+is independently certified.
+
+---
+
+### `multivariate_bound`
+
+Proves bounds over multi-variable domains directly.
+
+```lean
+import LeanCert.Tactic.IntervalAuto
+
+-- Prove x + y ≤ 2 on [0,1] × [0,1]
+example : ∀ x ∈ Set.Icc (0:ℝ) 1, ∀ y ∈ Set.Icc (0:ℝ) 1,
+    x + y ≤ (2 : ℚ) := by
+  multivariate_bound
+```
+
+---
+
+### `opt_bound`
+
+Proves lower or upper bounds for explicit `Expr`/`Box` goals using checked
+global optimization. Its accepted forms are:
+
+```text
+opt_bound
+opt_bound <maxIterations>
+opt_bound <maxIterations> mono
+opt_bound <maxIterations> mono (trust := kernel)
+```
+
+`mono` enables monotonicity pruning. A trailing trust item is optional. This is
+a strategy choice, not a
+numerical-backend or trust selection.
+
+Reported execution includes the exact checker, Golden Theorem, verification
+route, configured iteration limit, and tolerance. The Boolean certificate API
+does not expose actual iteration counts, so reports do not infer them.
+
+---
+
+### `root_bound`
+
+Proves absence of roots by showing a function is strictly positive or negative.
+
+**Native syntax (recommended):**
+
+```lean
+import LeanCert.Tactic.IntervalAuto
+
+-- x² + 1 ≠ 0 on [0, 1] (always positive)
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, x * x + 1 ≠ 0 := by
+  root_bound
+
+-- exp(x) ≠ 0 on [0, 1]
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, Real.exp x ≠ 0 := by
+  root_bound 15
+```
+
+**Expr AST syntax (also supported):**
+
+```lean
+open LeanCert.Core
+
+def I01 : IntervalRat := ⟨0, 1, by norm_num⟩
+
+example : ∀ x ∈ I01, Expr.eval (fun _ => x)
+    (Expr.add (Expr.mul (Expr.var 0) (Expr.var 0)) (Expr.const 1)) ≠ (0 : ℝ) := by
+  root_bound
+```
+
+`rootBoundCoreTyped` reports the exact `checkNoRoot`/`verify_no_root`
+certificate pair. A zero-exclusion checker returning false is a resumable
+rejection rather than an infrastructure exception, and the original goal is
+restored.
+
+---
+
+### `interval_bound_subdiv`
+
+Proves bounds using progressive subdivision when direct interval evaluation is too loose.
+
+```lean
+import LeanCert.Tactic.IntervalAuto
+
+-- Tighter bound requiring subdivision
+example : ∀ x ∈ Set.Icc (0:ℝ) 1, Real.exp x ≤ (272/100 : ℚ) := by
+  interval_bound_subdiv 15 3 (trust := kernel)
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `depth` | `ℕ` | 10 | Taylor series depth |
+| `subdivDepth` | `ℕ` | 3 | Number of subdivision levels |
+
+A trailing `(trust := native|kernel|auto)` is optional.
+
+The implementation separates untrusted search from proof validation. Each box
+is evaluated once for subdivision decisions, and each retained leaf closes one
+fixed Boolean certificate through the configured verification route. The typed
+core reports maximum/deepest depth, boxes examined, certified leaves, the exact
+checker and Golden Theorem, and aggregate verification usage. Exhaustion,
+certificate rejection, domain obstruction, proof transport failure, and
+unexpected internal failure are distinct outcomes; every failure restores the
+complete caller tactic state.
+
+---
+
+### `interval_bound_adaptive`
+
+Runs the original branch-and-bound bound prover with an optional maximum
+iteration count:
+
+```text
+interval_bound_adaptive
+interval_bound_adaptive <maxIterations>
+```
+
+It honors the scoped `leancert.trust` option and does not accept an inline
+trust item. Prefer `leancert` for automatic routing or `opt_bound` when working
+directly with explicit `Expr`/`Box` optimization goals.
+
+---
+
+### `interval_argmax` / `interval_argmin`
+
+Find the point where a function achieves its maximum/minimum.
+
+**`interval_argmax` - Native syntax (recommended):**
+
+```lean
+import LeanCert.Tactic.Discovery
+
+-- Find the maximizer of x² on [-1,1] (argmax at endpoints x = ±1)
+example : ∃ x ∈ Set.Icc (-1 : ℝ) 1, ∀ y ∈ Set.Icc (-1 : ℝ) 1,
+    y * y ≤ x * x := by
+  interval_argmax
+
+-- Linear function: max of 2x+1 on [0,1] (argmax at x=1)
+example : ∃ x ∈ Set.Icc (0 : ℝ) 1, ∀ y ∈ Set.Icc (0 : ℝ) 1,
+    2 * y + 1 ≤ 2 * x + 1 := by
+  interval_argmax
+```
+
+**`interval_argmin` - Native syntax (recommended):**
+
+```lean
+-- Find the minimizer of x on [0,1] (argmin at x=0)
+example : ∃ x ∈ Set.Icc (0 : ℝ) 1, ∀ y ∈ Set.Icc (0 : ℝ) 1,
+    x ≤ y := by
+  interval_argmin
+```
+
+**Expr AST syntax (also supported):**
+
+```lean
+open LeanCert.Core
+
+def I_neg1_1 : IntervalRat := ⟨-1, 1, by norm_num⟩
+def I01 : IntervalRat := ⟨0, 1, by norm_num⟩
+
+-- Argmax with Expr AST
+example : ∃ x ∈ I_neg1_1, ∀ y ∈ I_neg1_1,
+    Expr.eval (fun _ => y) (Expr.mul (Expr.var 0) (Expr.var 0)) ≤
+    Expr.eval (fun _ => x) (Expr.mul (Expr.var 0) (Expr.var 0)) := by
+  interval_argmax
+
+-- Argmin with Expr AST
+example : ∃ x ∈ I01, ∀ y ∈ I01,
+    Expr.eval (fun _ => x) (Expr.var 0) ≤
+    Expr.eval (fun _ => y) (Expr.var 0) := by
+  interval_argmin
+```
+
+**How it works:**
+1. Runs branch-and-bound optimization to find candidate optimizer `xOpt`
+2. Evaluates `f(xOpt)` to get a concrete bound `c`
+3. For argmax: Proves `∀ y ∈ I, f(y) ≤ c` and `c ≤ f(xOpt)`, then applies transitivity
+4. For argmin: Proves `∀ y ∈ I, c ≤ f(y)` and `f(xOpt) ≤ c`, then applies transitivity
+
+**Limitations:**
+- Works best when the argmax/argmin is at a rational point (e.g., interval endpoints)
+- For transcendental functions, may require higher Taylor depth
+- For interior optima at irrational points, consider using `interval_maximize`/`interval_minimize` instead
+
+---
+
+### Low-Level Manual Tactics
+
+For fine-grained control, use these macros from `LeanCert.Tactic.Interval`:
+
+```lean
+import LeanCert.Tactic.Interval
+
+open LeanCert.Core LeanCert.Engine
+
+def xSq : Expr := Expr.mul (Expr.var 0) (Expr.var 0)
+def xSq_supp : ExprSupportedCore xSq :=
+  ExprSupportedCore.mul (ExprSupportedCore.var 0) (ExprSupportedCore.var 0)
+
+def I01 : IntervalRat := ⟨0, 1, by norm_num⟩
+
+-- Manual bounds with explicit AST and support proof
+example : ∀ x ∈ I01, Expr.eval (fun _ => x) xSq ≤ (1 : ℚ) := by
+  interval_le xSq, xSq_supp, I01, 1
+
+example : ∀ x ∈ I01, (0 : ℚ) ≤ Expr.eval (fun _ => x) xSq := by
+  interval_ge xSq, xSq_supp, I01, 0
+```
+
+| Macro | Purpose |
+|-------|---------|
+| `interval_le` | `∀ x ∈ I, f(x) ≤ c` |
+| `interval_ge` | `∀ x ∈ I, c ≤ f(x)` |
+| `interval_lt` | `∀ x ∈ I, f(x) < c` |
+| `interval_gt` | `∀ x ∈ I, c < f(x)` |
+| `interval_le_pt` | Pointwise `f(x) ≤ c` given `x ∈ I` |
+| `interval_ge_pt` | Pointwise `c ≤ f(x)` given `x ∈ I` |
+
+**Extended (noncomputable) versions** for expressions with `exp`:
+`interval_ext_le`, `interval_ext_ge`, `interval_ext_lt`, `interval_ext_gt`
+
+These reduce the goal to a rational inequality that must be proved manually.
+
+---
+
+## Simplification Tactics
+
+### `vec_simp`
+
+Simplifies vector indexing expressions with explicit `Fin.mk` constructors using a custom `dsimproc` that extracts the natural number from `Fin.mk n proof` and walks the `vecCons` chain directly.
+
+```lean
+import Mathlib.Data.Real.Basic
+import Mathlib.Tactic
+import LeanCert.Tactic.VecSimp
+
+-- Basic indexing: reduces ![a, b, c] ⟨i, proof⟩ to the i-th element
+example : (![1, 2, 3] : Fin 3 → ℕ) ⟨0, by omega⟩ = 1 := by vec_simp
+example : (![1, 2, 3] : Fin 3 → ℕ) ⟨1, by omega⟩ = 2 := by vec_simp
+example : (![1, 2, 3] : Fin 3 → ℕ) ⟨2, by omega⟩ = 3 := by vec_simp
+
+-- Symbolic elements
+example (a b c : ℝ) : (![a, b, c] : Fin 3 → ℝ) ⟨1, by omega⟩ = b := by vec_simp
+
+-- Longer vectors
+example : (![1, 2, 3, 4, 5] : Fin 5 → ℕ) ⟨3, by omega⟩ = 4 := by vec_simp
+
+-- In expressions (simplifies all vector indexing)
+example (a b c : ℝ) : (![a, b, c] : Fin 3 → ℝ) ⟨0, by omega⟩ + 1 = a + 1 := by vec_simp
+
+-- Combines well with ring for algebraic manipulation
+example (a₀ a₁ : ℝ) :
+    (![a₀, a₁] : Fin 2 → ℝ) ⟨0, by omega⟩ * (![a₀, a₁] : Fin 2 → ℝ) ⟨1, by omega⟩ +
+    (![a₀, a₁] : Fin 2 → ℝ) ⟨1, by omega⟩ * (![a₀, a₁] : Fin 2 → ℝ) ⟨0, by omega⟩ = 2 * a₀ * a₁ := by
+  vec_simp; ring
+```
+
+**Why this exists:** Mathlib's `cons_val` simproc uses `int?` to extract indices, which only matches numeric literals like `0`, `1`, `2`. It doesn't match explicit `Fin.mk` applications like `⟨0, by omega⟩`, which commonly appear in proofs (e.g., from `finsum_expand` or matrix indexing). The `vec_simp` dsimproc fills that gap by pattern-matching on `Fin.mk` directly.
+
+**How it works:** A `dsimproc` (`VecSimp.vecConsFinMk`) matches applications of `vecCons` to a `Fin.mk n proof` index, extracts `n`, and recursively traverses the cons chain to return the n-th element. This is combined with standard Mathlib vector lemmas (`cons_val_zero`, `cons_val_one`, `head_cons`).
+
+---
+
+## Finite-Sum Tactics
+
+### `finsum_bound` / `finsum_witness`
+
+`finsum_bound` proves certified bounds for supported finite sets. It can
+reify the summand automatically or use a supplied evaluator and correctness
+proof:
+
+```text
+finsum_bound
+finsum_bound <precision>
+finsum_bound using <evaluator> <proof>
+finsum_bound using <evaluator> <proof> <precision>
+finsum_bound auto <evaluator>
+finsum_bound auto <evaluator> <precision>
+finsum_bound <precision> (trust := kernel)
+
+finsum_witness <evaluator> using <proof>
+finsum_witness <evaluator> using <proof> <precision>
+```
+
+The optional precision is measured in bits. `finsum_bound` accepts a trailing
+inline trust override in every form. `finsum_witness` honors the scoped
+`leancert.trust` option but does not accept an inline override.
+
+All finite-sum forms use transactional typed cores. Reified routes evaluate a
+candidate once to distinguish an invalid summand domain from an enclosure that
+does not prove the requested bound, then close one retained Boolean
+certificate. Witness routes retain their actual index path, term count,
+enclosure, checker, verifier, and verification usage. A failed `Fin n`
+rewrite or certificate attempt restores the original goal and local state.
+
+### `finsum_expand`
+
+Expands finite sums over Finsets into explicit additions.
+
+```lean
+import Mathlib.Data.Real.Basic
+import Mathlib.Tactic
+import LeanCert.Tactic.FinSumExpand
+
+-- Interval finsets (Icc = closed-closed)
+example (f : ℕ → ℝ) : ∑ k ∈ Finset.Icc 1 3, f k = f 1 + f 2 + f 3 := by finsum_expand
+
+-- Single element
+example (f : ℕ → ℝ) : ∑ k ∈ Finset.Icc 5 5, f k = f 5 := by finsum_expand
+
+-- Ico (closed-open)
+example (f : ℕ → ℝ) : ∑ k ∈ Finset.Ico 1 4, f k = f 1 + f 2 + f 3 := by finsum_expand
+
+-- Ioc (open-closed)
+example (f : ℕ → ℝ) : ∑ k ∈ Finset.Ioc 1 3, f k = f 2 + f 3 := by finsum_expand
+
+-- Ioo (open-open)
+example (f : ℕ → ℝ) : ∑ k ∈ Finset.Ioo 1 4, f k = f 2 + f 3 := by finsum_expand
+
+-- Iic (unbounded below, closed) - for ℕ, means [0, n]
+example (f : ℕ → ℝ) : ∑ k ∈ Finset.Iic 2, f k = f 0 + f 1 + f 2 := by finsum_expand
+
+-- Iio (unbounded below, open) - for ℕ, means [0, n)
+example (f : ℕ → ℝ) : ∑ k ∈ Finset.Iio 3, f k = f 0 + f 1 + f 2 := by finsum_expand
+
+-- Empty intervals
+example (f : ℕ → ℝ) : ∑ k ∈ Finset.Ico 5 5, f k = 0 := by finsum_expand
+
+-- Explicit finsets
+example (f : ℕ → ℝ) : ∑ k ∈ ({1, 3, 7} : Finset ℕ), f k = f 1 + f 3 + f 7 := by finsum_expand
+
+-- Combines with ring for evaluation
+example : ∑ k ∈ Finset.Icc 1 4, (fun n : ℕ => (n : ℝ)) k = 10 := by finsum_expand; ring
+
+-- Power series patterns
+example (a : ℕ → ℝ) (r : ℝ) : ∑ n ∈ Finset.Icc 1 3, |a n| * r ^ n =
+    |a 1| * r ^ 1 + |a 2| * r ^ 2 + |a 3| * r ^ 3 := by finsum_expand
+```
+
+**Supported interval types:**
+
+| Interval | Meaning | Example |
+|----------|---------|---------|
+| `Finset.Icc a b` | [a, b] closed-closed | `Icc 1 3` → {1, 2, 3} |
+| `Finset.Ico a b` | [a, b) closed-open | `Ico 1 4` → {1, 2, 3} |
+| `Finset.Ioc a b` | (a, b] open-closed | `Ioc 1 3` → {2, 3} |
+| `Finset.Ioo a b` | (a, b) open-open | `Ioo 1 4` → {2, 3} |
+| `Finset.Iic n` | [0, n] for ℕ | `Iic 2` → {0, 1, 2} |
+| `Finset.Iio n` | [0, n) for ℕ | `Iio 3` → {0, 1, 2} |
+| `{a, b, ...}` | Explicit set | `{1, 3, 7}` |
+| `∑ i : Fin n, f i` | Fin univ | `Fin 3` → {0, 1, 2} |
+
+**How it works:** Uses `Finset.sum_cons` and `Finset.sum_empty` rewriting combined with `native_decide` to evaluate finset membership. For `Fin n` sums, uses `Fin.sum_univ_ofNat` when `n` is a literal.
+
+**Why this exists:** When proving bounds involving finite sums, you often need to expand them for arithmetic simplification. Without this tactic, you'd need to manually define "bridge lemmas" for each specific range.
+
+### Shared finite-sum parser
+
+`finsum_bound` and `finsum_witness` share a finite-set parser for their
+certificate-generating paths. It recognizes `Finset.Icc`, `Finset.Ico`,
+`Finset.Ioc`, `Finset.Ioo`, `Finset.range`, and explicit finite sets such as
+`{1, 3, 7}` when the endpoints or elements are natural-number literals.
+
+---
+
+## Common Patterns
+
+### Eventual bounds and cutoff discovery
+
+`eventual_bound` certifies natural-number tails of the form
+`q / (n : ℝ) ^ k ≤ c`, where `q` is nonnegative, `k` and the cutoff are
+positive, and all fixed values are rational. The endpoint comparison is
+checked exactly; monotonic decay of reciprocal powers proves the entire
+infinite tail.
+
+```lean
+import LeanCert.Tactic
+
+example : ∀ n : Nat, 100 ≤ n → (1 : ℝ) / n ≤ 1 / 100 := by
+  eventual_bound
+
+example : ∃ N : Nat, ∀ n ≥ N, (3 : ℝ) / n ^ 2 ≤ 3 / 100 := by
+  eventual_bound using 10
+
+example : ∃ N : Nat, ∀ n ≥ N, (3 : ℝ) / n ^ 2 ≤ 1 / 1000 := by
+  eventual_bound
+
+-- The semantic router recognizes the same existential theorem shape.
+example : ∃ N : Nat, ∀ n ≥ N, (3 : ℝ) / n ^ 2 ≤ 1 / 1000 := by
+  leancert
+```
+
+`eventual_bound?` proves the same goal and reports the selected tail rule and
+cutoff source. For an existential goal without `using N`, LeanCert performs an
+untrusted exponential search followed by bounded binary refinement. The
+resulting cutoff is replayed through the exact checker before the Golden
+Theorem constructs the proof. Use `(maxIterations := n)` to bound candidate
+checks; if refinement exhausts the budget after finding a valid upper bracket,
+LeanCert safely returns the verified upper cutoff rather than claiming
+minimality.
+
+The current certificate language remains deliberately narrow: nonnegative
+rational multiples of reciprocal powers over `Nat`. General
+logarithmic/exponential tails and AD-based tail rules are follow-up work.
+
+### Proving a function is bounded
+
+```lean
+-- Upper and lower bounds with explicit interval-engine control
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, -1 ≤ Real.sin x := by
+  certify_bound
+
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, Real.sin x ≤ 1 := by
+  certify_bound
+```
+
+### Proving a root exists and is unique
+
+```lean
+def rootsInterval : IntervalRat := ⟨1, 2, by norm_num⟩
+
+def rootsExpr : Expr :=
+  Expr.add (Expr.mul (Expr.var 0) (Expr.var 0)) (Expr.neg (Expr.const 2))
+
+example : ∃ x ∈ rootsInterval, Expr.eval (fun _ => x) rootsExpr = 0 := by
+  unfold rootsExpr
+  interval_roots
+
+example : ∃! x, x ∈ rootsInterval ∧
+    Expr.eval (fun _ => x) rootsExpr = 0 := by
+  unfold rootsExpr
+  interval_unique_root
+```
+
+### Debugging failed proofs
+
+```lean
+set_option trace.LeanCert.router true in
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, x ≤ 1 := by leancert
+
+set_option trace.leancert.verification true in
+example : ∀ x ∈ Set.Icc (0 : ℝ) 1, x ≤ 1 := by
+  certify_bound (trust := auto)
+```
+
+If a bound is too tight, increase Taylor depth, use subdivision, or run
+`interval_refute` to determine whether the proposed bound is false.
+### `interval_argmin` and `interval_argmax`
+
+These tactics discover a rational candidate and certify that its value is
+attained on the requested interval.  For `Expr.eval` goals the proof retains a
+global-bound certificate and a point-value certificate, combined by
+`LeanCert.Validity.verify_argmin` or `LeanCert.Validity.verify_argmax`.
+Certificate rejection is distinct from verification infrastructure failure,
+and failed proof branches do not contribute verification telemetry.
+
+For existence-only extrema, `leancert` prefers the non-numerical compact
+extreme-value theorem. Invoke these dedicated tactics when a discovered
+rational witness and constituent-certificate telemetry are desired.

@@ -1,0 +1,91 @@
+version: v0.4
+project:
+  name: Irrationality of the Riemann zeta value at five
+  description: >-
+    Formalization of the irrationality claim for the real value of the Riemann
+    zeta function at five in Aabir Fauzan's September 2026 preprint. The two
+    compared statements assert irrationality of this zeta value and of the
+    sum of reciprocal fifth powers. The development constructs integer
+    polynomials using normalized Hankel determinants, proves positivity and
+    decay estimates, and derives irrationality. The paper's quantitative
+    irrationality-measure claim is not part of this submission.
+  authors: [Azriel Fasten]
+  responsible_maintainers: [Azriel Fasten]
+  license: MIT
+classification:
+  arxiv: [math.NT]
+  msc2020: [11J72, 11M06]
+sources:
+  - title: "ζ(5) is irrational"
+    authors: [Aabir Fauzan]
+    type: paper
+    id: "doi:10.5281/zenodo.22826419"
+    location: https://zenodo.org/records/22826419
+    relationship: formalizes
+    note: >-
+      Version 1, dated 17 September 2026. Original mathematical proof credit
+      belongs to Aabir Fauzan. This repository formalizes the irrationality
+      conclusion; it does not claim authorship of the source proof or imply
+      endorsement by the source author.
+    license: "Copyright 2026 Aabir Fauzan; all rights reserved"
+  - title: Arithmetic of linear forms involving odd zeta values
+    authors: [Wadim Zudilin]
+    type: paper
+    id: "arXiv:math/0206176"
+    location: https://arxiv.org/abs/math/0206176
+    relationship: background
+    note: Context for collective irrationality results; not formalized here.
+status:
+  scope: >-
+    Two unconditional irrationality statements, using standard Mathlib
+    definitions. Deliberate Challenge holes are excluded from proof counts.
+    Counts describe the first-party proof development; vendored dependencies
+    include unused unfinished declarations, which must not occur in the
+    compared Solution proofs' axiom closure.
+    The quantitative irrationality measure is not formalized here.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: [propext, Classical.choice, Quot.sound]
+automation:
+  methods:
+    - method: agent
+      models: [Astra]
+      framework: OpenAI ChatGPT and Codex
+      tool_setup: >-
+        Astra produced the Lean formal proof development with Azriel Fasten;
+        Codex prepared the Palomar interface and compatibility work. Lean
+        tactics and numerical certificate generation were used throughout.
+  notes: >-
+    Formal proof credit is shared by Astra and Azriel Fasten. Astra is
+    credited here as an AI system, not as a human author. Historical model
+    configurations, costs, and a complete prompt log are not reconstructed.
+review:
+  status: agent-reviewed
+  reviewers: [OpenAI ChatGPT]
+  notes: >-
+    Zeta5-Proof-Audit.md records the prior AI audit and its limits, including
+    the absence of a fresh full rebuild in that review. Historical kernel
+    reports concern Lean 4.32.2, not the Palomar port. No independent human
+    mathematical review has been established. See PALOMAR.md for current
+    reproduction results.
+fidelity:
+  divergences: >-
+    Only the irrationality conclusion and its series formulation are exposed
+    to Comparator. The paper's quantitative irrationality measure is omitted.
+    An independent human verification of full source-to-formalization fidelity
+    has not been recorded.
+alignment:
+  namespace: Zeta5Palomar
+  statements:
+    - source: Irrationality conclusion
+      lean: Zeta5Palomar.irrational_zeta_five
+      module: Solution
+      status: proved
+    - source: Equivalent reciprocal-fifth-power series formulation
+      lean: Zeta5Palomar.irrational_reciprocal_fifth_power_sum
+      module: Solution
+      status: proved
+acknowledgements: >-
+  Original mathematical proof: Aabir Fauzan. Formal Lean proof: Astra and
+  Azriel Fasten. Dependencies include Lean, Mathlib, PrimeNumberTheoremAnd,
+  LeanCert, and their pinned dependencies, with their own authors and licenses.

@@ -10,17 +10,15 @@ import sys
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN_VERSION = "4.32.2"
-TOOLCHAIN = "leanprover/lean4:v4.32.2"
+LEAN_VERSION = "4.35.0-rc2"
+TOOLCHAIN = "leanprover/lean4:v4.35.0-rc2"
 PINNED = {
-    "PrimeNumberTheoremAnd": "a5154676af9aa3095150ee410cdda80555aa0642",
-    "mathlib": "905b95818eb32af7874a58b427f50c1711a5e96c",
-    "leancert": "6b11513512c9d27183fb4725bfc291ab38b4a6d7",
+    "mathlib": "065356127b1dc0016f66b7283ce0ce2c4055aa55",
 }
 EXTERNAL_ROOTS = {"Init", "Lean", "Lake", "Std", "Mathlib", "Batteries", "Aesop",
                   "Qq", "LeanCert", "PrimeNumberTheoremAnd", "PrimeCert",
                   "LeanArchitect", "Checkdecls", "ProofWidgets", "Plausible"}
-SKIP_DIRS = {".lake", "build432", ".git", "__pycache__"}
+SKIP_DIRS = {"vendor", ".lake", "build432", ".git", "__pycache__"}
 DIAGNOSTICS = {"CheckOuter", "CheckSmall", "ProbeRoot"}
 
 
@@ -119,9 +117,14 @@ def inspect() -> dict:
     src = sources(); deps = graph(src)
     config = tomllib.loads((ROOT/"lakefile.toml").read_text())
     manifest = json.loads((ROOT/"lake-manifest.json").read_text())
-    pins = {p["name"]:p["rev"] for p in manifest["packages"]}
+    pins = {p["name"]:p.get("rev", p.get("dir")) for p in manifest["packages"]}
     problems = []
     for package in manifest["packages"]:
+        if package.get("type") == "path":
+            target = (ROOT / package["dir"]).resolve()
+            if not target.is_relative_to(ROOT) or not target.is_dir():
+                problems.append("path dependency escapes repository or is missing: " + package["name"])
+            continue
         if package.get("type") != "git" or not re.fullmatch(r"[0-9a-f]{40}", package.get("rev", "")):
             problems.append("dependency is not pinned to a Git commit: " + package["name"])
     if config.get("defaultTargets") != ["Main"]:

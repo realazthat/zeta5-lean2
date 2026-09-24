@@ -1,0 +1,41 @@
+name: Palomar verification
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main, palomar-preparation]
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          build: false
+      - name: Check source inventory
+        run: python3 scripts/project_audit.py --check --output project-inventory.json
+      - name: Build statements and proof
+        run: python3 scripts/build.py --jobs 2 Tests.KernelCertificates Challenge Solution AxiomAudit
+      - name: Install Comparator sandbox
+        run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap
+      - name: Compare statements and check independent kernels
+        run: python3 scripts/verify_comparator.py
+      - name: Preserve build evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: palomar-verification
+          path: |
+            project-inventory.json
+            .lake/build/verification-logs/

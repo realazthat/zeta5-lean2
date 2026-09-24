@@ -12,7 +12,9 @@ def signedIndices (A : ℕ) : Finset (ℕ×Bool) := (Finset.Icc 1 A) ×ˢ Finset
 
 lemma near_card (A p : ℕ) (c : ℤ) :
     (nearIndices (signedIndices A) signedRoot p c).card = linearNearCount A p c := by
-  simp only [nearIndices, Finset.card_filter, signedIndices, Finset.sum_product,
+  unfold nearIndices
+  erw [Finset.card_filter]
+  simp only [signedIndices, Finset.sum_product,
     Fintype.sum_bool, signedRoot, Bool.false_eq_true, if_false, if_true, sub_neg_eq_add]
   unfold linearNearCount
   apply Finset.sum_congr rfl

@@ -1,0 +1,229 @@
+name = "LeanCert"
+version = "0.1.0"
+defaultTargets = ["leancert"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.32.2"
+
+[[lean_lib]]
+name = "LeanCert"
+roots = ["LeanCert", "LeanCertMathlibPin"]
+precompileModules = false
+# Note: LeanCert.CertifiedBounds.Li2 is the lightweight li(2) interface for
+# downstream projects (builds in seconds; its two bound statements are
+# intentionally `sorry` — see the file docstring). The machine-checked proofs
+# live in the Li2Verified target (under a minute of native_decide interval
+# arithmetic on a typical development machine), built in LeanCert CI, which
+# ends with a statement-identity check against the interface.
+
+# Supported demonstration modules - not part of the default build.
+# Build with: lake build Examples
+[[lean_lib]]
+name = "Examples"
+roots = ["LeanCert.Examples"]
+precompileModules = false
+
+# Public announcement examples. Keep this small, quick, and presentation-ready.
+# Build explicitly with: lake build Showcase
+[[lean_lib]]
+name = "Showcase"
+roots = ["LeanCert.Examples.Showcase", "LeanCert.Test.ShowcaseFailures"]
+precompileModules = false
+
+# Heavy numerical verification - for CI validation. Proves the bounds stated
+# (with `sorry`) in the canonical Li2 interface and statement-identity-checks them.
+# Build explicitly with: lake build Li2Verified
+[[lean_lib]]
+name = "Li2Verified"
+roots = ["LeanCert.Examples.Li2Verified"]
+precompileModules = false
+
+# Heavy BKLNW a2 bounds verification - for CI validation.
+# The explicit target keeps the reflective implementation and stable public
+# interface covered together, including when other build roots do not import it.
+# Build explicitly with: lake build BKLNWVerified
+[[lean_lib]]
+name = "BKLNWVerified"
+roots = [
+  "LeanCert.CertifiedBounds.BKLNWVerified",
+  "LeanCert.CertifiedBounds.BKLNW",
+]
+precompileModules = false
+
+# Downstream interface guard: imports every LeanCert module referenced by
+# PrimeNumberTheoremAnd and #check-pins every declaration it uses by name.
+# Removing or renaming any of them must fail CI here, not in the downstream
+# project's CI after a release. See LeanCert/Test/DownstreamInterface.lean.
+[[lean_lib]]
+name = "DownstreamInterface"
+roots = ["LeanCert.Test.DownstreamInterface"]
+precompileModules = false
+
+# Downstream behavioral guard: compiles representative proof patterns copied
+# from PrimeNumberTheoremAnd. This complements the name-only interface guard.
+# Build explicitly with: lake build DownstreamPatterns
+[[lean_lib]]
+name = "DownstreamPatterns"
+roots = [
+  "LeanCert.Test.DownstreamPatterns",
+  "LeanCert.Test.DownstreamPatterns.Tactics",
+  "LeanCert.Test.DownstreamPatterns.BKLNW",
+  "LeanCert.Test.DownstreamPatterns.Chebyshev",
+  "LeanCert.Test.DownstreamPatterns.PNTCompilers",
+  "LeanCert.Test.DownstreamPatterns.Table4Ext",
+  "LeanCert.Test.DownstreamPatterns.Li2",
+  "LeanCert.Test.DownstreamPatterns.Extension",
+]
+precompileModules = false
+
+# Chebyshev psi smoke test (native_decide)
+# Build explicitly with: lake build ChebyshevPsiTest
+[[lean_lib]]
+name = "ChebyshevPsiTest"
+roots = ["LeanCert.Test.ChebyshevPsi"]
+precompileModules = false
+
+# Chebyshev theta smoke test (native_decide)
+# Build explicitly with: lake build ChebyshevThetaTest
+[[lean_lib]]
+name = "ChebyshevThetaTest"
+roots = ["LeanCert.Test.ChebyshevTheta"]
+precompileModules = false
+
+# Generic table certificate smoke test
+# Build explicitly with: lake build TableTest
+[[lean_lib]]
+name = "TableTest"
+roots = ["Tests.Table"]
+precompileModules = false
+
+# Hardening regression smoke test
+# Build explicitly with: lake build HardeningTest
+[[lean_lib]]
+name = "HardeningTest"
+roots = ["LeanCert.Test.Hardening"]
+precompileModules = false
+
+# Full functional/regression test suite (everything under LeanCert/Test
+# except benchmarks). Build with: lake build FunctionalTests
+# Each test is its own root (built in its own process); a test module not
+# listed here is dead code — add new tests to this list.
+[[lean_lib]]
+name = "FunctionalTests"
+roots = [
+  "LeanCert.Test.AffineCoverTest",
+  "LeanCert.Test.AlgebraicBezout",
+  "LeanCert.Test.AsympCheckers",
+  "LeanCert.Test.AsympEnv",
+  "LeanCert.Test.AsympTransforms",
+  "LeanCert.Test.BridgeTest",
+  "LeanCert.Test.CubicCount",
+  "LeanCert.Test.CubicIsolation",
+  "LeanCert.Test.DocsExamples",
+  "LeanCert.Test.DomainAwareAD",
+  "LeanCert.Test.ChebyshevPsi",
+  "LeanCert.Test.ChebyshevTheta",
+  "LeanCert.Test.EulerMascheroni",
+  "LeanCert.Test.EventualBound",
+  "LeanCert.Test.EnclosureTactic",
+  "LeanCert.Test.ExtensionProtocol",
+  "LeanCert.Test.ExtensionExecution",
+  "LeanCert.Test.FinSumBound",
+  "LeanCert.Test.FinSumExpandTest",
+  "LeanCert.Test.Hardening",
+  "LeanCert.Test.IntegrationDyadicChecked",
+  "LeanCert.Test.Krawczyk",
+  "LeanCert.Test.KrawczykTactic",
+  "LeanCert.Test.LeanCertSolverProtocol",
+  "LeanCert.Test.LeanCertSemanticParse",
+  "LeanCert.Test.LeanCertRouter",
+  "LeanCert.Test.LeanCertIntegrals",
+  "LeanCert.Test.NaturalSyntaxRepairs",
+  "LeanCert.Test.Numeral",
+  "LeanCert.Test.Pisano",
+  "LeanCert.Test.PublicEvalAPI",
+  "LeanCert.Test.PublicAPI.Eval",
+  "LeanCert.Test.PublicAPI.Backend",
+  "LeanCert.Test.PublicAPI.Optimization",
+  "LeanCert.Test.PublicAPI.Isolation",
+  "LeanCert.Test.PublicAPI.Bounds",
+  "LeanCert.Test.PublicAPI.CertifiedBoundsImport",
+  "LeanCert.Test.PublicAPI.DomainUmbrellas",
+  "LeanCert.Test.PublicAPI.Extension",
+  "LeanCert.Test.PublicAPI.Enclosure",
+  "LeanCert.Test.PublicAPI.TrustAxes",
+  "LeanCert.Test.ReadmeTest",
+  "LeanCert.Test.ReleaseTest",
+  "LeanCert.Test.ShowcaseFailures",
+  "LeanCert.Test.SqrtTest",
+  "LeanCert.Test.Support",
+  "LeanCert.Test.TacticAuto",
+  "LeanCert.Test.TacticDiscovery",
+  "LeanCert.Test.TestDyadicEval",
+  "LeanCert.Test.TestPhase3",
+  "LeanCert.Test.TransformerTest",
+  "LeanCert.Test.TrigReduction",
+  "LeanCert.Test.TrustModes",
+  "LeanCert.Test.ValidityExports",
+  "LeanCert.Test.VecSimpTest",
+  "LeanCert.Test.WitnessSum",
+  "LeanCert.Test.test_ceil",
+  "LeanCert.Test.test_discovery_polish",
+  "LeanCert.Test.test_edge_bound_forms",
+  "LeanCert.Test.test_edge_bounds",
+  "LeanCert.Test.test_edge_decide_fast",
+  "LeanCert.Test.test_edge_discovery_forms",
+  "LeanCert.Test.test_edge_discovery_seticc",
+  "LeanCert.Test.test_edge_mv",
+  "LeanCert.Test.test_edge_mv_forms",
+  "LeanCert.Test.test_edge_refute",
+  "LeanCert.Test.test_exp_bound",
+  "LeanCert.Test.test_exp_bounds",
+  "LeanCert.Test.test_exp_fail",
+  "LeanCert.Test.test_log",
+  "LeanCert.Test.test_multivar",
+  "LeanCert.Test.test_reify_reflect",
+  "LeanCert.Test.test_stress_intervalrat",
+  "LeanCert.Test.test_stress_multivar",
+  "LeanCert.Test.test_stress_root",
+  "LeanCert.Test.test_stress_subdiv",
+  "LeanCert.Test.test_stress_univariate",
+  "LeanCert.Test.test_subdiv",
+  "LeanCert.Test.test_subdiv_lower",
+  "LeanCert.Test.test_subdiv_strict",
+  "LeanCert.Test.test_unique_root_fix",
+]
+precompileModules = false
+
+# Manual-run performance benchmarks. Build with: lake build Benchmarks
+# (Listed as separate roots: several define their own `main` and cannot be
+# imported into a single environment.)
+[[lean_lib]]
+name = "Benchmarks"
+roots = [
+  "LeanCert.Test.BenchmarkAffine",
+  "LeanCert.Test.BenchmarkBackends",
+  "LeanCert.Test.ExtremeBenchmark",
+  "LeanCert.Test.IntensiveBenchmark",
+  "LeanCert.Test.TestDyadicIntegration",
+  "LeanCert.Test.TimingBenchmark",
+]
+precompileModules = false
+
+[[lean_exe]]
+name = "leancert"
+root = "Main"
+
+[[lean_exe]]
+name = "lean_bridge"
+root = "LeanCert.Bridge"
+
+[[lean_exe]]
+name = "check-compat"
+root = "LeanCert.CheckCompat"
+
+[[lean_exe]]
+name = "leancert-bench"
+root = "LeanCert.Benchmark.Main"

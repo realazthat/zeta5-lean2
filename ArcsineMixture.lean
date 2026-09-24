@@ -23,8 +23,17 @@ noncomputable def mass (i : Component) : ℝ := (row i).2.2
   change i.val ≤ j.val at hij
   fin_cases i <;> fin_cases j <;> norm_num [left,right,row,arcsineData] at *
 
- theorem mass_sum : (∑ i, mass i) = (37/40 : ℝ) := by
-  norm_num [mass,row,arcsineData,Fin.sum_univ_succ]
+/-- Compute the finite mass total in ℚ, then transport it to ℝ. Keeping the
+arithmetic certificate rational avoids a deeply nested real-arithmetic proof
+that overflows the independent NanoDa checker's stack. -/
+theorem mass_sum : (∑ i, mass i) = (37/40 : ℝ) := by
+  have rational_sum : (∑ i : Component, (row i).2.2) = (37/40 : ℚ) := by
+    decide +kernel
+  change (∑ i : Component, ((row i).2.2 : ℝ)) = _
+  calc
+    _ = ((∑ i : Component, (row i).2.2 : ℚ) : ℝ) :=
+      (map_sum (Rat.castHom ℝ) _ _).symm
+    _ = _ := by rw [rational_sum]; norm_num
 
 noncomputable def componentMeasure (i : Component) : Measure ℂ :=
   arcsineMeasure (left i) (right i)

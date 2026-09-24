@@ -43,8 +43,9 @@ theorem single_class_count (A p a : ℕ) (hp : 0 < p)
     omega
   rw [hinterval]
   have hc := Nat.Ioc_filter_modEq_card 0 A hp a
-  simpa only [Nat.ModEq, Nat.cast_zero, zero_sub, hneg, sub_neg_eq_add,
-    max_eq_left (by omega : (0 : ℤ) ≤ ⌊((A : ℚ) - a) / p⌋ + 1)] using hc
+  simp only [Nat.ModEq, Nat.cast_zero, zero_sub, hneg, sub_neg_eq_add,
+    max_eq_left (by omega : (0 : ℤ) ≤ ⌊((A : ℚ) - a) / p⌋ + 1)] at hc
+  exact hc
 
 /-- The exact finite pole count equals the limiting floor expression, rather
 than merely approximating it. The approximation later is only in summing
@@ -212,7 +213,7 @@ theorem poleCount_sum (A p : ℕ) (hp : 0 < p) (hodd : p % 2 = 1) :
     rw [hinterval]
     simp only [← Nat.dvd_iff_mod_eq_zero]
     exact Nat.Ioc_filter_dvd_card_eq_div A p
-  have htotal := Finset.filter_card_add_filter_neg_card_eq_card
+  have htotal := Finset.card_filter_add_card_filter_not
     (s := Finset.Icc 1 A) (fun j => j%p = 0)
   have hS : S.card = A-A/p := by
     change _ + S.card = _ at htotal

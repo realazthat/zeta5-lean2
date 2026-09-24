@@ -1,0 +1,123 @@
+site_name: LeanCert
+site_description: Certified numerical computation and bound verification for Lean 4.
+site_url: https://docs.leancert.io
+repo_url: https://github.com/alerad/leancert
+repo_name: alerad/leancert
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.arithmatex:
+      generic: true
+  - tables
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Quickstart: quickstart.md
+    - Choosing A Proof Shape: choosing-proof-shape.md
+    - Curated Showcase: showcase.md
+    - Failure Showcase: showcase-failures.md
+  - Direct Automation:
+    - Using leancert: direct/leancert.md
+    - Bounds and Inequalities: direct/bounds.md
+    - Roots and No-Root Proofs: direct/roots.md
+    - Optimization and Discovery: direct/optimization-discovery.md
+    - Integration: direct/integration.md
+    - Eventual Bounds and Cutoff Discovery: direct/eventual-bounds.md
+    - Checked Automatic Differentiation: direct/checked-ad.md
+    - Troubleshooting: direct/troubleshooting.md
+    - Advanced Guides:
+      - Choosing a Dedicated Tactic: tactics/choosing-tactics.md
+      - Discovery Commands: tactics/discovery.md
+      - Discovery to Theorem: tactics/end-to-end-example.md
+  - Proof Templates:
+    - Overview: proof-templates/overview.md
+    - Checker-To-Theorem Pattern: proof-templates/checker-to-theorem.md
+    - Table Certificates: proof-templates/table-certificates.md
+    - Asymptotic Envelopes: proof-templates/asymptotic-envelopes.md
+    - Pointwise Envelopes: proof-templates/pointwise-envelopes.md
+    - ConstantFactory: proof-templates/constant-factory.md
+    - Exact Product-Integral Certificates: proof-templates/qproduct-finite-integrals.md
+    - Contour Shift: proof-templates/contour-shift.md
+    - Directed Limits: proof-templates/directed-limits.md
+    - Wall Quotients: proof-templates/wall-quotients.md
+  - Domain Libraries:
+    - Overview: domains/overview.md
+    - Analytic Number Theory:
+      - Overview: domains/ant/overview.md
+      - Chebyshev: domains/ant/chebyshev.md
+      - Finite ANT: domains/ant/finite-ant.md
+      - ANT Asymptotic: domains/ant/asymptotic-ant.md
+      - Explicit PNT: domains/ant/explicit-pnt.md
+    - QProduct Prime Limits: domains/qproduct-prime-limits.md
+    - Constants: domains/constants.md
+  - Certificate Engines:
+    - Analytic Number Theory: certificates/ant.md
+    - Asymptotic Envelopes: certificates/ant-asymp.md
+    - Chebyshev: certificates/chebyshev.md
+    - QProduct: certificates/qproduct.md
+    - ConstantFactory: certificates/constants.md
+    - Contour Shift: certificates/contour-shift.md
+  - ML Verification:
+    - Verification: ml/neural-networks.md
+    - Distillation: ml/distillation.md
+  - Architecture and Trust:
+    - Trust Model: architecture/trust-model.md
+    - Golden Theorems: architecture/golden-theorems.md
+    - Interval Backend Selection: architecture/backend-selection.md
+    - Table Certificates: architecture/table-certificates.md
+    - Root Finding: architecture/root-finding.md
+    - Verification Status: architecture/verification-status.md
+    - CI Promises: architecture/ci-promises.md
+    - Benchmark Harness: architecture/benchmarks.md
+  - Contributing:
+    - Architecture Guide: contributing/architecture.md
+    - Roadmap: roadmap.md
+  - Reference:
+    - Supported Public API: reference/public-api.md
+    - Downstream Enclosure Extensions: reference/extensions.md
+    - Removed APIs and Migration: reference/compatibility.md
+    - Imports: reference/imports.md
+    - Tactics: reference/tactics.md
+    - Certificate APIs: reference/certificate-apis.md
+    - Algebraic Root Certificates: certificates/algebraic-roots.md
+    - Certificate API Overview: certificates/overview.md

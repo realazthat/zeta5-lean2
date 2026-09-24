@@ -1,0 +1,76 @@
+name: Build Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual triggering of the workflow from the GitHub Actions interface
+
+# Cancel previous runs if a new commit is pushed to the same PR or branch
+concurrency:
+  group: ${{ github.ref }}  # Group runs by the ref (branch or PR)
+  cancel-in-progress: true  # Cancel any ongoing runs in the same group
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read          # Read access to repository contents
+  pages: write            # Write access to GitHub Pages
+  id-token: write         # Write access to ID tokens
+  issues: write           # Write access to issues
+  pull-requests: write    # Write access to pull requests
+  actions: write          # Write access to GitHub Actions
+
+jobs:
+  build_project:
+    runs-on: ubuntu-latest
+    name: Build project
+    steps:
+      - name: Cleanup to free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true # saves approximately 12 GB
+          dotnet: false
+          haskell: false
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+
+      - name: Checkout project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
+
+      # LeanCert is a source dependency (no cloud olean cache, unlike Mathlib),
+      # so cache its package directory keyed on the resolved dependency
+      # revisions and toolchain. The git checkout must be cached together with
+      # .lake/build: if Lake has to re-clone the package it rebuilds from
+      # scratch even when build artifacts are present.
+      - name: Restore LeanCert package cache
+        uses: actions/cache@v6
+        with:
+          path: .lake/packages/leancert
+          key: leancert-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}
+
+      - name: Build the project
+        uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # v1.6.0
+        with:
+          use-github-cache: false
+          build-args: :blueprint
+
+      - name: Generate upstreaming dashboard
+        uses: leanprover-community/upstreaming-dashboard-action@main
+        with:
+          website-directory: ./home_page
+          project-name: PrimeNumberTheoremAnd
+          include-drafts: true
+
+      - name: Compile blueprint and documentation
+        uses: leanprover-community/docgen-action@main
+        with:
+          blueprint: true
+          homepage: home_page
+          references: 'blueprint/src/references.bib'

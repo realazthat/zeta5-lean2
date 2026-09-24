@@ -8,11 +8,14 @@ from project_audit import ROOT, sources
 
 def main() -> None:
     files = set(sources().values())
-    files.update(ROOT / name for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json"))
+    files.update(ROOT / name for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json",
+                                          "comparator.json", "formalization.yaml", "LICENSE"))
+    files.update(p for p in (ROOT / "vendor").rglob("*") if p.is_file()
+                 and not ({".lake", ".git", "__pycache__"} & set(p.relative_to(ROOT).parts)))
     files.update((ROOT / "scripts").glob("*.py"))
-    rows = [hashlib.sha256(p.read_bytes()).hexdigest() + "  " + str(p.relative_to(ROOT))
+    rows = [hashlib.sha256(p.read_bytes()).hexdigest() + "  " + p.relative_to(ROOT).as_posix()
             for p in sorted(files)]
-    destination = ROOT / "SourceManifest.sha256"
+    destination = ROOT / "PalomarSourceManifest.sha256"
     destination.write_text("\n".join(rows) + "\n")
     print(f"Recorded {len(files)} source and build files in {destination.name}")
 
