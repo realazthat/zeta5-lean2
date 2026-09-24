@@ -2,6 +2,10 @@
 # The solution export needs more memory than a small hosted runner provides.
 # Provision swap only on the disposable GitHub Actions machine.
 set -euo pipefail
+if [[ "${GITHUB_ACTIONS:-}" != true || "${RUNNER_ENVIRONMENT:-}" != github-hosted ]]; then
+  echo "Memory provisioning is restricted to disposable GitHub-hosted runners" >&2
+  exit 1
+fi
 : "${RUNNER_TEMP:?This script requires a GitHub Actions runner}"
 free -h
 df -h "$RUNNER_TEMP"
@@ -13,6 +17,13 @@ if ((missing_kib > 0)); then
   extra_gib=$(((missing_kib + 1048575) / 1048576))
   available_bytes=$(df -B1 --output=avail "$RUNNER_TEMP" | tail -n 1)
   needed_bytes=$(((extra_gib + 12) * 1024 * 1024 * 1024))
+  if ((available_bytes < needed_bytes)) && [[ -d /usr/local/lib/android/sdk ]]; then
+    # This fixed SDK path is part of the pinned runner image, unused by Lean.
+    [[ "$(realpath /usr/local/lib/android/sdk)" == /usr/local/lib/android/sdk ]]
+    sudo rm -rf -- /usr/local/lib/android/sdk
+    available_bytes=$(df -B1 --output=avail "$RUNNER_TEMP" | tail -n 1)
+    df -h "$RUNNER_TEMP"
+  fi
   if ((available_bytes < needed_bytes)); then
     echo "Insufficient disk for ${extra_gib} GiB swap plus 12 GiB build space" >&2
     exit 1
