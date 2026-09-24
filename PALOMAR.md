@@ -75,17 +75,31 @@ The human submission entry point is <https://submit.palomar-registry.org/>.
 Agents should follow that host's `llms.txt` protocol instead of driving the form.
 The responsible maintainer must supply an accurate authorization declaration.
 
+PR #2 targets `palomar-preparation`. The Lean 4.35 port, dependency vendoring,
+and Challenge/Solution interfaces are inherited from PR #1 at
+`5e55b5ff7a0d57a758e0bd7462753ea8e674c00e`. PR #2 adds certificate
+compaction, readability documentation, CI repairs, and evidence corrections.
+
 ## Compact branch verification
 
-The `codegolf-readable` branch passed its own complete build (4,590 Lake jobs)
-and sandboxed Comparator on 24 September 2026. con-ron accepted 91,762
+The saved local logs for compact source commit
+`53f1134b621452a5b8339c3050367259d46b4de6` record a complete build
+(4,590 Lake jobs) and Comparator acceptance on 24 September 2026. con-ron accepted 91,762
 declarations, NanoDa accepted the solution, and the default Lean kernel accepted
-the solution. Comparator ended with `Your solution is okay!` and exit code 0.
-The bundled checkers were unmodified, and the sandbox remained enabled.
+the solution. Comparator printed `Your solution is okay!`.
+The saved logs do not independently attest process exit status, checker binary
+integrity, or sandbox enforcement. The reproduction script selects bundled
+checkers and configures sandboxing; that configuration is not execution evidence.
 Both final statements retain only the three permitted axioms.
 
 `verification/codegolf/` contains the complete logs and their fingerprints.
-`PalomarSourceManifest.sha256` identifies this branch's source files. The older
+`PalomarSourceManifest.sha256` fingerprints tracked source and build files in
+the current tree. Regenerate it with `python3 scripts/source_manifest.py` after
+staging new files. The evidence JSON distinguishes its current hash from the
+historical manifest hash associated with the saved run. Later CI and evidence
+changes do not constitute a new kernel verification run.
+`project-inventory.json` is a current source inventory; its artifact fields
+describe the checkout where it was generated, not the historical build machine. The older
 `verification/palomar/` evidence concerns the preserved baseline commit below.
 See `CODEGOLF.md` for the 94.72% first-party source reduction and its scope.
 
@@ -104,9 +118,10 @@ The results below concern baseline commit
   only `propext`, `Classical.choice`, and `Quot.sound` in their axiom closures.
 - Kernel-certificate regression: a true logarithmic bound accepted and a false
   bound rejected in kernel mode.
-- Sandboxed Comparator: passed on 24 September 2026. con-ron accepted
+- Saved local Comparator log on 24 September 2026: con-ron accepted
   91,762 declarations; NanoDa and the default Lean kernel also accepted the
-  Solution. Comparator completed with `Your solution is okay!` and exit code 0.
+  Solution. Comparator printed `Your solution is okay!`. The evidence limitations above
+  also apply to the baseline logs.
 
 The local technical submission checks have passed. This is preparation for
 submission, not a claim of registration or editorial acceptance. The complete
@@ -114,5 +129,5 @@ build and Comparator logs are in `verification/palomar/`; their fingerprints are
 recorded in `verification/palomar/evidence.json`.
 
 Two finite-sum proofs were rewritten to avoid NanoDa worker-stack overflow.
-Their statements are unchanged. All checkers in the final run were the
-unmodified binaries bundled with the pinned Lean toolchain.
+Their statements are unchanged. The reproduction script selects the checkers
+bundled with the pinned Lean toolchain.

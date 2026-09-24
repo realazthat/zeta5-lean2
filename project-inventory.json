@@ -1,36 +1,446 @@
 {
-  "toolchain": "leanprover/lean4:v4.32.2",
+  "toolchain": "leanprover/lean4:v4.35.0-rc2",
   "dependency_pins": {
-    "PrimeNumberTheoremAnd": "a5154676af9aa3095150ee410cdda80555aa0642",
-    "mathlib": "905b95818eb32af7874a58b427f50c1711a5e96c",
+    "leancert": "vendor/leancert",
+    "Cli": "2842b9871b04862f944c032e34052cb9448ccb71",
+    "batteries": "ed9b316aabe389fec1ef43c3326ab48c7e59be42",
+    "Qq": "786b7acdca7eb4e9c76c5d1d5bd810e7e5c56334",
+    "aesop": "75d936c7af167cc93fac0d31237682fc2204591d",
+    "proofwidgets": "4c70ac059693669e5756e32a7a94b57ee1e99dc5",
+    "importGraph": "10930f8138f0462dbd744a91fc03a16fae0e046f",
+    "LeanSearchClient": "95e037bfdc31d3916ac615446847fb01960e2719",
+    "plausible": "e50948299c4dc4a4c21b1c34b6a6a4fddc19f912",
+    "PrimeNumberTheoremAnd": "vendor/PrimeNumberTheoremAnd",
+    "mathlib": "065356127b1dc0016f66b7283ce0ce2c4055aa55",
     "PrimeCert": "6cac6fcb55fe9070afc4c42cad1d0eaa1c59e6a1",
-    "leancert": "6b11513512c9d27183fb4725bfc291ab38b4a6d7",
     "checkdecls": "3d425859e73fcfbef85b9638c2a91708ef4a22d4",
-    "LeanArchitect": "d9013cc08bd2b5483e837368dfa4cc7ead92a5c2",
-    "plausible": "e12c1910fe855cbfc38803cd4e55543906d5fa62",
-    "LeanSearchClient": "c5d5b8fe6e5158def25cd28eb94e4141ad97c843",
-    "importGraph": "7e9612bf0b9ee66db3cb5b9988a35afc706f5a12",
-    "proofwidgets": "6e311e2a844da9b2cc3971187df2fe0066947b93",
-    "aesop": "a7dbf0c63b694e47f425f3dcddbc0e178bb432d3",
-    "Qq": "38d591e778f100aec9762bb582f9c7f55f50e9dc",
-    "batteries": "023ce7d62a0531e22a5331e20b587817a80d49ff",
-    "Cli": "88679d088c9720c27ebdf2ba4dafe17341747f94"
+    "LeanArchitect": "d9013cc08bd2b5483e837368dfa4cc7ead92a5c2"
   },
   "problems": [],
   "summary": {
-    "source_modules": 411,
-    "source_bytes": 42612216,
-    "main_closure_modules": 405,
+    "source_modules": 416,
+    "source_bytes": 2251837,
+    "main_closure_modules": 407,
     "main_missing_imports": [],
     "missing_imports": [],
-    "artifact_versions": {
-      "4.32.2": 459,
-      "4.19.0": 8
-    },
+    "artifact_versions": {},
     "missing_current_olean": [
+      "ActualDiskValue",
+      "ActualInnerDiskBound",
+      "ActualPullbackCertificate",
+      "ActualRationalDistribution",
+      "Allocation",
+      "AllocationPrimeBound",
+      "AnalyticCompletion",
+      "AnalyticFarPoles",
+      "AnalyticPresentation",
+      "AnalyticTranslation",
+      "Andreief",
+      "AppendixCellBase",
+      "AppendixCells.Batch000",
+      "AppendixCells.Batch001",
+      "AppendixCells.Batch002",
+      "AppendixCells.Batch003",
+      "AppendixCells.Batch004",
+      "AppendixCells.Batch005",
+      "AppendixCells.Batch006",
+      "AppendixCells.Batch007",
+      "AppendixCells.Batch008",
+      "AppendixCells.Batch009",
+      "AppendixCells.Batch010",
+      "AppendixCells.Batch011",
+      "AppendixCells.Batch012",
+      "AppendixCells.Batch013",
+      "AppendixCells.Batch014",
+      "AppendixCells.Batch015",
+      "AppendixCells.Batch016",
+      "AppendixCells.Batch017",
+      "AppendixCells.Batch018",
+      "AppendixCells.Batch019",
+      "AppendixCells.Batch020",
+      "AppendixCells.Batch021",
+      "AppendixCells.Batch022",
+      "AppendixCells.Batch023",
+      "AppendixCells.Batch024",
+      "AppendixCells.Batch025",
+      "AppendixCells.Batch026",
+      "AppendixCells.Batch027",
+      "AppendixCells.Batch028",
+      "AppendixCells.Batch029",
+      "AppendixCells.Batch030",
+      "AppendixCells.Batch031",
+      "AppendixCells.Batch032",
+      "AppendixCells.Batch033",
+      "AppendixCells.Batch034",
+      "AppendixCells.Batch035",
+      "AppendixCells.Batch036",
+      "AppendixCells.Batch037",
+      "AppendixCells.Batch038",
+      "AppendixCells.Batch039",
+      "AppendixCells.Batch040",
+      "AppendixCells.Batch041",
+      "AppendixCells.Batch042",
+      "AppendixField.Batch000",
+      "AppendixField.Batch001",
+      "AppendixField.Batch002",
+      "AppendixField.Batch003",
+      "AppendixField.Batch004",
+      "AppendixField.Batch005",
+      "AppendixField.Batch006",
+      "AppendixField.Batch007",
+      "AppendixField.Batch008",
+      "AppendixField.Batch009",
+      "AppendixField.Batch010",
+      "AppendixField.Batch011",
+      "AppendixField.Batch012",
+      "AppendixField.Batch013",
+      "AppendixField.Batch014",
+      "AppendixField.Batch015",
+      "AppendixField.Batch016",
+      "AppendixField.Batch017",
+      "AppendixField.Batch018",
+      "AppendixField.Batch019",
+      "AppendixField.Batch020",
+      "AppendixField.Batch021",
+      "AppendixField.Batch022",
+      "AppendixField.Batch023",
+      "AppendixField.Batch024",
+      "AppendixField.Batch025",
+      "AppendixField.Batch026",
+      "AppendixField.Batch027",
+      "AppendixField.Batch028",
+      "AppendixField.Batch029",
+      "AppendixField.Batch030",
+      "AppendixField.Batch031",
+      "AppendixField.Batch032",
+      "AppendixField.Batch033",
+      "AppendixField.Batch034",
+      "AppendixField.Batch035",
+      "AppendixField.Batch036",
+      "AppendixField.Batch037",
+      "AppendixField.Batch038",
+      "AppendixField.Batch039",
+      "AppendixField.Batch040",
+      "AppendixField.Batch041",
+      "AppendixField.Batch042",
+      "AppendixField.Batch043",
+      "AppendixField.Batch044",
+      "AppendixField.Batch045",
+      "AppendixField.Batch046",
+      "AppendixField.Batch047",
+      "AppendixField.Batch048",
+      "AppendixField.Batch049",
+      "AppendixField.Batch050",
+      "AppendixField.Batch051",
+      "AppendixField.Batch052",
+      "AppendixField.Batch053",
+      "AppendixField.Batch054",
+      "AppendixField.Batch055",
+      "AppendixField.Batch056",
+      "AppendixField.Batch057",
+      "AppendixField.Batch058",
+      "AppendixField.Batch059",
+      "AppendixField.Batch060",
+      "AppendixField.Batch061",
+      "AppendixField.Batch062",
+      "AppendixField.Batch063",
+      "AppendixField.Batch064",
+      "AppendixField.Batch065",
+      "AppendixField.Batch066",
+      "AppendixField.Batch067",
+      "AppendixField.Batch068",
+      "AppendixField.Batch069",
+      "AppendixField.Batch070",
+      "AppendixField.Batch071",
+      "AppendixField.Batch072",
+      "AppendixField.Batch073",
+      "AppendixField.Batch074",
+      "AppendixField.Batch075",
+      "AppendixField.Batch076",
+      "AppendixField.Batch077",
+      "AppendixField.Batch078",
+      "AppendixField.Batch079",
+      "AppendixField.Batch080",
+      "AppendixField.Batch081",
+      "AppendixField.Batch082",
+      "AppendixField.Batch083",
+      "AppendixField.Batch084",
+      "AppendixField.Batch085",
+      "AppendixNumericBase",
+      "AppendixNumericConstants",
+      "AppendixNumericSpecial",
+      "AppendixNumericalCertificate",
+      "AppendixNumerics",
+      "AppendixPartition",
+      "AppendixPotential.Batch000",
+      "AppendixPotential.Batch001",
+      "AppendixPotential.Batch002",
+      "AppendixPotential.Batch003",
+      "AppendixPotential.Batch004",
+      "AppendixPotential.Batch005",
+      "AppendixPotential.Batch006",
+      "AppendixPotential.Batch007",
+      "AppendixPotential.Batch008",
+      "AppendixPotential.Batch009",
+      "AppendixPotential.Batch010",
+      "AppendixPotential.Batch011",
+      "AppendixPotential.Batch012",
+      "AppendixPotential.Batch013",
+      "AppendixPotential.Batch014",
+      "AppendixPotential.Batch015",
+      "AppendixPotential.Batch016",
+      "AppendixPotential.Batch017",
+      "AppendixPotential.Batch018",
+      "AppendixPotential.Batch019",
+      "AppendixPotential.Batch020",
+      "AppendixPotential.Batch021",
+      "AppendixPotential.Batch022",
+      "AppendixPotential.Batch023",
+      "AppendixPotential.Batch024",
+      "AppendixPotential.Batch025",
+      "AppendixPotential.Batch026",
+      "AppendixPotential.Batch027",
+      "AppendixPotential.Batch028",
+      "AppendixPotential.Batch029",
+      "AppendixPotential.Batch030",
+      "AppendixPotential.Batch031",
+      "AppendixPotential.Batch032",
+      "AppendixPotential.Batch033",
+      "AppendixPotential.Batch034",
+      "AppendixPotential.Batch035",
+      "AppendixPotential.Batch036",
+      "AppendixPotential.Batch037",
+      "AppendixPotential.Batch038",
+      "AppendixPotential.Batch039",
+      "AppendixPotential.Batch040",
+      "AppendixPotential.Batch041",
+      "AppendixPotential.Batch042",
+      "AppendixPotential.Batch043",
+      "AppendixPotential.Batch044",
+      "AppendixPotential.Batch045",
+      "AppendixPotential.Batch046",
+      "AppendixPotential.Batch047",
+      "AppendixPotential.Batch048",
+      "AppendixPotential.Batch049",
+      "AppendixPotential.Batch050",
+      "AppendixPotential.Batch051",
+      "AppendixPotential.Batch052",
+      "AppendixPotential.Batch053",
+      "AppendixPotential.Batch054",
+      "AppendixPotential.Batch055",
+      "AppendixPotential.Batch056",
+      "AppendixPotential.Batch057",
+      "AppendixPotential.Batch058",
+      "AppendixPotential.Batch059",
+      "AppendixPotential.Batch060",
+      "AppendixPotential.Batch061",
+      "AppendixPotential.Batch062",
+      "AppendixPotential.Batch063",
+      "AppendixPotential.Batch064",
+      "AppendixPotential.Batch065",
+      "AppendixPotential.Batch066",
+      "AppendixPotential.Batch067",
+      "AppendixPotential.Batch068",
+      "AppendixPotential.Batch069",
+      "AppendixPotential.Batch070",
+      "AppendixPotential.Batch071",
+      "AppendixPotential.Batch072",
+      "AppendixPotential.Batch073",
+      "AppendixPotential.Batch074",
+      "AppendixPotential.Batch075",
+      "AppendixPotential.Batch076",
+      "AppendixPotential.Batch077",
+      "AppendixPotential.Batch078",
+      "AppendixPotential.Batch079",
+      "AppendixPotential.Batch080",
+      "AppendixPotential.Batch081",
+      "AppendixPotential.Batch082",
+      "AppendixPotential.Batch083",
+      "AppendixPotential.Batch084",
+      "AppendixPotential.Batch085",
+      "ArcsineMixture",
+      "ArcsineMonotonicity",
+      "ArcsineNumericBridge",
+      "AxiomAudit",
+      "BasisTransfer",
+      "BernoulliKernel",
+      "CanonicalLocalBound",
+      "CanonicalPresentation",
+      "CanonicalSplitBound",
+      "CertificateData",
+      "CertificateTactics",
+      "Challenge",
+      "CircleMeasures",
+      "CirclePotential",
+      "ClassBasis",
+      "ConfigurationEnergy",
+      "Construction",
+      "ConstructionPartialFractions",
+      "ConstructionPullback",
+      "DenominatorRiemann",
+      "EnergyComparison",
+      "EnergyMixtures",
+      "ExternalField",
+      "FarUnitExpansion",
+      "FarUnitPowerSeries",
+      "FieldMinimum",
+      "FinalAssembly",
+      "FloorIndicators",
+      "FloorIntegral",
+      "FullPullbackCertificate",
+      "FunctionalCancellation",
+      "GeometricMoments",
+      "GramIntegral",
+      "GramScaling",
+      "GramUpperBound",
+      "InnerAllocationLimit",
+      "InnerAssignedWeights",
+      "InnerAsymptotics",
+      "InnerBaseKernel",
+      "InnerBasis",
+      "InnerDegrees",
+      "InnerDeterminant",
+      "InnerDiskDegrees",
+      "InnerDiskFactorization",
+      "InnerDiskPadic",
+      "InnerDiskRoots",
+      "InnerDistributionBound",
+      "InnerErrorBound",
+      "InnerExponentMatch",
+      "InnerFactorCounts",
+      "InnerFactorization",
+      "InnerGamma",
+      "InnerNormBridge",
+      "InnerNormalized",
+      "InnerPrimeBound",
+      "InnerPrimeCellBase",
+      "InnerPrimeCellPrototype",
+      "InnerPrimeCells",
+      "InnerPrimeCells.Batch000",
+      "InnerPrimeCells.Batch001",
+      "InnerPrimeCells.Batch002",
+      "InnerPrimeCells.Batch003",
+      "InnerPrimeCells.Batch004",
+      "InnerPrimeCells.Batch005",
+      "InnerPrimeCells.Batch006",
+      "InnerPrimeCells.Batch007",
+      "InnerPrimeCells.Batch008",
+      "InnerPrimeCells.Batch009",
+      "InnerPrimeCells.Batch010",
+      "InnerPrimeCells.Batch011",
+      "InnerPrimeCells.Batch012",
+      "InnerPrimeCells.Batch013",
+      "InnerPrimeCells.Batch014",
+      "InnerPrimeCells.Batch015",
+      "InnerPrimeGeometry",
+      "InnerPrimeLimit",
+      "InnerPullbackCertificate",
+      "InnerRealKernel",
+      "InnerRoots",
+      "InnerRowFactors",
+      "InnerSources",
+      "InnerTailBound",
+      "InnerUniform",
+      "InnerValuation",
+      "InnerWeights",
+      "IntegerPoleDistribution",
+      "IntegerPoleRecurrence",
+      "IntegerPolynomial",
+      "LocalDiskValue",
+      "LocalDivision",
+      "LocalFunctional",
+      "LogCertificates",
+      "Main",
+      "MatrixIntegral",
+      "Moments",
+      "NearPoleCompletion",
+      "NearPoleSeries",
+      "Normalization",
+      "NormalizationLog",
+      "NormalizationRanges",
+      "NormalizationTail",
+      "NormalizerBound",
+      "NormalizerConstants",
+      "NumeratorFunctional",
+      "OuterArithmetic",
       "OuterAsymptotics",
+      "OuterBasis",
+      "OuterClassCounts",
+      "OuterCountSums",
+      "OuterDeterminant",
+      "OuterEntries",
+      "OuterLargePrimes",
+      "OuterLow",
+      "OuterMoments",
+      "OuterNear",
+      "OuterNormalized",
+      "OuterPoleArithmetic",
+      "OuterPrimeArithmetic",
+      "OuterPrimeBound",
+      "OuterPrimeCells",
+      "OuterPrimeLimit",
+      "OuterPrimeUpperLimit",
+      "OuterValuation",
+      "OuterWeightAggregation",
+      "OuterWeightSums",
+      "OuterZero",
+      "PaperParameters",
+      "PartialFractions",
+      "PartitionCertificate",
+      "PoleIntegral",
+      "PoleKernel",
+      "PolynomialDistribution",
+      "PositiveIntegrals",
+      "PotentialFieldCertificate",
+      "PowerSeriesCompletion",
+      "PowerSeriesResidues",
+      "PresentationCertificates",
+      "PrimeFloor",
+      "PrimeHarmonic",
+      "PrimeKernelMajorant",
+      "PrimeRangePartition",
+      "PrimeSums",
+      "RationalDistribution",
+      "RationalPullback",
+      "RealDeterminantAsymptotic",
+      "RealDeterminantBound",
+      "RealDeterminantEnergyBridge",
+      "RealEnergy",
+      "RealNormalization",
+      "RealRemainder",
+      "ResidualIntegral",
+      "ResidueFactorization",
+      "ScalarFloorSum",
+      "ScalarUniform",
+      "ScalarValuation",
+      "ScaledIntegerLocalBound",
+      "ScaledLocalBound",
+      "ScaledWeightBounds",
+      "SmallPrimeActual",
+      "SmallPrimeAsymptotics",
       "SmallPrimeAudit",
-      "Zeta5PNTAudit"
+      "SmallPrimeBasis",
+      "SmallPrimeBinomial",
+      "SmallPrimeBound",
+      "SmallPrimeDeterminant",
+      "SmallPrimeEntry",
+      "SmallPrimeFactorials",
+      "SmallPrimeFunctional",
+      "SmallPrimeLipschitz",
+      "SmallPrimePole",
+      "SmallPrimeProducts",
+      "SmallPrimePullback",
+      "SmallPrimeQuotient",
+      "SmallPrimeResidues",
+      "SmallPrimeRootEquiv",
+      "Solution",
+      "SplitExpansion",
+      "TailPrimeBound",
+      "Tests.KernelCertificates",
+      "TrigCertificates",
+      "WeightBounds",
+      "Zeta5PNTAudit",
+      "Zeta5Reduction"
     ],
     "diagnostic_modules": []
   },
@@ -44,13 +454,7 @@
         "InnerDistributionBound"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ActualDiskValue.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ActualInnerDiskBound",
@@ -63,13 +467,7 @@
         "ActualDiskValue"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ActualInnerDiskBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ActualPullbackCertificate",
@@ -79,13 +477,7 @@
         "ActualRationalDistribution"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ActualPullbackCertificate.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ActualRationalDistribution",
@@ -95,13 +487,7 @@
         "NearPoleSeries"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ActualRationalDistribution.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "Allocation",
@@ -111,18 +497,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/Allocation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/Allocation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AllocationPrimeBound",
@@ -132,13 +507,7 @@
         "OuterPrimeUpperLimit"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/AllocationPrimeBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AnalyticCompletion",
@@ -151,18 +520,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AnalyticCompletion.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AnalyticCompletion.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AnalyticFarPoles",
@@ -172,18 +530,7 @@
         "AnalyticCompletion"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AnalyticFarPoles.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/AnalyticFarPoles.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AnalyticPresentation",
@@ -192,13 +539,7 @@
         "FarUnitPowerSeries"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/AnalyticPresentation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AnalyticTranslation",
@@ -208,13 +549,7 @@
         "PolynomialDistribution"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/AnalyticTranslation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "Andreief",
@@ -225,18 +560,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/Andreief.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/Andreief.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCellBase",
@@ -245,23 +569,13 @@
         "AppendixNumericBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixCellBase.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixCellBase.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch000",
       "source": "AppendixCells/Batch000.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch000",
         "AppendixField.Batch001",
@@ -270,18 +584,13 @@
         "AppendixPotential.Batch002"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch000.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch001",
       "source": "AppendixCells/Batch001.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch002",
         "AppendixField.Batch003",
@@ -290,18 +599,13 @@
         "AppendixPotential.Batch004"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch001.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch002",
       "source": "AppendixCells/Batch002.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch004",
         "AppendixField.Batch005",
@@ -311,18 +615,13 @@
         "AppendixPotential.Batch006"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch002.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch003",
       "source": "AppendixCells/Batch003.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch005",
         "AppendixField.Batch006",
@@ -332,18 +631,13 @@
         "AppendixPotential.Batch008"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch003.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch004",
       "source": "AppendixCells/Batch004.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch007",
         "AppendixField.Batch008",
@@ -353,18 +647,13 @@
         "AppendixPotential.Batch010"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch004.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch005",
       "source": "AppendixCells/Batch005.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch009",
         "AppendixField.Batch010",
@@ -374,18 +663,13 @@
         "AppendixPotential.Batch012"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch005.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch006",
       "source": "AppendixCells/Batch006.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch011",
         "AppendixField.Batch012",
@@ -395,18 +679,13 @@
         "AppendixPotential.Batch014"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch006.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch007",
       "source": "AppendixCells/Batch007.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch013",
         "AppendixField.Batch014",
@@ -416,18 +695,13 @@
         "AppendixPotential.Batch016"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch007.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch008",
       "source": "AppendixCells/Batch008.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch015",
         "AppendixField.Batch016",
@@ -437,18 +711,13 @@
         "AppendixPotential.Batch018"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch008.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch009",
       "source": "AppendixCells/Batch009.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch017",
         "AppendixField.Batch018",
@@ -458,18 +727,13 @@
         "AppendixPotential.Batch020"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch009.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch010",
       "source": "AppendixCells/Batch010.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch019",
         "AppendixField.Batch020",
@@ -479,18 +743,13 @@
         "AppendixPotential.Batch022"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch010.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch011",
       "source": "AppendixCells/Batch011.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch021",
         "AppendixField.Batch022",
@@ -500,18 +759,13 @@
         "AppendixPotential.Batch024"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch011.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch012",
       "source": "AppendixCells/Batch012.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch023",
         "AppendixField.Batch024",
@@ -521,18 +775,13 @@
         "AppendixPotential.Batch026"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch012.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch013",
       "source": "AppendixCells/Batch013.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch025",
         "AppendixField.Batch026",
@@ -542,18 +791,13 @@
         "AppendixPotential.Batch028"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch013.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch014",
       "source": "AppendixCells/Batch014.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch027",
         "AppendixField.Batch028",
@@ -563,18 +807,13 @@
         "AppendixPotential.Batch030"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch014.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch015",
       "source": "AppendixCells/Batch015.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch029",
         "AppendixField.Batch030",
@@ -584,18 +823,13 @@
         "AppendixPotential.Batch032"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch015.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch016",
       "source": "AppendixCells/Batch016.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch031",
         "AppendixField.Batch032",
@@ -605,18 +839,13 @@
         "AppendixPotential.Batch034"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch016.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch017",
       "source": "AppendixCells/Batch017.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch033",
         "AppendixField.Batch034",
@@ -626,18 +855,13 @@
         "AppendixPotential.Batch036"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch017.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch018",
       "source": "AppendixCells/Batch018.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch035",
         "AppendixField.Batch036",
@@ -647,18 +871,13 @@
         "AppendixPotential.Batch038"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch018.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch019",
       "source": "AppendixCells/Batch019.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch037",
         "AppendixField.Batch038",
@@ -668,18 +887,13 @@
         "AppendixPotential.Batch040"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch019.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch020",
       "source": "AppendixCells/Batch020.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch039",
         "AppendixField.Batch040",
@@ -689,18 +903,13 @@
         "AppendixPotential.Batch042"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch020.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch021",
       "source": "AppendixCells/Batch021.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch041",
         "AppendixField.Batch042",
@@ -710,18 +919,13 @@
         "AppendixPotential.Batch044"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch021.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch022",
       "source": "AppendixCells/Batch022.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch043",
         "AppendixField.Batch044",
@@ -731,18 +935,13 @@
         "AppendixPotential.Batch046"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch022.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch023",
       "source": "AppendixCells/Batch023.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch045",
         "AppendixField.Batch046",
@@ -752,18 +951,13 @@
         "AppendixPotential.Batch048"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch023.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch024",
       "source": "AppendixCells/Batch024.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch047",
         "AppendixField.Batch048",
@@ -773,18 +967,13 @@
         "AppendixPotential.Batch050"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch024.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch025",
       "source": "AppendixCells/Batch025.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch049",
         "AppendixField.Batch050",
@@ -794,18 +983,13 @@
         "AppendixPotential.Batch052"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch025.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch026",
       "source": "AppendixCells/Batch026.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch051",
         "AppendixField.Batch052",
@@ -815,18 +999,13 @@
         "AppendixPotential.Batch054"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch026.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch027",
       "source": "AppendixCells/Batch027.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch053",
         "AppendixField.Batch054",
@@ -836,18 +1015,13 @@
         "AppendixPotential.Batch056"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch027.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch028",
       "source": "AppendixCells/Batch028.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch055",
         "AppendixField.Batch056",
@@ -857,18 +1031,13 @@
         "AppendixPotential.Batch058"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch028.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch029",
       "source": "AppendixCells/Batch029.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch057",
         "AppendixField.Batch058",
@@ -878,18 +1047,13 @@
         "AppendixPotential.Batch060"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch029.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch030",
       "source": "AppendixCells/Batch030.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch059",
         "AppendixField.Batch060",
@@ -899,18 +1063,13 @@
         "AppendixPotential.Batch062"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch030.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch031",
       "source": "AppendixCells/Batch031.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch061",
         "AppendixField.Batch062",
@@ -920,18 +1079,13 @@
         "AppendixPotential.Batch064"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch031.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch032",
       "source": "AppendixCells/Batch032.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch063",
         "AppendixField.Batch064",
@@ -941,18 +1095,13 @@
         "AppendixPotential.Batch066"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch032.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch033",
       "source": "AppendixCells/Batch033.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch065",
         "AppendixField.Batch066",
@@ -962,18 +1111,13 @@
         "AppendixPotential.Batch068"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch033.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch034",
       "source": "AppendixCells/Batch034.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch067",
         "AppendixField.Batch068",
@@ -983,18 +1127,13 @@
         "AppendixPotential.Batch070"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch034.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch035",
       "source": "AppendixCells/Batch035.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch069",
         "AppendixField.Batch070",
@@ -1004,18 +1143,13 @@
         "AppendixPotential.Batch072"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch035.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch036",
       "source": "AppendixCells/Batch036.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch071",
         "AppendixField.Batch072",
@@ -1025,18 +1159,13 @@
         "AppendixPotential.Batch074"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch036.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch037",
       "source": "AppendixCells/Batch037.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch073",
         "AppendixField.Batch074",
@@ -1046,18 +1175,13 @@
         "AppendixPotential.Batch076"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch037.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch038",
       "source": "AppendixCells/Batch038.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch075",
         "AppendixField.Batch076",
@@ -1067,18 +1191,13 @@
         "AppendixPotential.Batch078"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch038.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch039",
       "source": "AppendixCells/Batch039.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch077",
         "AppendixField.Batch078",
@@ -1088,18 +1207,13 @@
         "AppendixPotential.Batch080"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch039.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch040",
       "source": "AppendixCells/Batch040.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch079",
         "AppendixField.Batch080",
@@ -1109,18 +1223,13 @@
         "AppendixPotential.Batch082"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch040.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch041",
       "source": "AppendixCells/Batch041.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch081",
         "AppendixField.Batch082",
@@ -1130,18 +1239,13 @@
         "AppendixPotential.Batch084"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch041.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixCells.Batch042",
       "source": "AppendixCells/Batch042.lean",
       "imports": [
+        "CertificateTactics",
         "AppendixCellBase",
         "AppendixField.Batch083",
         "AppendixField.Batch084",
@@ -1150,1475 +1254,781 @@
         "AppendixPotential.Batch085"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixCells/Batch042.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch000",
       "source": "AppendixField/Batch000.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch000.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch001",
       "source": "AppendixField/Batch001.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch001.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch002",
       "source": "AppendixField/Batch002.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch002.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch003",
       "source": "AppendixField/Batch003.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch003.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch004",
       "source": "AppendixField/Batch004.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch004.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch005",
       "source": "AppendixField/Batch005.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch005.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch006",
       "source": "AppendixField/Batch006.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch006.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch007",
       "source": "AppendixField/Batch007.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch007.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch008",
       "source": "AppendixField/Batch008.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch008.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch009",
       "source": "AppendixField/Batch009.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch009.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch010",
       "source": "AppendixField/Batch010.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch010.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch011",
       "source": "AppendixField/Batch011.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch011.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch012",
       "source": "AppendixField/Batch012.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch012.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch013",
       "source": "AppendixField/Batch013.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch013.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch014",
       "source": "AppendixField/Batch014.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch014.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch015",
       "source": "AppendixField/Batch015.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch015.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch016",
       "source": "AppendixField/Batch016.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch016.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch017",
       "source": "AppendixField/Batch017.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch017.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch018",
       "source": "AppendixField/Batch018.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch018.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch019",
       "source": "AppendixField/Batch019.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch019.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch020",
       "source": "AppendixField/Batch020.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch020.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch021",
       "source": "AppendixField/Batch021.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch021.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch022",
       "source": "AppendixField/Batch022.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch022.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch023",
       "source": "AppendixField/Batch023.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch023.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch024",
       "source": "AppendixField/Batch024.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch024.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch025",
       "source": "AppendixField/Batch025.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch025.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch026",
       "source": "AppendixField/Batch026.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch026.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch027",
       "source": "AppendixField/Batch027.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch027.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch028",
       "source": "AppendixField/Batch028.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch028.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch029",
       "source": "AppendixField/Batch029.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch029.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch030",
       "source": "AppendixField/Batch030.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch030.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch031",
       "source": "AppendixField/Batch031.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch031.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch032",
       "source": "AppendixField/Batch032.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch032.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch033",
       "source": "AppendixField/Batch033.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch033.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch034",
       "source": "AppendixField/Batch034.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch034.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch035",
       "source": "AppendixField/Batch035.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch035.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch036",
       "source": "AppendixField/Batch036.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch036.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch037",
       "source": "AppendixField/Batch037.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch037.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch038",
       "source": "AppendixField/Batch038.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch038.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch039",
       "source": "AppendixField/Batch039.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch039.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch040",
       "source": "AppendixField/Batch040.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch040.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch041",
       "source": "AppendixField/Batch041.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch041.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch042",
       "source": "AppendixField/Batch042.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch042.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch043",
       "source": "AppendixField/Batch043.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch043.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch044",
       "source": "AppendixField/Batch044.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch044.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch045",
       "source": "AppendixField/Batch045.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch045.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch046",
       "source": "AppendixField/Batch046.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch046.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch047",
       "source": "AppendixField/Batch047.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch047.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch048",
       "source": "AppendixField/Batch048.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch048.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch049",
       "source": "AppendixField/Batch049.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch049.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch050",
       "source": "AppendixField/Batch050.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch050.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch051",
       "source": "AppendixField/Batch051.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch051.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch052",
       "source": "AppendixField/Batch052.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch052.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch053",
       "source": "AppendixField/Batch053.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch053.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch054",
       "source": "AppendixField/Batch054.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch054.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch055",
       "source": "AppendixField/Batch055.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch055.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch056",
       "source": "AppendixField/Batch056.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch056.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch057",
       "source": "AppendixField/Batch057.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch057.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch058",
       "source": "AppendixField/Batch058.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch058.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch059",
       "source": "AppendixField/Batch059.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch059.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch060",
       "source": "AppendixField/Batch060.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch060.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch061",
       "source": "AppendixField/Batch061.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch061.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch062",
       "source": "AppendixField/Batch062.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch062.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch063",
       "source": "AppendixField/Batch063.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch063.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch064",
       "source": "AppendixField/Batch064.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch064.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch065",
       "source": "AppendixField/Batch065.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch065.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch066",
       "source": "AppendixField/Batch066.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch066.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch067",
       "source": "AppendixField/Batch067.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch067.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch068",
       "source": "AppendixField/Batch068.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch068.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch069",
       "source": "AppendixField/Batch069.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch069.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch070",
       "source": "AppendixField/Batch070.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch070.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch071",
       "source": "AppendixField/Batch071.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch071.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch072",
       "source": "AppendixField/Batch072.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch072.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch073",
       "source": "AppendixField/Batch073.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch073.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch074",
       "source": "AppendixField/Batch074.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch074.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch075",
       "source": "AppendixField/Batch075.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch075.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch076",
       "source": "AppendixField/Batch076.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch076.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch077",
       "source": "AppendixField/Batch077.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch077.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch078",
       "source": "AppendixField/Batch078.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch078.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch079",
       "source": "AppendixField/Batch079.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch079.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch080",
       "source": "AppendixField/Batch080.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch080.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch081",
       "source": "AppendixField/Batch081.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch081.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch082",
       "source": "AppendixField/Batch082.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch082.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch083",
       "source": "AppendixField/Batch083.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch083.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch084",
       "source": "AppendixField/Batch084.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch084.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixField.Batch085",
       "source": "AppendixField/Batch085.lean",
       "imports": [
-        "AppendixNumericBase",
-        "LogCertificates",
-        "TrigCertificates"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixField/Batch085.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixNumericBase",
@@ -2629,39 +2039,18 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixNumericBase.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixNumericBase.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixNumericConstants",
       "source": "AppendixNumericConstants.lean",
       "imports": [
+        "CertificateData",
         "AppendixNumericBase",
         "LogCertificates"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixNumericConstants.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixNumericConstants.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixNumericSpecial",
@@ -2672,13 +2061,7 @@
         "TrigCertificates"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixNumericSpecial.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixNumericalCertificate",
@@ -2731,13 +2114,7 @@
         "AppendixCells.Batch042"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixNumericalCertificate.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixNumerics",
@@ -2746,18 +2123,7 @@
         "AppendixNumericBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixNumerics.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixNumerics.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPartition",
@@ -2766,1383 +2132,781 @@
         "AppendixCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPartition.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPartition.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch000",
       "source": "AppendixPotential/Batch000.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch000.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch000.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch001",
       "source": "AppendixPotential/Batch001.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch001.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch001.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch002",
       "source": "AppendixPotential/Batch002.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch002.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch002.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch003",
       "source": "AppendixPotential/Batch003.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch003.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch003.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch004",
       "source": "AppendixPotential/Batch004.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch004.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch004.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch005",
       "source": "AppendixPotential/Batch005.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch005.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch005.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch006",
       "source": "AppendixPotential/Batch006.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch006.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch006.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch007",
       "source": "AppendixPotential/Batch007.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch007.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch007.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch008",
       "source": "AppendixPotential/Batch008.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch008.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch008.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch009",
       "source": "AppendixPotential/Batch009.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch009.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch009.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch010",
       "source": "AppendixPotential/Batch010.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch010.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch010.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch011",
       "source": "AppendixPotential/Batch011.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch011.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch011.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch012",
       "source": "AppendixPotential/Batch012.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch012.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch012.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch013",
       "source": "AppendixPotential/Batch013.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch013.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch013.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch014",
       "source": "AppendixPotential/Batch014.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/AppendixPotential/Batch014.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "AppendixPotential/Batch014.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch015",
       "source": "AppendixPotential/Batch015.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch015.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch016",
       "source": "AppendixPotential/Batch016.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch016.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch017",
       "source": "AppendixPotential/Batch017.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch017.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch018",
       "source": "AppendixPotential/Batch018.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch018.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch019",
       "source": "AppendixPotential/Batch019.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch019.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch020",
       "source": "AppendixPotential/Batch020.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch020.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch021",
       "source": "AppendixPotential/Batch021.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch021.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch022",
       "source": "AppendixPotential/Batch022.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch022.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch023",
       "source": "AppendixPotential/Batch023.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch023.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch024",
       "source": "AppendixPotential/Batch024.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch024.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch025",
       "source": "AppendixPotential/Batch025.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch025.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch026",
       "source": "AppendixPotential/Batch026.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch026.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch027",
       "source": "AppendixPotential/Batch027.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch027.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch028",
       "source": "AppendixPotential/Batch028.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch028.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch029",
       "source": "AppendixPotential/Batch029.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch029.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch030",
       "source": "AppendixPotential/Batch030.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch030.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch031",
       "source": "AppendixPotential/Batch031.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch031.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch032",
       "source": "AppendixPotential/Batch032.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch032.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch033",
       "source": "AppendixPotential/Batch033.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch033.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch034",
       "source": "AppendixPotential/Batch034.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch034.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch035",
       "source": "AppendixPotential/Batch035.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch035.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch036",
       "source": "AppendixPotential/Batch036.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch036.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch037",
       "source": "AppendixPotential/Batch037.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch037.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch038",
       "source": "AppendixPotential/Batch038.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch038.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch039",
       "source": "AppendixPotential/Batch039.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch039.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch040",
       "source": "AppendixPotential/Batch040.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch040.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch041",
       "source": "AppendixPotential/Batch041.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch041.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch042",
       "source": "AppendixPotential/Batch042.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch042.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch043",
       "source": "AppendixPotential/Batch043.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch043.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch044",
       "source": "AppendixPotential/Batch044.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch044.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch045",
       "source": "AppendixPotential/Batch045.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch045.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch046",
       "source": "AppendixPotential/Batch046.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch046.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch047",
       "source": "AppendixPotential/Batch047.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch047.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch048",
       "source": "AppendixPotential/Batch048.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch048.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch049",
       "source": "AppendixPotential/Batch049.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch049.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch050",
       "source": "AppendixPotential/Batch050.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch050.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch051",
       "source": "AppendixPotential/Batch051.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch051.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch052",
       "source": "AppendixPotential/Batch052.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch052.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch053",
       "source": "AppendixPotential/Batch053.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch053.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch054",
       "source": "AppendixPotential/Batch054.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch054.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch055",
       "source": "AppendixPotential/Batch055.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch055.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch056",
       "source": "AppendixPotential/Batch056.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch056.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch057",
       "source": "AppendixPotential/Batch057.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch057.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch058",
       "source": "AppendixPotential/Batch058.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch058.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch059",
       "source": "AppendixPotential/Batch059.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch059.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch060",
       "source": "AppendixPotential/Batch060.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch060.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch061",
       "source": "AppendixPotential/Batch061.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch061.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch062",
       "source": "AppendixPotential/Batch062.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch062.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch063",
       "source": "AppendixPotential/Batch063.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch063.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch064",
       "source": "AppendixPotential/Batch064.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch064.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch065",
       "source": "AppendixPotential/Batch065.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch065.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch066",
       "source": "AppendixPotential/Batch066.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch066.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch067",
       "source": "AppendixPotential/Batch067.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch067.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch068",
       "source": "AppendixPotential/Batch068.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch068.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch069",
       "source": "AppendixPotential/Batch069.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch069.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch070",
       "source": "AppendixPotential/Batch070.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch070.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch071",
       "source": "AppendixPotential/Batch071.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch071.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch072",
       "source": "AppendixPotential/Batch072.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch072.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch073",
       "source": "AppendixPotential/Batch073.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch073.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch074",
       "source": "AppendixPotential/Batch074.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch074.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch075",
       "source": "AppendixPotential/Batch075.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch075.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch076",
       "source": "AppendixPotential/Batch076.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch076.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch077",
       "source": "AppendixPotential/Batch077.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch077.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch078",
       "source": "AppendixPotential/Batch078.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch078.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch079",
       "source": "AppendixPotential/Batch079.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch079.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch080",
       "source": "AppendixPotential/Batch080.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch080.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch081",
       "source": "AppendixPotential/Batch081.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch081.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch082",
       "source": "AppendixPotential/Batch082.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch082.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch083",
       "source": "AppendixPotential/Batch083.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch083.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch084",
       "source": "AppendixPotential/Batch084.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch084.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AppendixPotential.Batch085",
       "source": "AppendixPotential/Batch085.lean",
       "imports": [
-        "AppendixNumericConstants"
+        "CertificateTactics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "AppendixPotential/Batch085.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ArcsineMixture",
@@ -4152,13 +2916,7 @@
         "RealEnergy"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "ArcsineMixture.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ArcsineMonotonicity",
@@ -4167,13 +2925,7 @@
         "ArcsineMixture"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "ArcsineMonotonicity.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ArcsineNumericBridge",
@@ -4184,13 +2936,7 @@
         "AppendixNumerics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "ArcsineNumericBridge.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "AxiomAudit",
@@ -4199,13 +2945,7 @@
         "Main"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/AxiomAudit.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "BasisTransfer",
@@ -4217,13 +2957,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/BasisTransfer.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "BernoulliKernel",
@@ -4235,18 +2969,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/BernoulliKernel.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "BernoulliKernel.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "CanonicalLocalBound",
@@ -4256,13 +2979,7 @@
         "AnalyticPresentation"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/CanonicalLocalBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "CanonicalPresentation",
@@ -4271,13 +2988,7 @@
         "PresentationCertificates"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "CanonicalPresentation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "CanonicalSplitBound",
@@ -4287,13 +2998,41 @@
         "SplitExpansion"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/CanonicalSplitBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
+    },
+    {
+      "module": "CertificateData",
+      "source": "CertificateData.lean",
+      "imports": [
+        "Mathlib.Data.Nat.Sqrt",
+        "Mathlib.Data.Rat.Defs",
+        "Lean"
+      ],
+      "diagnostic_only": false,
+      "artifacts": []
+    },
+    {
+      "module": "CertificateTactics",
+      "source": "CertificateTactics.lean",
+      "imports": [
+        "CertificateData",
+        "AppendixNumericConstants",
+        "RealEnergy",
+        "TrigCertificates",
+        "AppendixCellBase"
+      ],
+      "diagnostic_only": false,
+      "artifacts": []
+    },
+    {
+      "module": "Challenge",
+      "source": "Challenge.lean",
+      "imports": [
+        "Mathlib.NumberTheory.Real.Irrational",
+        "Mathlib.NumberTheory.LSeries.RiemannZeta"
+      ],
+      "diagnostic_only": false,
+      "artifacts": []
     },
     {
       "module": "CircleMeasures",
@@ -4303,18 +3042,7 @@
         "Mathlib.MeasureTheory.Integral.Prod"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/CircleMeasures.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "CircleMeasures.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "CirclePotential",
@@ -4326,18 +3054,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/CirclePotential.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "CirclePotential.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ClassBasis",
@@ -4353,18 +3070,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/ClassBasis.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/ClassBasis.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ConfigurationEnergy",
@@ -4375,13 +3081,7 @@
         "Mathlib.Algebra.Order.BigOperators.Group.LocallyFinite"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "ConfigurationEnergy.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "Construction",
@@ -4395,23 +3095,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/Construction.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/Construction.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "Construction.olean",
-          "lean_version": "4.19.0",
-          "source_newer": true
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ConstructionPartialFractions",
@@ -4421,13 +3105,7 @@
         "PartialFractions"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ConstructionPartialFractions.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ConstructionPullback",
@@ -4437,13 +3115,7 @@
         "PolynomialDistribution"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ConstructionPullback.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "DenominatorRiemann",
@@ -4453,13 +3125,7 @@
         "Mathlib.Analysis.SpecialFunctions.Integrals.Basic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/DenominatorRiemann.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "EnergyComparison",
@@ -4472,13 +3138,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/EnergyComparison.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "EnergyMixtures",
@@ -4488,18 +3148,7 @@
         "Mathlib.MeasureTheory.Integral.Bochner.SumMeasure"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/EnergyMixtures.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "EnergyMixtures.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ExternalField",
@@ -4508,13 +3157,7 @@
         "DenominatorRiemann"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ExternalField.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "FarUnitExpansion",
@@ -4524,18 +3167,7 @@
         "Mathlib.Analysis.SpecificLimits.Normed"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/FarUnitExpansion.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/FarUnitExpansion.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "FarUnitPowerSeries",
@@ -4544,13 +3176,7 @@
         "PowerSeriesCompletion"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/FarUnitPowerSeries.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "FieldMinimum",
@@ -4561,13 +3187,7 @@
         "AppendixCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/FieldMinimum.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "FinalAssembly",
@@ -4578,13 +3198,7 @@
         "Zeta5Reduction"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/FinalAssembly.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "FloorIndicators",
@@ -4595,13 +3209,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/FloorIndicators.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "FloorIntegral",
@@ -4611,13 +3219,7 @@
         "PrimeHarmonic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/FloorIntegral.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "FullPullbackCertificate",
@@ -4626,13 +3228,7 @@
         "ActualPullbackCertificate"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/FullPullbackCertificate.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "FunctionalCancellation",
@@ -4641,13 +3237,7 @@
         "NumeratorFunctional"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/FunctionalCancellation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "GeometricMoments",
@@ -4656,23 +3246,7 @@
         "Moments"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/GeometricMoments.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/GeometricMoments.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "GeometricMoments.olean",
-          "lean_version": "4.19.0",
-          "source_newer": true
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "GramIntegral",
@@ -4682,13 +3256,7 @@
         "MatrixIntegral"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/GramIntegral.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "GramScaling",
@@ -4697,13 +3265,7 @@
         "GramIntegral"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/GramScaling.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "GramUpperBound",
@@ -4713,13 +3275,7 @@
         "ResidualIntegral"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/GramUpperBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerAllocationLimit",
@@ -4729,13 +3285,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerAllocationLimit.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerAssignedWeights",
@@ -4745,13 +3295,7 @@
         "Mathlib.Data.List.Sort"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerAssignedWeights.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerAsymptotics",
@@ -4764,18 +3308,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerAsymptotics.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "InnerAsymptotics.olean",
-          "lean_version": "4.19.0",
-          "source_newer": true
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerBaseKernel",
@@ -4785,13 +3318,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerBaseKernel.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerBasis",
@@ -4801,13 +3328,7 @@
         "InnerDegrees"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerBasis.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerDegrees",
@@ -4817,13 +3338,7 @@
         "InnerRoots"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerDegrees.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerDeterminant",
@@ -4834,13 +3349,7 @@
         "BasisTransfer"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerDeterminant.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerDiskDegrees",
@@ -4849,13 +3358,7 @@
         "InnerDiskFactorization"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerDiskDegrees.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerDiskFactorization",
@@ -4865,13 +3368,7 @@
         "Mathlib.Algebra.Polynomial.Inductions"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerDiskFactorization.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerDiskPadic",
@@ -4881,13 +3378,7 @@
         "NearPoleSeries"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerDiskPadic.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerDiskRoots",
@@ -4898,13 +3389,7 @@
         "IntegerPoleDistribution"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerDiskRoots.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerDistributionBound",
@@ -4914,13 +3399,7 @@
         "ActualRationalDistribution"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerDistributionBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerErrorBound",
@@ -4930,13 +3409,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerErrorBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerExponentMatch",
@@ -4946,13 +3419,7 @@
         "InnerDiskDegrees"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerExponentMatch.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerFactorCounts",
@@ -4962,13 +3429,7 @@
         "ResidueFactorization"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerFactorCounts.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerFactorization",
@@ -4979,13 +3440,7 @@
         "Construction"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerFactorization.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerGamma",
@@ -4995,13 +3450,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerGamma.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerNormBridge",
@@ -5011,13 +3460,7 @@
         "Mathlib.NumberTheory.Padics.PadicNumbers"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerNormBridge.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerNormalized",
@@ -5028,13 +3471,7 @@
         "ActualInnerDiskBound"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerNormalized.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeBound",
@@ -5045,13 +3482,7 @@
         "ScalarUniform"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCellBase",
@@ -5061,13 +3492,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCellBase.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCellPrototype",
@@ -5076,13 +3501,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCellPrototype.olean",
-          "lean_version": "4.32.2",
-          "source_newer": true
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells",
@@ -5106,13 +3525,7 @@
         "InnerPrimeCells.Batch015"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch000",
@@ -5121,13 +3534,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch000.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch001",
@@ -5136,13 +3543,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch001.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch002",
@@ -5151,13 +3552,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch002.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch003",
@@ -5166,13 +3561,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch003.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch004",
@@ -5181,13 +3570,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch004.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch005",
@@ -5196,13 +3579,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch005.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch006",
@@ -5211,13 +3588,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch006.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch007",
@@ -5226,13 +3597,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch007.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch008",
@@ -5241,13 +3606,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch008.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch009",
@@ -5256,13 +3615,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch009.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch010",
@@ -5271,13 +3624,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch010.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch011",
@@ -5286,13 +3633,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch011.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch012",
@@ -5301,13 +3642,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch012.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch013",
@@ -5316,13 +3651,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch013.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch014",
@@ -5331,13 +3660,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch014.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeCells.Batch015",
@@ -5346,13 +3669,7 @@
         "InnerPrimeCellBase"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeCells/Batch015.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeGeometry",
@@ -5361,13 +3678,7 @@
         "InnerPrimeCells"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeGeometry.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPrimeLimit",
@@ -5378,13 +3689,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPrimeLimit.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerPullbackCertificate",
@@ -5394,13 +3699,7 @@
         "InnerDiskPadic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerPullbackCertificate.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerRealKernel",
@@ -5416,13 +3715,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerRealKernel.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerRoots",
@@ -5433,13 +3726,7 @@
         "Mathlib.NumberTheory.Padics.PadicNumbers"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerRoots.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerRowFactors",
@@ -5449,13 +3736,7 @@
         "InnerFactorization"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerRowFactors.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerSources",
@@ -5464,13 +3745,7 @@
         "InnerDistributionBound"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerSources.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerTailBound",
@@ -5480,13 +3755,7 @@
         "NormalizationTail"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerTailBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerUniform",
@@ -5496,13 +3765,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerUniform.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerValuation",
@@ -5511,23 +3774,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/InnerValuation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/InnerValuation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "InnerValuation.olean",
-          "lean_version": "4.19.0",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "InnerWeights",
@@ -5537,13 +3784,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/InnerWeights.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "IntegerPoleDistribution",
@@ -5553,13 +3794,7 @@
         "IntegerPoleRecurrence"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/IntegerPoleDistribution.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "IntegerPoleRecurrence",
@@ -5569,18 +3804,7 @@
         "Mathlib.NumberTheory.Padics.PadicNumbers"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/IntegerPoleRecurrence.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/IntegerPoleRecurrence.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "IntegerPolynomial",
@@ -5591,13 +3815,7 @@
         "NormalizationLog"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/IntegerPolynomial.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "LocalDiskValue",
@@ -5607,13 +3825,7 @@
         "ActualRationalDistribution"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/LocalDiskValue.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "LocalDivision",
@@ -5626,18 +3838,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/LocalDivision.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "LocalDivision.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "LocalFunctional",
@@ -5646,18 +3847,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/LocalFunctional.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/LocalFunctional.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "LogCertificates",
@@ -5667,18 +3857,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/LogCertificates.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "LogCertificates.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "Main",
@@ -5690,13 +3869,7 @@
         "FinalAssembly"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/Main.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "MatrixIntegral",
@@ -5708,13 +3881,7 @@
         "Mathlib.Analysis.Matrix.PosDef"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/MatrixIntegral.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "Moments",
@@ -5726,23 +3893,7 @@
         "Mathlib.MeasureTheory.Integral.DominatedConvergence"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/Moments.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/Moments.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "Moments.olean",
-          "lean_version": "4.19.0",
-          "source_newer": true
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "NearPoleCompletion",
@@ -5751,13 +3902,7 @@
         "PowerSeriesResidues"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/NearPoleCompletion.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "NearPoleSeries",
@@ -5768,18 +3913,7 @@
         "LocalDivision"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/NearPoleSeries.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "NearPoleSeries.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "Normalization",
@@ -5791,23 +3925,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/Normalization.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/Normalization.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "Normalization.olean",
-          "lean_version": "4.19.0",
-          "source_newer": true
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "NormalizationLog",
@@ -5817,13 +3935,7 @@
         "Mathlib.Analysis.SpecialFunctions.Log.Basic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/NormalizationLog.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "NormalizationRanges",
@@ -5834,13 +3946,7 @@
         "InnerPrimeBound"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/NormalizationRanges.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "NormalizationTail",
@@ -5854,18 +3960,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/NormalizationTail.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "NormalizationTail.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "NormalizerBound",
@@ -5877,13 +3972,7 @@
         "NormalizerConstants"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/NormalizerBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "NormalizerConstants",
@@ -5892,13 +3981,7 @@
         "NormalizationTail"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/NormalizerConstants.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "NumeratorFunctional",
@@ -5907,13 +3990,7 @@
         "OuterMoments"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/NumeratorFunctional.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterArithmetic",
@@ -5922,13 +3999,7 @@
         "OuterPrimeArithmetic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterArithmetic.olean",
-          "lean_version": "4.32.2",
-          "source_newer": true
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterAsymptotics",
@@ -5948,13 +4019,7 @@
         "OuterMoments"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterBasis.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterClassCounts",
@@ -5965,13 +4030,7 @@
         "InnerAsymptotics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "OuterClassCounts.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterCountSums",
@@ -5980,13 +4039,7 @@
         "OuterClassCounts"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "OuterCountSums.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterDeterminant",
@@ -5996,13 +4049,7 @@
         "BasisTransfer"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterDeterminant.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterEntries",
@@ -6012,13 +4059,7 @@
         "NumeratorFunctional"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterEntries.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterLargePrimes",
@@ -6027,13 +4068,7 @@
         "OuterDeterminant"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterLargePrimes.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterLow",
@@ -6042,13 +4077,7 @@
         "OuterPoleArithmetic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterLow.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterMoments",
@@ -6059,18 +4088,7 @@
         "Construction"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterMoments.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "OuterMoments.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterNear",
@@ -6080,13 +4098,7 @@
         "FunctionalCancellation"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterNear.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterNormalized",
@@ -6097,13 +4109,7 @@
         "ScalarValuation"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterNormalized.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterPoleArithmetic",
@@ -6112,13 +4118,7 @@
         "OuterNear"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterPoleArithmetic.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterPrimeArithmetic",
@@ -6128,13 +4128,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterPrimeArithmetic.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterPrimeBound",
@@ -6144,13 +4138,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterPrimeBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterPrimeCells",
@@ -6160,13 +4148,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterPrimeCells.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterPrimeLimit",
@@ -6177,13 +4159,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterPrimeLimit.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterPrimeUpperLimit",
@@ -6193,13 +4169,7 @@
         "NormalizationLog"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterPrimeUpperLimit.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterValuation",
@@ -6214,23 +4184,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/OuterValuation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/OuterValuation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "OuterValuation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterWeightAggregation",
@@ -6241,13 +4195,7 @@
         "OuterCountSums"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterWeightAggregation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterWeightSums",
@@ -6257,13 +4205,7 @@
         "OuterLow"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "OuterWeightSums.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "OuterZero",
@@ -6272,13 +4214,7 @@
         "OuterLow"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/OuterZero.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PaperParameters",
@@ -6289,23 +4225,7 @@
         "Mathlib.Data.List.Sort"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/PaperParameters.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/PaperParameters.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "PaperParameters.olean",
-          "lean_version": "4.19.0",
-          "source_newer": true
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PartialFractions",
@@ -6315,18 +4235,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/PartialFractions.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "PartialFractions.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PartitionCertificate",
@@ -6336,13 +4245,7 @@
         "PresentationCertificates"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PartitionCertificate.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PoleIntegral",
@@ -6353,13 +4256,7 @@
         "PoleKernel"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PoleIntegral.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PoleKernel",
@@ -6370,18 +4267,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/PoleKernel.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "build432/PoleKernel.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PolynomialDistribution",
@@ -6392,13 +4278,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PolynomialDistribution.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PositiveIntegrals",
@@ -6408,18 +4288,7 @@
         "Mathlib.MeasureTheory.Measure.Typeclasses.NullSingletonClass"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PositiveIntegrals.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "PositiveIntegrals.olean",
-          "lean_version": "4.19.0",
-          "source_newer": true
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PotentialFieldCertificate",
@@ -6432,18 +4301,7 @@
         "AppendixNumericalCertificate"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PotentialFieldCertificate.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "PotentialFieldCertificate.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PowerSeriesCompletion",
@@ -6455,13 +4313,7 @@
         "Mathlib.RingTheory.PowerSeries.Inverse"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PowerSeriesCompletion.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PowerSeriesResidues",
@@ -6471,13 +4323,7 @@
         "PartialFractions"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PowerSeriesResidues.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PresentationCertificates",
@@ -6487,13 +4333,7 @@
         "RationalPullback"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PresentationCertificates.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PrimeFloor",
@@ -6503,13 +4343,7 @@
         "FloorIndicators"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PrimeFloor.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PrimeHarmonic",
@@ -6518,13 +4352,7 @@
         "PrimeSums"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PrimeHarmonic.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PrimeKernelMajorant",
@@ -6535,13 +4363,7 @@
         "InnerTailBound"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PrimeKernelMajorant.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PrimeRangePartition",
@@ -6551,13 +4373,7 @@
         "NormalizationLog"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PrimeRangePartition.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "PrimeSums",
@@ -6572,13 +4388,7 @@
         "PrimeNumberTheoremAnd.Consequences"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/PrimeSums.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "RationalDistribution",
@@ -6587,13 +4397,7 @@
         "IntegerPoleDistribution"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/RationalDistribution.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "RationalPullback",
@@ -6605,13 +4409,7 @@
         "NumeratorFunctional"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/RationalPullback.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "RealDeterminantAsymptotic",
@@ -6621,13 +4419,7 @@
         "RealRemainder"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/RealDeterminantAsymptotic.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "RealDeterminantBound",
@@ -6637,13 +4429,7 @@
         "PotentialFieldCertificate"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/RealDeterminantBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "RealDeterminantEnergyBridge",
@@ -6653,13 +4439,7 @@
         "AppendixNumerics"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/RealDeterminantEnergyBridge.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "RealEnergy",
@@ -6673,18 +4453,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/RealEnergy.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "RealEnergy.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "RealNormalization",
@@ -6694,13 +4463,7 @@
         "Mathlib.Analysis.SpecialFunctions.Log.Basic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/RealNormalization.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "RealRemainder",
@@ -6709,13 +4472,7 @@
         "RealNormalization"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/RealRemainder.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ResidualIntegral",
@@ -6725,13 +4482,7 @@
         "Mathlib.MeasureTheory.Integral.Pi"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ResidualIntegral.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ResidueFactorization",
@@ -6742,13 +4493,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ResidueFactorization.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ScalarFloorSum",
@@ -6758,13 +4503,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ScalarFloorSum.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ScalarUniform",
@@ -6774,13 +4513,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ScalarUniform.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ScalarValuation",
@@ -6791,13 +4524,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ScalarValuation.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ScaledIntegerLocalBound",
@@ -6806,13 +4533,7 @@
         "LocalDiskValue"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ScaledIntegerLocalBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ScaledLocalBound",
@@ -6821,13 +4542,7 @@
         "PartitionCertificate"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ScaledLocalBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "ScaledWeightBounds",
@@ -6838,13 +4553,7 @@
         "WeightBounds"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/ScaledWeightBounds.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeActual",
@@ -6856,13 +4565,7 @@
         "SmallPrimePole"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeActual.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeAsymptotics",
@@ -6871,13 +4574,7 @@
         "OuterPrimeUpperLimit"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/SmallPrimeAsymptotics.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeAudit",
@@ -6896,13 +4593,7 @@
         "Construction"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeBasis.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeBinomial",
@@ -6912,13 +4603,7 @@
         "SmallPrimeLipschitz"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeBinomial.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeBound",
@@ -6929,13 +4614,7 @@
         "InnerNormBridge"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeDeterminant",
@@ -6946,13 +4625,7 @@
         "NumeratorFunctional"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeDeterminant.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeEntry",
@@ -6962,13 +4635,7 @@
         "SmallPrimeBinomial"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeEntry.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeFactorials",
@@ -6978,13 +4645,7 @@
         "SmallPrimeResidues"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeFactorials.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeFunctional",
@@ -6996,13 +4657,7 @@
         "Mathlib.Algebra.Polynomial.Taylor"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeFunctional.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeLipschitz",
@@ -7012,13 +4667,7 @@
         "Mathlib.Algebra.BigOperators.NatAntidiagonal"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeLipschitz.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimePole",
@@ -7028,13 +4677,7 @@
         "LocalFunctional"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimePole.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeProducts",
@@ -7043,13 +4686,7 @@
         "SmallPrimeLipschitz"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeProducts.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimePullback",
@@ -7061,13 +4698,7 @@
         "SmallPrimeDeterminant"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimePullback.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeQuotient",
@@ -7076,13 +4707,7 @@
         "SmallPrimeProducts"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeQuotient.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeResidues",
@@ -7092,13 +4717,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "SmallPrimeResidues.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "SmallPrimeRootEquiv",
@@ -7108,13 +4727,16 @@
         "SmallPrimeFactorials"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/SmallPrimeRootEquiv.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
+    },
+    {
+      "module": "Solution",
+      "source": "Solution.lean",
+      "imports": [
+        "Main"
+      ],
+      "diagnostic_only": false,
+      "artifacts": []
     },
     {
       "module": "SplitExpansion",
@@ -7123,13 +4745,7 @@
         "FarUnitPowerSeries"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/SplitExpansion.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "TailPrimeBound",
@@ -7141,18 +4757,16 @@
         "ScalarUniform"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/TailPrimeBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        },
-        {
-          "path": "TailPrimeBound.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
+    },
+    {
+      "module": "Tests.KernelCertificates",
+      "source": "Tests/KernelCertificates.lean",
+      "imports": [
+        "LeanCert.Tactic.IntervalAuto.PointIneq"
+      ],
+      "diagnostic_only": false,
+      "artifacts": []
     },
     {
       "module": "TrigCertificates",
@@ -7162,13 +4776,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "TrigCertificates.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "WeightBounds",
@@ -7180,13 +4788,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": "build432/WeightBounds.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     },
     {
       "module": "Zeta5PNTAudit",
@@ -7209,18 +4811,7 @@
         "Mathlib.Tactic"
       ],
       "diagnostic_only": false,
-      "artifacts": [
-        {
-          "path": ".lake/build/lib/lean/Zeta5Reduction.olean",
-          "lean_version": "4.32.2",
-          "source_newer": true
-        },
-        {
-          "path": "build432/Zeta5Reduction.olean",
-          "lean_version": "4.32.2",
-          "source_newer": false
-        }
-      ]
+      "artifacts": []
     }
   ]
 }

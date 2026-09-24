@@ -27,11 +27,18 @@ The readability pass retains explicit theorem statements and rational bounds,
 formats the sixteen component bounds in groups of four, names the reusable
 assembly operations, and documents each helper module and its rounding rules.
 
+PR #2 targets `palomar-preparation`. The Lean 4.35 port, dependency vendoring,
+and Challenge/Solution interfaces are inherited from PR #1 at
+`5e55b5ff7a0d57a758e0bd7462753ea8e674c00e`. PR #2 adds certificate
+compaction, readability documentation, CI repairs, and evidence corrections.
+
 ## Verification
 
-The baseline passed the complete build and sandboxed Comparator with con-ron,
-NanoDa, and the default Lean kernel. This branch also passed its complete 4,590-job rebuild and sandboxed Comparator
-with all three unmodified bundled kernels. con-ron accepted 91,762 declarations;
+The saved local logs for compact source commit
+`53f1134b621452a5b8339c3050367259d46b4de6` record a complete 4,590-job build
+and acceptance by all three Comparator kernels. con-ron accepted 91,762 declarations;
 NanoDa and the default Lean kernel also accepted the solution. Both final
 statements use only `propext`, `Classical.choice`, and `Quot.sound`.
-Full logs and fingerprints are in `verification/codegolf/`.
+Full logs and fingerprints are in `verification/codegolf/`. These logs do not
+independently attest process exit status, checker binary integrity, or sandbox
+enforcement. They are historical local evidence, not a hosted CI result.
