@@ -1,0 +1,20 @@
+name: Official Palomar mechanical preflight
+
+on:
+  push:
+    branches: [ci/palomar-official-preflight]
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@1703d7babd984ccc3831cdf89c28221abe34808f
+    with:
+      repository: realazthat/zeta5-lean2
+      commit: 2fa4e829816e1d4a4f61249cb758e67195d46806
+      pipeline_commit: 1703d7babd984ccc3831cdf89c28221abe34808f
+      request_id: zeta5-2fa4e829-preflight
+      mode: full
+      execution_profile: palomar-standard-v1
+      options: '{"comparator_config_path":"comparator.json","formalization_metadata_path":"formalization.yaml"}'
